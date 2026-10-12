@@ -1,0 +1,1377 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Visor de entrevistas</title>
+<style>
+:root{
+  --bg:#F3F4F7; --surface:#FFFFFF; --sunk:#EEF0F4; --line:#DFE3EA; --line2:#C9CFD9;
+  --ink:#1B2130; --muted:#5B6474; --faint:#8A92A0;
+  --accent:#2348C9; --accent-hover:#1B3AA6; --accent-soft:#E7ECFB;
+  --mark:#FFE58A; --danger:#C2372B; --ok:#2C8A55;
+  --ui:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --read:var(--ui);
+  --hover:#EEF1F8; --hit:#D7E3FF; --near:#FFF8D6; --prog:#A9B6E6; --pline:#F0F2F5; --readc:#2A3142;
+  --star:#E8A400; --star-soft:#FFF1C2; --star-ink:#6B4C00; --danger-soft:#FBEDEC; --head:#FAFBFC; --thumb:#CBD0D9;
+  color-scheme:light;
+}
+/* modo oscuro */
+:root[data-theme="dark"]{
+  --bg:#121419; --surface:#1B1E25; --sunk:#252933; --line:#2D323C; --line2:#3D4350;
+  --ink:#E9EBEF; --muted:#A5ACB8; --faint:#7B8391;
+  --accent:#7E9CFF; --accent-hover:#97B0FF; --accent-soft:#232C48;
+  --mark:#6A5714; --danger:#F2776D; --ok:#4CC38A;
+  --hover:#262B36; --hit:#24345E; --near:#2E2A17; --prog:#3D4B7A; --pline:#252932; --readc:#D9DCE2;
+  --star:#F2B634; --star-soft:#3A3017; --star-ink:#F5D07A; --danger-soft:#3A2224; --head:#20242C; --thumb:#3D4350;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:16px/1.5 var(--ui);-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 45%,transparent);outline-offset:2px}
+.hidden{display:none!important}
+.num{font-variant-numeric:tabular-nums}
+::-webkit-scrollbar{width:12px;height:12px}::-webkit-scrollbar-thumb{background:var(--thumb);border-radius:10px;border:3px solid transparent;background-clip:padding-box}
+
+/* botones */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line2);background:var(--surface);border-radius:10px;padding:9px 16px;font-weight:700;font-size:15px;line-height:1.2;transition:background .15s,border-color .15s}
+.btn:hover{background:var(--sunk)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent-hover)}
+.btn.quiet{border-color:transparent;background:transparent;color:var(--muted);font-weight:400}
+.btn.quiet:hover{background:var(--sunk);color:var(--ink)}
+.btn.big{padding:13px 22px;font-size:17px;border-radius:12px}
+.btn.sm{padding:6px 11px;font-size:14px;border-radius:8px}
+.btn:disabled{opacity:.55;cursor:default}
+.link{background:none;border:0;padding:0;color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-size:inherit}
+.input{width:100%;background:var(--surface);border:1.5px solid var(--line2);border-radius:10px;padding:11px 13px;outline:none;transition:border-color .15s}
+.input:focus{border-color:var(--accent)}
+
+/* ── entrada ── */
+#login{min-height:100%;display:grid;place-items:center;padding:24px}
+.login-card{width:min(420px,100%);background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:36px 32px 30px;box-shadow:0 20px 60px rgba(27,33,48,.08)}
+.login-card h1{font-size:26px;line-height:1.2;margin:0 0 8px}
+.login-card p{margin:0 0 24px;color:var(--muted)}
+.login-card label{display:block;font-weight:700;margin-bottom:8px}
+.login-card .input{font-size:18px;padding:13px 14px}
+.remember{display:flex;align-items:center;gap:8px;margin:14px 0 22px;color:var(--muted);font-weight:400!important}
+.remember input{width:18px;height:18px;accent-color:var(--accent)}
+.err{color:var(--danger);min-height:22px;margin-top:12px;font-size:15px}
+.lock{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;margin-bottom:18px}
+
+/* ── estructura ── */
+#app{height:100%;display:flex;flex-direction:column}
+.top{flex:none;display:flex;align-items:center;gap:14px;height:60px;padding:0 20px;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .title{font-size:19px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.spacer{flex:1}
+.status{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:14px;white-space:nowrap}
+.status i{width:9px;height:9px;border-radius:50%;background:var(--ok)}
+.status.busy i{background:#E0A100}
+.status.bad{color:var(--danger);cursor:pointer} .status.bad i{background:var(--danger)}
+.hello{white-space:nowrap;color:var(--muted)}
+.hello b{color:var(--ink)}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;flex:none}
+
+/* ── inicio ── */
+#home{flex:1;overflow:auto;padding:40px 24px 60px}
+.home-in{max-width:760px;margin:0 auto}
+.home-in h2{font-size:28px;margin:0 0 6px}
+.home-in .lead{color:var(--muted);margin:0 0 26px}
+.ivcard{display:flex;align-items:center;gap:18px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:12px;transition:border-color .15s,box-shadow .15s}
+.ivcard:hover{border-color:var(--accent);box-shadow:0 6px 20px rgba(35,72,201,.10)}
+.ivcard .main{flex:1;min-width:0}
+.ivcard .t{display:block;font-size:19px;font-weight:700;margin-bottom:4px}
+.ivcard .meta{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--muted);font-size:15px}
+.ivcard .meta span{display:inline-flex;align-items:center;gap:6px}
+.ivcard .go{color:var(--accent);font-weight:700;white-space:nowrap}
+.home-empty{background:var(--surface);border:1.5px dashed var(--line2);border-radius:14px;padding:34px;text-align:center;color:var(--muted)}
+.home-empty b{display:block;color:var(--ink);font-size:19px;margin-bottom:4px}
+
+/* ── entrevista ── */
+#work{flex:1;min-height:0;display:flex;flex-direction:column}
+.stage{flex:none;display:grid;grid-template-columns:min(62%, calc(var(--ph, 40vh) * 16 / 9)) minmax(0,1fr);background:var(--surface)}
+.vcol{min-width:0;display:flex;flex-direction:column;background:#000}
+.player-wrap{position:relative;aspect-ratio:16/9;background:#000}
+.player-wrap iframe,#player{position:absolute;inset:0;width:100%;height:100%;border:0}
+.player-msg{position:absolute;inset:0;display:grid;place-items:center;color:#C9CDD6;text-align:center;padding:24px;font-size:15px}
+.timebar{display:flex;align-items:center;gap:16px;padding:10px 16px 12px;background:var(--surface)}
+.now-tc{flex:none;min-width:118px}
+.now-tc small{display:block;color:var(--muted);font-size:13px;line-height:1.2}
+.now-tc b{font-size:22px;letter-spacing:.01em}
+.now-tc b span{color:var(--faint);font-weight:400;font-size:16px}
+.track{position:relative;flex:1;height:34px;cursor:pointer}
+.track .bar{position:absolute;left:0;right:0;top:15px;height:5px;border-radius:5px;background:var(--sunk)}
+.track .prog{position:absolute;left:0;top:15px;height:5px;border-radius:5px;background:var(--prog)}
+.track .head{position:absolute;top:8px;width:3px;height:19px;background:var(--accent);border-radius:2px;transform:translateX(-1.5px)}
+.track .mk{position:absolute;top:6px;width:10px;height:23px;border-radius:4px;transform:translateX(-5px);border:2px solid var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.track .tip{position:absolute;bottom:38px;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:6px 10px;border-radius:8px;font-size:14px;white-space:nowrap;pointer-events:none;max-width:320px;overflow:hidden;text-overflow:ellipsis;z-index:5}
+
+.tcol{position:relative;min-width:0;border-left:1px solid var(--line)}
+.tinner{position:absolute;inset:0;display:flex;flex-direction:column}
+.thead{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.thead h3{margin:0;font-size:17px;margin-right:auto}
+.thead .input{width:190px;padding:7px 11px;font-size:14px}
+.thelp{padding:8px 16px;color:var(--muted);font-size:14px;background:var(--sunk);border-bottom:1px solid var(--line)}
+.tbody{overflow:auto;flex:1;padding:10px 16px 60px;position:relative}
+.para{display:grid;grid-template-columns:74px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--pline)}
+.para .pt{color:var(--faint);font-size:13px;padding-top:4px;cursor:pointer;line-height:1.4}
+.para .pt:hover{color:var(--accent)}
+.para .dots{display:flex;gap:4px;margin-top:6px}
+.para .dots i{width:8px;height:8px;border-radius:50%}
+.para .tx{font-size:17px;line-height:1.65;color:var(--readc)}
+.cue{cursor:pointer;border-radius:3px;transition:background .15s}
+.cue:hover{background:var(--hover)}
+.cue.on{background:var(--mark);color:var(--ink);box-shadow:0 0 0 2px var(--mark)}
+.cue.hit{background:var(--hit)}
+.tempty{color:var(--muted);padding:26px 4px;font-size:15px}
+.backnow{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;z-index:3;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+#annot{position:fixed;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+
+.split{height:10px;flex:none;cursor:row-resize;background:var(--bg);border-top:1px solid var(--line);position:relative}
+.split::after{content:'';position:absolute;left:50%;top:3px;width:44px;height:4px;margin-left:-22px;border-radius:4px;background:var(--line2)}
+.split:hover::after{background:var(--faint)}
+.dragging,.dragging *{cursor:row-resize!important;user-select:none!important}
+.dragging iframe{pointer-events:none}
+
+.lower{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column}
+
+/* recuadro de nota nueva */
+.composer{flex:none;margin:12px 16px 0;background:var(--surface);border:1.5px solid var(--line);border-radius:14px}
+.composer.rest{display:flex;align-items:center;gap:16px;padding:12px 16px}
+.composer.rest p{margin:0;color:var(--muted);flex:1}
+.composer.open{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);padding:14px 16px 14px}
+.composer.flash{animation:flash .9s}
+@keyframes flash{0%{box-shadow:0 0 0 10px color-mix(in srgb,var(--accent) 30%,transparent)}}
+.c-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.c-head h3{margin:0;font-size:18px}
+.c-head .when{font-size:18px;color:var(--accent);font-weight:700}
+.c-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.c-grid label{display:block;font-weight:700;font-size:15px;margin-bottom:5px}
+.c-grid label small{font-weight:400;color:var(--muted)}
+.c-grid textarea{resize:none;min-height:46px;max-height:140px;line-height:1.45;overflow:auto}
+.c-foot{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.c-foot .lbl{color:var(--muted);font-size:15px;margin-right:2px}
+.pill{border:1.5px solid var(--line2);background:var(--surface);border-radius:99px;padding:6px 13px;font-size:14px}
+.pill:hover{border-color:var(--faint)}
+.pill.on{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.c-foot .keys{color:var(--faint);font-size:13px;margin-left:auto;margin-right:6px}
+
+.notesbar{flex:none;display:flex;align-items:center;gap:12px;padding:14px 16px 10px;flex-wrap:wrap}
+.notesbar h3{margin:0;font-size:18px}
+.seg{display:inline-flex;background:var(--sunk);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;border-radius:8px;padding:6px 12px;font-size:14px;display:inline-flex;align-items:center;gap:7px;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.seg .n{color:var(--faint);font-weight:400}
+.notesbar .input{width:220px;padding:8px 12px;font-size:14px;margin-left:auto}
+
+.nscroll{flex:none;padding:0 16px 24px}
+table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+thead th{position:sticky;top:0;z-index:2;background:var(--surface);text-align:left;font-size:14px;font-weight:700;color:var(--muted);padding:11px 12px;border-bottom:1px solid var(--line)}
+thead th:first-child{border-top-left-radius:12px} thead th:last-child{border-top-right-radius:12px}
+td{vertical-align:top;padding:12px 12px;border-bottom:1px solid var(--line)}
+tbody tr:last-child td{border-bottom:0}
+col.c-st{width:46px} col.c-tc{width:128px} col.c-tag{width:190px} col.c-who{width:140px} col.c-x{width:130px}
+tr.row td:first-child{box-shadow:inset 4px 0 0 var(--uc)}
+tr.row.near td{background:var(--near)}
+tr.row.flash td{animation:rowflash 1.4s}
+@keyframes rowflash{0%{background:var(--mark)}}
+.tc{border:1.5px solid var(--line2);background:var(--surface);border-radius:8px;padding:5px 9px;font-size:15px;white-space:nowrap;margin-top:-4px}
+.tc:hover{border-color:var(--accent);color:var(--accent)}
+.tc span{color:var(--faint);font-size:13px}
+.cell{width:calc(100% + 16px);resize:none;border:1.5px solid transparent;background:transparent;border-radius:8px;padding:5px 8px;line-height:1.45;outline:none;min-height:34px;overflow:hidden;display:block;margin:-6px -8px}
+tr.mine .cell:hover{border-color:var(--line)}
+.cell:focus{border-color:var(--accent);background:var(--surface)}
+.cell::placeholder{color:var(--faint)}
+.ro{white-space:pre-wrap;word-break:break-word;line-height:1.45}
+.ro.says,.cell.says{font-size:16px}
+.ro.empty{color:var(--faint)}
+select.tag{width:100%;border:1.5px solid var(--line);background:var(--surface);border-radius:8px;padding:5px 6px;font-size:14px;outline:none;margin-top:-4px}
+select.tag:focus{border-color:var(--accent)}
+.tagpill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:14px;background:var(--sunk);border:1px solid var(--line)}
+.who{display:inline-flex;align-items:center;gap:7px;font-size:14px;padding:3px 10px 3px 7px;border-radius:99px;background:color-mix(in srgb,var(--uc) 18%,var(--surface));max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.who i{width:9px;height:9px;border-radius:50%;background:var(--uc);flex:none}
+.del{border:0;background:none;color:var(--muted);font-size:14px;padding:5px 8px;border-radius:8px}
+.del:hover{color:var(--danger);background:var(--danger-soft)}
+.del.confirm{color:#fff;background:var(--danger)}
+.warn{color:var(--danger);font-size:13px;margin-top:4px}
+/* estrella, rango, respuestas */
+.star{border:0;background:none;font-size:22px;line-height:1;color:var(--line2);padding:2px 4px;border-radius:6px;margin-top:-4px}
+button.star:hover{color:var(--star);background:var(--star-soft)}
+.star.on{color:var(--star)}
+span.star{cursor:default}
+.tcrange{display:block;color:var(--muted);font-size:13px;margin-top:6px;white-space:nowrap}
+.acts{display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-top:-4px}
+.replybtn{border:0;background:none;color:var(--accent);font-size:14px;padding:5px 8px;border-radius:8px;white-space:nowrap}
+.replybtn:hover{background:var(--accent-soft)}
+tr.row.has-rep td{border-bottom:0}
+tr.reps td{padding:0 12px 14px;border-bottom:1px solid var(--line)}
+tr.reps td:first-child{box-shadow:inset 4px 0 0 var(--uc)}
+.replist{margin-left:4px;border-left:2px solid var(--line);padding-left:14px}
+.rep{margin:4px 0 8px;font-size:15px;line-height:1.45}
+.rep b{font-weight:700}
+.rep .when{color:var(--faint);font-size:13px;margin-left:6px}
+.rep .rdel{border:0;background:none;color:var(--faint);font-size:13px;padding:0 4px;margin-left:6px}
+.rep .rdel:hover{color:var(--danger)}
+.repbox{display:flex;gap:8px;margin-top:6px;max-width:720px}
+.repbox .input{padding:8px 11px;font-size:15px}
+.track .rg{position:absolute;top:12px;height:11px;border-radius:5px;opacity:.45}
+.c-range{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.c-range .to{color:var(--muted)}
+.tcin{width:118px;font-size:16px;font-weight:700;color:var(--accent);background:var(--surface);border:1.5px solid var(--line2);border-radius:8px;padding:5px 8px;outline:none;font-variant-numeric:tabular-nums}
+.tcin:focus{border-color:var(--accent)}
+.tcin::placeholder{color:var(--faint);font-weight:400}
+.tcin.bad{border-color:var(--danger)}
+.tcedit{display:flex;flex-direction:column;gap:6px;margin-top:-4px}
+.tcedit label{font-size:13px;color:var(--muted)}
+.tcedit .tcin{width:100%;font-size:14px;padding:4px 6px}
+.tcedit .row2{display:flex;gap:6px;flex-wrap:wrap}
+.tcpen{border:0;background:none;color:var(--faint);font-size:13px;padding:2px 4px;margin-top:4px;border-radius:6px;display:block}
+.tcpen:hover{color:var(--accent);background:var(--accent-soft)}
+.starp.on{background:var(--star-soft);border-color:var(--star);color:var(--star-ink)}
+.onlystar{border:1.5px solid var(--line2);background:var(--surface);border-radius:10px;padding:6px 12px;font-size:14px;display:inline-flex;gap:6px;align-items:center}
+.onlystar.on{background:var(--star-soft);border-color:var(--star);color:var(--star-ink);font-weight:700}
+/* vista "Solo notas": video al costado, notas protagonistas */
+.viewsw{display:inline-flex;background:var(--sunk);border-radius:10px;padding:3px;gap:2px}
+.viewsw button{border:0;background:transparent;border-radius:8px;padding:6px 12px;font-size:14px;color:var(--muted);white-space:nowrap}
+.viewsw button.on{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.nowline{display:none}
+#work.nv{display:grid;grid-template-columns:minmax(340px,38%) minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+#work.nv .stage{grid-template-columns:1fr;align-self:start;border-right:1px solid var(--line)}
+#work.nv .tcol,#work.nv .split{display:none}
+#work.nv .lower{height:100%}
+#work.nv .nowline{display:block;background:var(--surface);padding:14px 16px 18px;border-top:1px solid var(--line)}
+.nowline small{display:block;color:var(--muted);font-size:13px;margin-bottom:4px}
+.nowline p{margin:0;font-size:18px;line-height:1.5;min-height:27px}
+/* en "Solo notas" cada nota es una tarjeta grande */
+#work.nv thead,#work.nv colgroup,#work.nv tr.reps td:first-child{display:none}
+#work.nv table,#work.nv tbody{display:block;border:0;background:none;border-radius:0}
+#work.nv tr.row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;grid-template-areas:"st tc who" "st says says" "st com com" "st tag act";background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--uc);border-radius:14px;margin-bottom:12px;padding:8px 6px 6px}
+#work.nv tr.row td{border:0;padding:6px 10px;box-shadow:none;background:none}
+#work.nv tr.row.near{background:var(--near)}
+#work.nv tr.row td:nth-child(1){grid-area:st;padding-top:10px}
+#work.nv tr.row td:nth-child(2){grid-area:tc}
+#work.nv tr.row td:nth-child(3){grid-area:says}
+#work.nv tr.row td:nth-child(4){grid-area:com}
+#work.nv tr.row td:nth-child(5){grid-area:tag}
+#work.nv tr.row td:nth-child(6){grid-area:who;text-align:right}
+#work.nv tr.row td:nth-child(7){grid-area:act}
+#work.nv tr.row td:nth-child(3)::before{content:'Qué se dice';display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+#work.nv tr.row td:nth-child(4)::before{content:'Comentario';display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+#work.nv tr.row td:nth-child(5):empty{display:none}
+#work.nv tr.row td:nth-child(5) select.tag{max-width:260px}
+#work.nv .acts{flex-direction:row;justify-content:flex-end;align-items:center;margin:0}
+#work.nv .tcrange{display:inline;margin:0 0 0 10px}
+#work.nv tr.row.has-rep{border-radius:14px 14px 0 0;margin-bottom:0;border-bottom:0}
+#work.nv tr.reps{display:block;background:var(--surface);border:1px solid var(--line);border-top:0;border-left:5px solid var(--uc);border-radius:0 0 14px 14px;margin:0 0 12px}
+#work.nv tr.reps td{display:block;border:0;box-shadow:none;padding:0 16px 14px 60px}
+#work.nv td{font-size:16px}
+#work.nv .ro.says,#work.nv .cell.says,#work.nv .ro,#work.nv .cell{font-size:17px}
+#work.nv .c-grid{grid-template-columns:1fr}
+.newtag{display:inline-flex;gap:6px;align-items:center}
+.newtag .input{width:180px;padding:6px 10px;font-size:14px;border-radius:99px}
+.pill.add{border-style:dashed;color:var(--muted)}
+/* búsqueda en todas */
+.gsearch{display:flex;gap:10px;margin:0 0 14px}
+.gsearch .input{font-size:17px}
+.homeacts{display:flex;gap:10px;align-items:center;margin:0 0 26px;flex-wrap:wrap}
+.reshead{display:flex;align-items:center;gap:12px;margin:6px 0 16px;flex-wrap:wrap}
+.reshead h3{margin:0;font-size:20px;flex:1}
+.resgroup{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin-bottom:14px;overflow:hidden}
+.resgroup h4{margin:0;padding:12px 16px;font-size:17px;border-bottom:1px solid var(--line);background:var(--head)}
+.hit{display:grid;grid-template-columns:96px 1fr;gap:12px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--pline);background:none;padding:12px 16px}
+.hit:last-child{border-bottom:0}
+.hit:hover{background:var(--accent-soft)}
+.hit .t{color:var(--accent);font-weight:700}
+.hit .k{display:block;color:var(--muted);font-size:13px;margin-bottom:2px}
+.hit .x{font-size:16px;line-height:1.5}
+mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 1px}
+.nempty{text-align:center;color:var(--muted);padding:34px 20px;background:var(--surface);border:1.5px dashed var(--line2);border-radius:12px}
+.nempty b{display:block;color:var(--ink);font-size:17px;margin-bottom:4px}
+
+/* ventanas */
+.modal-bg{position:fixed;inset:0;background:rgba(27,33,48,.45);display:grid;place-items:center;z-index:100;padding:20px}
+.modal{width:min(680px,100%);max-height:calc(100vh - 40px);overflow:auto;background:var(--surface);border-radius:18px;box-shadow:0 30px 90px rgba(0,0,0,.25)}
+.modal-h{display:flex;align-items:center;padding:20px 24px 12px}
+.modal-h h3{margin:0;font-size:22px;flex:1}
+.modal-b{padding:4px 24px 24px}
+.field{display:block;margin-bottom:16px}
+.field > span{display:block;font-weight:700;margin-bottom:6px}
+.field > small{display:block;color:var(--muted);margin-top:5px;font-size:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.drop{border:2px dashed var(--line2);border-radius:12px;padding:22px;text-align:center;color:var(--muted);cursor:pointer;transition:.15s}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+.drop b{color:var(--ink)}
+.ivrow{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+.ivrow .t{flex:1;min-width:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.small{font-size:14px;color:var(--muted)}
+.sep{height:1px;background:var(--line);margin:22px 0}
+.steps{margin:0;padding:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:12px;margin-bottom:16px}
+.steps li::before{content:counter(s);width:30px;height:30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;display:grid;place-items:center}
+.steps b{display:block}
+.keys-list{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;color:var(--muted);font-size:15px;margin-top:8px}
+kbd{font:700 13px/1 var(--ui);background:var(--sunk);border:1px solid var(--line2);border-bottom-width:2px;border-radius:6px;padding:3px 7px;color:var(--ink)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:12px;z-index:200;font-size:15px;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:90vw}
+.toast.bad{background:var(--danger);color:#fff}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<!-- ───────── ENTRADA ───────── -->
+<section id="login" class="hidden">
+  <form class="login-card" id="loginForm" autocomplete="on">
+    <div class="lock"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Material privado del documental</div>
+    <h1 id="loginTitle">Visor de entrevistas</h1>
+    <p>Escribí tu contraseña para entrar. Todo lo que anotes va a quedar a tu nombre.</p>
+    <label for="pw">Tu contraseña</label>
+    <input class="input" type="password" id="pw" autocomplete="current-password" autofocus required>
+    <label class="remember"><input type="checkbox" id="remember" checked> Recordarme en esta computadora</label>
+    <button class="btn primary big" id="loginBtn" style="width:100%">Entrar</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</section>
+
+<!-- ───────── APP ───────── -->
+<section id="app" class="hidden">
+  <header class="top">
+    <button class="btn sm hidden" id="backBtn">← Todas las entrevistas</button>
+    <div class="title" id="topTitle">Entrevistas</div>
+    <div class="spacer"></div>
+    <div class="viewsw hidden" id="viewSw" title="Cambiar cómo se ve la entrevista"><button data-v="t">Con transcripción</button><button data-v="n">Solo notas</button></div>
+    <div class="status hidden" id="sync" title="Tocá para reintentar"><i></i><span></span></div>
+    <button class="btn quiet sm" id="themeBtn" title="Cambiar entre fondo claro y oscuro">Modo oscuro</button>
+    <button class="btn quiet sm" id="helpBtn">¿Cómo se usa?</button>
+    <button class="btn quiet sm" id="logout">Salir</button>
+  </header>
+
+  <!-- inicio: lista de entrevistas -->
+  <div id="home">
+    <div class="home-in">
+      <h2>Entrevistas</h2>
+      <p class="lead" id="homeLead">Elegí una para verla y anotar.</p>
+      <form class="gsearch" id="gsForm"><input class="input" id="gq" type="search" placeholder="Buscar en todas las entrevistas (una palabra o frase)"><button class="btn primary">Buscar</button></form>
+      <div class="homeacts"><button class="btn" id="starsBtn">★ Ver todos los momentos clave</button><button class="btn quiet hidden" id="adminBtn">Cargar o editar entrevistas</button></div>
+      <div id="ivlist"></div>
+      <div id="results" class="hidden"></div>
+    </div>
+  </div>
+
+  <!-- una entrevista -->
+  <div id="work" class="hidden">
+    <div class="stage">
+      <div class="vcol">
+        <div class="player-wrap"><div id="player"></div><div class="player-msg" id="playerMsg">Cargando video…</div></div>
+        <div class="timebar">
+          <div class="now-tc num"><small>Momento</small><b id="tcNow">--:--:--</b></div>
+          <div class="track" id="track" title="Tocá la barra para ir a ese momento"><div class="bar"></div><div class="prog" id="prog"></div><div id="marks"></div><div class="head" id="head"></div></div>
+        </div>
+        <div class="nowline"><small>Se está diciendo</small><p id="nowLine"></p></div>
+      </div>
+      <div class="tcol">
+        <div class="tinner">
+          <div class="thead">
+            <h3>Lo que se dice</h3>
+            <input class="input" id="tq" placeholder="Buscar una palabra…" type="search">
+          </div>
+          <div class="thelp">Tocá una frase para ir a ese momento. Seleccioná texto para anotarlo.</div>
+          <div class="tbody" id="tbody"></div>
+          <button class="btn sm backnow hidden" id="backNow">Volver a lo que se está diciendo</button>
+        </div>
+      </div>
+    </div>
+    <div class="split" id="split" title="Arrastrá para agrandar o achicar el video"></div>
+    <div class="lower">
+      <div class="composer hidden" id="composer"></div>
+      <div class="notesbar">
+        <h3>Notas</h3>
+        <div class="seg" id="seg"></div>
+        <button class="onlystar" id="onlyStar" title="Mostrar solo los momentos clave">★ Solo claves</button>
+        <input class="input" id="nq" placeholder="Buscar en las notas…" type="search">
+      </div>
+      <div class="nscroll" id="nscroll">
+        <table id="ntable">
+          <colgroup><col class="c-st"><col class="c-tc"><col><col><col class="c-tag"><col class="c-who"><col class="c-x"></colgroup>
+          <thead><tr><th title="Momento clave">★</th><th>Momento</th><th>Qué se dice</th><th>Comentario</th><th>Etiqueta</th><th>Quién</th><th></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="nempty hidden" id="nempty"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<button id="annot" class="btn primary sm hidden">Anotar esto</button>
+<div id="modalRoot"></div>
+
+<script>
+/* ═════════════ CONFIGURACIÓN ═════════════ */
+const CONFIG = {
+  // Solo si alojás este archivo fuera de Apps Script (ej. GitHub Pages): pegá acá la URL /exec.
+  API_URL: 'https://script.google.com/macros/s/AKfycbzYqVG-_dDrvqxFv7T1nA3DL-Djl0gsXjTymlpmqXTPeyHyxd6gFDQvkWiUa2UDY6RUFg/exec',
+  TITLE: 'Visor de entrevistas',
+  TAGS: ['Material de archivo', 'Duda', 'Descartar'],
+  POLL_SECONDS: 15
+};
+const INJECTED_URL = '__API_URL__';
+const API_URL = INJECTED_URL.indexOf('http') === 0 ? INJECTED_URL : CONFIG.API_URL;
+
+/* ═════════════ utilidades ═════════════ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2));
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} },
+  del(k){ try { localStorage.removeItem(k); } catch(e){} }
+};
+const plural = (n, one, many) => n + ' ' + (n === 1 ? one : many);
+
+// Timecode (sin drop-frame)
+function tcToFrames(tc, fps){
+  const b = Math.round(fps);
+  let p = String(tc||'').trim().split(/[:;.]/).map(x => parseInt(x,10) || 0);
+  if (p.length === 1) p = [0,0,p[0],0]; else if (p.length === 2) p = [0,p[0],p[1],0]; else if (p.length === 3) p = [p[0],p[1],p[2],0];
+  return ((p[0]*60 + p[1])*60 + p[2])*b + p[3];
+}
+function framesToTc(f, fps){
+  const b = Math.round(fps); f = Math.max(0, Math.round(f));
+  const ff = f % b; let s = Math.floor(f / b);
+  const ss = s % 60; s = Math.floor(s/60); const mm = s % 60; const hh = Math.floor(s/60) % 24;
+  return [hh,mm,ss,ff].map(n => String(n).padStart(2,'0')).join(':');
+}
+const ivFps = () => S.cur ? (parseFloat(S.cur.fps) || 24) : 24;
+function secToTcFor(iv, sec){ if (!iv) return '--:--:--:--'; const f = parseFloat(iv.fps) || 24; return framesToTc(tcToFrames(iv.tcStart, f) + Math.floor(sec * f + 0.05), f); }
+function secToTc(sec){ return secToTcFor(S.cur, sec); }
+// Lee un timecode escrito a mano (HH:MM:SS:CC, HH:MM:SS o MM:SS). Devuelve segundos dentro del video, o null si no es válido.
+function parseTcInput(txt){
+  const v = String(txt || '').trim();
+  if (!/^\d{1,2}([:;.]\d{1,2}){1,3}$/.test(v)) return null;
+  const iv = S.cur, f = parseFloat(iv.fps) || 24;
+  const p = v.split(/[:;.]/).map(Number);
+  if ((p.length === 2 ? [p[1]] : [p[1], p[2]]).some(x => x > 59)) return null;
+  if (p.length === 4 && p[3] >= Math.round(f)) return null;
+  const sec = (tcToFrames(v, f) - tcToFrames(iv.tcStart, f)) / f;
+  if (sec < 0) return null;
+  if (S.duration && sec > S.duration + 1) return null;
+  return Math.round(sec * 1000) / 1000;
+}
+const durTxt = s => { s = Math.max(0, Math.round(s)); return s < 60 ? s + ' s' : Math.floor(s/60) + ' min ' + String(s%60).padStart(2,'0') + ' s'; };
+// "14:33:45" grande + ":12" (cuadros) en gris
+const tcHtml = tc => { const s = String(tc); return esc(s.slice(0,8)) + '<span>' + esc(s.slice(8)) + '</span>'; };
+const fmtShort = s => { s = Math.floor(s||0); const h = Math.floor(s/3600), m = Math.floor(s%3600/60), x = s%60; return (h ? h + ':' + String(m).padStart(2,'0') : m) + ':' + String(x).padStart(2,'0'); };
+
+function ytId(u){
+  u = String(u||'').trim();
+  const m = u.match(/(?:[?&]v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/);
+  if (m) return m[1];
+  return /^[\w-]{11}$/.test(u) ? u : '';
+}
+
+function parseSubs(text){
+  text = String(text).replace(/\r/g,'');
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  const toSec = s => { const p = s.trim().replace(',','.').split(':'); let h=0,m=0,x=0;
+    if (p.length === 3){ h=+p[0]; m=+p[1]; x=parseFloat(p[2]); } else if (p.length === 2){ m=+p[0]; x=parseFloat(p[1]); } else x=parseFloat(p[0]);
+    return h*3600 + m*60 + x; };
+  const out = [];
+  text.split(/\n\s*\n/).forEach(block => {
+    const lines = block.split('\n').filter(l => l.trim() !== '');
+    const i = lines.findIndex(l => l.includes('-->'));
+    if (i < 0) return;
+    const m = lines[i].match(/([\d:.,]+)\s*-->\s*([\d:.,]+)/);
+    if (!m) return;
+    const t = lines.slice(i+1).join(' ').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+    if (t) out.push([Math.round(toSec(m[1])*1000)/1000, Math.round(toSec(m[2])*1000)/1000, t]);
+  });
+  return out.sort((a,b) => a[0]-b[0]);
+}
+
+let toastT;
+function toast(msg, bad){
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const t = document.createElement('div'); t.className = 'toast' + (bad ? ' bad' : ''); t.textContent = msg;
+  document.body.appendChild(t); clearTimeout(toastT); toastT = setTimeout(() => t.remove(), bad ? 6000 : 2600);
+}
+
+/* ═════════════ tema claro / oscuro ═════════════ */
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  const b = $('#themeBtn'); if (b) b.textContent = t === 'dark' ? 'Modo claro' : 'Modo oscuro';
+}
+applyTheme(store.get('visor.theme') || (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+$('#themeBtn').onclick = () => { const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; store.set('visor.theme', t); applyTheme(t); };
+
+/* ═════════════ vista: con transcripción / solo notas ═════════════ */
+function applyView(v){
+  S.view = v === 'n' ? 'n' : 't';
+  $('#work').classList.toggle('nv', S.view === 'n');
+  $('#viewSw').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === S.view));
+  store.set('visor.view', S.view);
+}
+$('#viewSw').addEventListener('click', e => { const b = e.target.closest('button'); if (b) applyView(b.dataset.v); });
+
+/* ═════════════ estado ═════════════ */
+const S = {
+  pw: null, me: null, users: [], colors: {}, interviews: [], cur: null,
+  tags: [], view: 't', cues: [], paras: null, notes: [], replies: [], who: 'all', q: '', onlyStar: false, replyOpen: null, tcEdit: null, pendingSeek: null,
+  player: null, ytReady: false, playerReady: false, prevState: -1, suppressUntil: 0,
+  userScrollAt: 0, activeCue: -1, duration: 0,
+  composer: null, busy: 0, failed: new Set(), lastNotesJson: '', pollT: null
+};
+const colorOf = name => S.colors[name] || '#9AA3B2';
+const tagList = () => (S.tags && S.tags.length) ? S.tags : CONFIG.TAGS;
+async function addTag(name){
+  name = String(name || '').replace(/\s+/g, ' ').trim();
+  if (!name) return null;
+  try { const j = await tracked(() => api('addTag', { name })); S.tags = j.tags; toast('Etiqueta “' + j.name + '” creada'); return j.name; }
+  catch (err){ toast('No se pudo crear la etiqueta: ' + err.message, true); return null; }
+}
+
+/* ═════════════ conexión con la planilla ═════════════ */
+async function api(action, data){
+  const payload = Object.assign({ action, pw: S.pw }, data || {});
+  let j;
+  if (window.__MOCK_API__) j = await window.__MOCK_API__(JSON.parse(JSON.stringify(payload)));
+  else if (window.google && google.script && google.script.run){
+    j = await new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(err => rej(new Error(err && err.message || err))).rpc(payload));
+  } else {
+    if (!API_URL) throw new Error('Falta configurar la dirección del servidor.');
+    const r = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow' });
+    j = await r.json();
+  }
+  if (!j.ok){
+    if (j.error === 'auth' && action !== 'login'){ logout(true); }
+    const e = new Error(j.error === 'auth' ? 'Esa contraseña no es correcta.' : j.error); e.code = j.error; throw e;
+  }
+  return j;
+}
+function setSync(){
+  const el = $('#sync');
+  el.className = 'status' + (S.failed.size ? ' bad' : ' hidden');
+  el.querySelector('span').textContent = S.failed.size ? ('No se guardaron ' + plural(S.failed.size, 'nota', 'notas') + '. Tocá para reintentar') : '';
+}
+async function tracked(fn){ S.busy++; setSync(); try { return await fn(); } finally { S.busy--; setSync(); } }
+
+/* ═════════════ entrar / salir ═════════════ */
+async function login(pw, silent){
+  S.pw = pw;
+  const btn = $('#loginBtn'); btn.disabled = true; btn.textContent = 'Entrando…'; $('#loginErr').textContent = '';
+  try {
+    const j = await api('login');
+    if ($('#remember').checked || silent) store.set('visor.pw', pw);
+    S.me = j.me; S.users = j.users; S.interviews = j.interviews; S.tags = j.tags || [];
+    S.colors = {}; S.users.forEach(u => S.colors[u.name] = u.color);
+    enterApp();
+  } catch (e){
+    store.del('visor.pw'); S.pw = null;
+    $('#login').classList.remove('hidden'); $('#app').classList.add('hidden');
+    $('#loginErr').textContent = silent ? '' : e.message;
+  } finally { btn.disabled = false; btn.textContent = 'Entrar'; }
+}
+function logout(expired){
+  store.del('visor.pw'); S.pw = null; S.cur = null;
+  try { if (S.player && S.player.stopVideo) S.player.stopVideo(); } catch(e){}
+  try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+  closeModal();
+  $('#app').classList.add('hidden');
+  $('#login').classList.remove('hidden'); $('#pw').value = '';
+  $('#loginErr').textContent = expired ? 'Tu contraseña cambió. Escribí la nueva para entrar.' : '';
+}
+function enterApp(){
+  $('#login').classList.add('hidden'); $('#app').classList.remove('hidden');
+  $('#adminBtn').classList.toggle('hidden', !S.me.admin);
+  loadYT();
+  const want = decodeURIComponent((location.hash || '').slice(1));
+  const pick = S.interviews.find(i => i.id === want);
+  if (pick) openInterview(pick.id); else showHome();
+  if (!S.pollT) S.pollT = setInterval(poll, CONFIG.POLL_SECONDS * 1000);
+}
+
+/* ═════════════ inicio ═════════════ */
+function showHome(){
+  savePos();
+  if (S.player && S.playerReady){ try { S.player.pauseVideo(); } catch(e){} }
+  S.cur = null; try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
+  $('#work').classList.add('hidden'); $('#home').classList.remove('hidden'); $('#viewSw').classList.add('hidden');
+  $('#backBtn').classList.add('hidden'); $('#topTitle').textContent = CONFIG.TITLE;
+  renderHome();
+}
+function renderHome(){
+  hideResults();
+  const list = S.interviews;
+  $('#homeLead').textContent = list.length ? 'Elegí una entrevista para verla y anotar.' : '';
+  if (!list.length){
+    $('#ivlist').innerHTML = '<div class="home-empty"><b>Todavía no hay entrevistas</b>' +
+      (S.me.admin ? 'Cargá la primera con “Cargar o editar entrevistas”, acá arriba.' : 'Cuando estén cargadas, aparecen acá.') + '</div>';
+    return;
+  }
+  $('#ivlist').innerHTML = list.map(iv => {
+    const counts = Object.entries(iv.counts || {}).filter(([,n]) => n > 0);
+    const pos = parseFloat(store.get('visor.pos.' + iv.id)) || 0;
+    const notes = counts.length ? counts.map(([who,n]) => '<span><i class="dot" style="background:' + esc(colorOf(who)) + '"></i>' + esc(who === S.me.name ? 'Vos' : who) + ': ' + plural(n, 'nota', 'notas') + '</span>').join('') : '<span>Sin notas todavía</span>';
+    return '<button class="ivcard" data-id="' + esc(iv.id) + '"><span class="main"><span class="t">' + esc(iv.title) + '</span><span class="meta">' + notes +
+      (iv.stars ? '<span>★ ' + plural(iv.stars, 'momento clave', 'momentos clave') + '</span>' : '') +
+      (pos > 5 ? '<span>Te quedaste en el minuto ' + fmtShort(pos) + '</span>' : '') + '</span></span><span class="go">' + (pos > 5 ? 'Seguir viendo' : 'Abrir') + '</span></button>';
+  }).join('');
+}
+$('#ivlist').addEventListener('click', e => { const b = e.target.closest('.ivcard'); if (b) openInterview(b.dataset.id); });
+
+/* ═════════════ buscar en todas / momentos clave ═════════════ */
+const normTxt = t => String(t || '').toLowerCase().normalize('NFD').replace(new RegExp('[' + String.fromCharCode(0x300) + '-' + String.fromCharCode(0x36f) + ']', 'g'), '');
+function highlight(text, q){
+  const t = String(text || ''); const nt = normTxt(t), nq = normTxt(q).trim();
+  const i = nq ? nt.indexOf(nq) : -1;
+  if (i < 0 || nt.length !== t.length) return esc(t);
+  return esc(t.slice(0, i)) + '<mark>' + esc(t.slice(i, i + nq.length)) + '</mark>' + esc(t.slice(i + nq.length));
+}
+function showResults(title, items, q, emptyMsg){
+  $('#ivlist').classList.add('hidden'); $('.homeacts').classList.add('hidden'); $('#homeLead').classList.add('hidden');
+  const box = $('#results'); box.classList.remove('hidden');
+  const byIv = {}; items.forEach(it => (byIv[it.interview] = byIv[it.interview] || []).push(it));
+  const groups = S.interviews.filter(iv => byIv[iv.id]).map(iv => '<div class="resgroup"><h4>' + esc(iv.title) + '</h4>' +
+    byIv[iv.id].map(it => '<button class="hit" data-iv="' + esc(iv.id) + '" data-s="' + it.seconds + '"><span class="t num">' + esc(secToTcFor(iv, it.seconds).slice(0,8)) + '</span><span>' +
+      '<span class="k">' + (it.kind === 'transcript' ? 'Se dice' : ((it.star ? '★ ' : '') + 'Nota de ' + esc(it.author === S.me.name ? 'vos' : it.author))) + '</span>' +
+      '<span class="x">' + highlight(it.kind === 'transcript' ? it.text : (it.comment || it.text || ''), q) + '</span>' +
+      (it.kind !== 'transcript' && it.says && it.says !== (it.comment || it.text) ? '<span class="k" style="margin-top:4px">“' + highlight(it.says, q) + '”</span>' : '') +
+      '</span></button>').join('') + '</div>').join('');
+  box.innerHTML = '<div class="reshead"><h3>' + title + '</h3><button class="btn" id="resBack">← Volver a la lista</button></div>' +
+    (groups || '<div class="home-empty"><b>' + emptyMsg + '</b></div>');
+}
+function hideResults(){
+  $('#results').classList.add('hidden'); $('#ivlist').classList.remove('hidden'); $('.homeacts').classList.remove('hidden'); $('#homeLead').classList.remove('hidden');
+}
+$('#results').addEventListener('click', e => {
+  if (e.target.closest('#resBack')){ hideResults(); $('#gq').value = ''; return; }
+  const h = e.target.closest('.hit'); if (h) openInterview(h.dataset.iv, +h.dataset.s);
+});
+$('#gsForm').onsubmit = async e => {
+  e.preventDefault();
+  const q = $('#gq').value.trim();
+  if (q.length < 2){ toast('Escribí al menos dos letras.'); return; }
+  $('#results').classList.remove('hidden'); $('#ivlist').classList.add('hidden');
+  $('#results').innerHTML = '<p class="small">Buscando “' + esc(q) + '” en todas las entrevistas…</p>';
+  try {
+    const j = await tracked(() => api('search', { q }));
+    const res = j.results.map(r => Object.assign({}, r, r.kind === 'note' ? { comment: r.text } : {}));
+    showResults(plural(res.length, 'resultado', 'resultados') + ' para “' + esc(q) + '”', res, q, 'No encontré “' + esc(q) + '” en ninguna entrevista.');
+  } catch (err){ hideResults(); toast('No se pudo buscar: ' + err.message, true); }
+};
+$('#starsBtn').onclick = async () => {
+  $('#results').classList.remove('hidden'); $('#ivlist').classList.add('hidden');
+  $('#results').innerHTML = '<p class="small">Juntando los momentos clave…</p>';
+  try {
+    const j = await tracked(() => api('starred'));
+    const items = j.notes.map(n => ({ kind: 'note', interview: n.interview, seconds: n.seconds, comment: n.comment, text: n.comment || n.says, says: n.says, author: n.author, star: true }))
+      .sort((a, b) => a.seconds - b.seconds);
+    showResults('★ ' + plural(items.length, 'momento clave', 'momentos clave'), items, '', 'Todavía nadie marcó momentos clave.');
+  } catch (err){ hideResults(); toast('No se pudieron traer: ' + err.message, true); }
+};
+$('#backBtn').onclick = showHome;
+function updateCountsLocal(){
+  if (!S.cur) return;
+  const c = {}; S.notes.forEach(n => c[n.author] = (c[n.author]||0) + 1);
+  S.cur.counts = c; S.cur.stars = S.notes.filter(n => n.star).length;
+}
+
+/* ═════════════ abrir una entrevista ═════════════ */
+async function openInterview(id, at){
+  const iv = S.interviews.find(i => i.id === id); if (!iv) return;
+  savePos();
+  S.pendingSeek = (at != null && !isNaN(at)) ? Math.max(0, at - 2) : null;
+  S.cur = iv; try { location.hash = encodeURIComponent(id); } catch(e){}
+  $('#home').classList.add('hidden'); $('#work').classList.remove('hidden'); $('#viewSw').classList.remove('hidden');
+  $('#backBtn').classList.remove('hidden'); $('#topTitle').textContent = iv.title;
+  S.cues = []; S.paras = null; S.notes = []; S.replies = []; S.replyOpen = null; S.lastNotesJson = ''; S.activeCue = -1; S.duration = 0;
+  $('#tq').value = ''; $('#nq').value = ''; S.q = '';
+  $('#tbody').innerHTML = '<div class="tempty">Cargando la transcripción…</div>';
+  closeComposer(); renderNotes(); renderMarks();
+  loadVideo();
+  try {
+    const j = await tracked(() => api('open', { id }));
+    if (S.cur !== iv) return;
+    S.cues = j.transcript || []; setNotes(j.notes || [], j.replies || []);
+    renderTranscript(); renderNotes(); renderMarks(); updateCountsLocal();
+  } catch (e){ toast('No se pudo abrir la entrevista: ' + e.message, true); $('#tbody').innerHTML = '<div class="tempty">No se pudo cargar. Probá recargar la página.</div>'; }
+}
+function setNotes(list, reps){
+  const pendingLocal = S.notes.filter(n => n._pending || S.failed.has(n.id));
+  const ids = new Set(list.map(n => n.id));
+  S.notes = list.concat(pendingLocal.filter(n => !ids.has(n.id)));
+  const pr = S.replies.filter(r => r._pending); const rids = new Set((reps || []).map(r => r.id));
+  S.replies = (reps || []).concat(pr.filter(r => !rids.has(r.id)));
+  S.lastNotesJson = JSON.stringify(list) + '|' + JSON.stringify(reps || []);
+}
+async function poll(){
+  if (!S.cur || document.hidden || S.busy) return;
+  const iv = S.cur;
+  try {
+    const j = await api('notes', { id: iv.id });
+    if (S.cur !== iv) return;
+    if (j.tags) S.tags = j.tags;
+    const json = JSON.stringify(j.notes) + '|' + JSON.stringify(j.replies || []);
+    if (json === S.lastNotesJson) return;
+    if (document.activeElement && document.activeElement.closest('.repbox')) return; // está escribiendo una respuesta
+    if (S.tcEdit) return; // está cambiando un timecode
+    const editing = document.activeElement && document.activeElement.closest('tr.row');
+    const keep = editing ? S.notes.find(n => n.id === editing.dataset.id) : null;
+    setNotes(j.notes, j.replies || []);
+    if (keep){ const i = S.notes.findIndex(n => n.id === keep.id); if (i >= 0) S.notes[i] = keep; }
+    renderNotes(); renderMarks(); renderTranscriptDots(); updateCountsLocal();
+  } catch(e){ /* sin conexión: se reintenta en el próximo ciclo */ }
+}
+
+/* ═════════════ video (YouTube) ═════════════ */
+function loadYT(){
+  if (window.YT && window.YT.Player){ S.ytReady = true; return; }
+  window.onYouTubeIframeAPIReady = () => { S.ytReady = true; if (S.cur) loadVideo(); };
+  const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(s);
+  setTimeout(() => { if (!S.ytReady) $('#playerMsg').textContent = 'No se pudo cargar YouTube. Revisá la conexión a internet o si tenés un bloqueador de anuncios.'; }, 10000);
+}
+function loadVideo(){
+  const iv = S.cur; if (!iv) return;
+  const vid = ytId(iv.youtube);
+  const msg = $('#playerMsg');
+  if (!vid){ msg.classList.remove('hidden'); msg.textContent = 'Esta entrevista todavía no tiene video.'; if (S.player && S.player.stopVideo) S.player.stopVideo(); return; }
+  if (!S.ytReady){ msg.classList.remove('hidden'); msg.textContent = 'Cargando video…'; return; }
+  const jump = S.pendingSeek; S.pendingSeek = null;
+  const start = jump != null ? jump : (parseFloat(store.get('visor.pos.' + iv.id)) || 0);
+  const greet = () => { if (jump == null && start > 5) toast('Seguís desde donde te quedaste (minuto ' + fmtShort(start) + ')'); };
+  if (S.player && S.playerReady){
+    S.player.cueVideoById({ videoId: vid, startSeconds: start });
+    msg.classList.add('hidden'); greet();
+    return;
+  }
+  if (S.player) return;
+  S.player = new YT.Player('player', {
+    videoId: vid,
+    playerVars: { rel: 0, playsinline: 1, modestbranding: 1, start: Math.floor(start) },
+    events: {
+      onReady: () => { S.playerReady = true; msg.classList.add('hidden'); greet(); },
+      onStateChange: onPlayerState,
+      onError: e => { msg.classList.remove('hidden'); msg.textContent = 'YouTube no pudo reproducir este video (error ' + e.data + '). Hay que revisar que sea “No listado” y que permita insertarse.'; }
+    }
+  });
+}
+const now = () => (S.player && S.playerReady && S.player.getCurrentTime) ? (S.player.getCurrentTime() || 0) : 0;
+const isPlaying = () => S.player && S.playerReady && S.player.getPlayerState && S.player.getPlayerState() === 1;
+function seek(sec, play){
+  if (!S.playerReady) return;
+  S.suppressUntil = Date.now() + 900;
+  S.player.seekTo(Math.max(0, sec), true);
+  if (play) S.player.playVideo();
+  S.userScrollAt = 0;
+  tick();
+}
+function pauseQuiet(){ if (isPlaying()){ S.suppressUntil = Date.now() + 900; S.player.pauseVideo(); } }
+function togglePlay(){ if (!S.playerReady) return; isPlaying() ? S.player.pauseVideo() : S.player.playVideo(); }
+function onPlayerState(e){
+  const st = e.data, prev = S.prevState; S.prevState = st;
+  // Eligiendo "hasta dónde": la pausa marca el final
+  if (st === 2 && S.composer && S.composer.open && S.composer.picking){ setEnd(now()); savePos(); return; }
+  // La persona puso pausa → se abre el recuadro de nota nueva en ese momento
+  if (st === 2 && prev === 1 && Date.now() > S.suppressUntil){
+    const ae = document.activeElement;
+    const typing = ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName) && !ae.closest('#composer');
+    if (!typing) openComposer(now(), true);
+  }
+  // Volvió a darle play sin escribir nada → el recuadro se cierra solo
+  if (st === 1 && S.composer && S.composer.open && !S.composer.touched) closeComposer();
+  if (st === 2) savePos();
+}
+function savePos(){ if (S.cur && S.playerReady) { const t = now(); if (t > 0) store.set('visor.pos.' + S.cur.id, String(t)); } }
+setInterval(() => { if (isPlaying()) savePos(); }, 5000);
+window.addEventListener('beforeunload', savePos);
+
+/* ═════════════ reloj ═════════════ */
+function tick(){
+  if (!S.cur) return;
+  const t = now();
+  $('#tcNow').innerHTML = S.playerReady ? tcHtml(secToTc(t)) : '--:--:--';
+  if (S.composer && S.composer.picking){ const el = $('#cEndNow'); if (el) el.textContent = secToTc(Math.max(t, S.composer.seconds)).slice(0,8); }
+  const d = S.playerReady && S.player.getDuration ? S.player.getDuration() : 0;
+  if (d && d !== S.duration){ S.duration = d; renderMarks(); }
+  if (S.duration){ const p = Math.min(100, t / S.duration * 100); $('#head').style.left = p + '%'; $('#prog').style.width = p + '%'; }
+  const i = cueIndexAt(t);
+  if (S.view === 'n'){ const nl = $('#nowLine'), txt = i >= 0 ? S.cues[i][2] : (S.cues.length ? '…' : 'Esta entrevista no tiene transcripción.'); if (nl.textContent !== txt) nl.textContent = txt; }
+  if (i !== S.activeCue){
+    const old = document.querySelector('.cue.on'); if (old) old.classList.remove('on');
+    S.activeCue = i;
+    const el = i >= 0 ? document.querySelector('.cue[data-i="' + i + '"]') : null;
+    if (el){ el.classList.add('on'); if (Date.now() - S.userScrollAt > 5000) scrollCueIntoView(el); }
+  }
+  const onEl = document.querySelector('.cue.on'); let off = false;
+  if (onEl){ const r = onEl.getBoundingClientRect(), b = $('#tbody').getBoundingClientRect(); off = r.bottom < b.top || r.top > b.bottom; }
+  $('#backNow').classList.toggle('hidden', !off);
+  document.querySelectorAll('tr.row.near').forEach(r => r.classList.remove('near'));
+  if (isPlaying()){
+    const n = S.notes.find(n => Math.abs(n.seconds - t) < 1.5);
+    if (n){ const r = document.querySelector('tr.row[data-id="' + CSS.escape(n.id) + '"]'); if (r) r.classList.add('near'); }
+  }
+}
+setInterval(tick, 200);
+function cueIndexAt(t){
+  const c = S.cues; if (!c.length) return -1;
+  let lo = 0, hi = c.length - 1, ans = -1;
+  while (lo <= hi){ const m = (lo+hi) >> 1; if (c[m][0] <= t + 0.05){ ans = m; lo = m+1; } else hi = m-1; }
+  if (ans < 0) return -1;
+  return (t <= c[ans][1] + 1.5) ? ans : -1;
+}
+function scrollCueIntoView(el){
+  const box = $('#tbody'); const r = el.getBoundingClientRect(), b = box.getBoundingClientRect();
+  if (r.top < b.top + 40 || r.bottom > b.bottom - 70) box.scrollTo({ top: box.scrollTop + (r.top - b.top) - b.height * 0.35, behavior: 'smooth' });
+}
+
+/* ═════════════ transcripción ═════════════ */
+function buildParas(){
+  const paras = []; let cur = null;
+  S.cues.forEach((c, i) => {
+    const prev = S.cues[i-1];
+    const gap = prev ? c[0] - prev[1] : 99;
+    const len = cur ? cur.len : 0;
+    const endsSentence = prev && /[.?!…"»]$/.test(prev[2]);
+    if (!cur || gap > 2.5 || (len > 380 && endsSentence) || len > 900){ cur = { start: c[0], end: c[1], idx: [], len: 0 }; paras.push(cur); }
+    cur.idx.push(i); cur.len += c[2].length; cur.end = c[1];
+  });
+  return paras;
+}
+function renderTranscript(){
+  const box = $('#tbody');
+  if (!S.cues.length){
+    box.innerHTML = '<div class="tempty">Esta entrevista todavía no tiene transcripción.' + (S.me.admin ? ' Podés subirla desde “Cargar o editar entrevistas”, en la pantalla de inicio.' : '') + '</div>';
+    $('.thelp').classList.add('hidden'); return;
+  }
+  $('.thelp').classList.remove('hidden');
+  S.paras = buildParas();
+  const q = ($('#tq').value || '').trim().toLowerCase();
+  box.innerHTML = S.paras.map((p, pi) => '<div class="para" data-p="' + pi + '"><div class="pt num" data-s="' + p.start + '" title="Ir a este momento">' +
+      esc(secToTc(p.start).slice(0,8)) + '<div class="dots"></div></div><div class="tx">' +
+      p.idx.map(i => '<span class="cue' + (q && S.cues[i][2].toLowerCase().includes(q) ? ' hit' : '') + '" data-i="' + i + '">' + esc(S.cues[i][2]) + '</span>').join(' ') +
+      '</div></div>').join('');
+  S.activeCue = -2; renderTranscriptDots(); tick();
+}
+function renderTranscriptDots(){
+  if (!S.paras) return;
+  const vis = visibleNotes(true);
+  document.querySelectorAll('.para').forEach(el => {
+    const p = S.paras[+el.dataset.p]; if (!p) return;
+    const who = [...new Set(vis.filter(n => n.seconds >= p.start - 0.5 && n.seconds < p.end + 1).map(n => n.author))];
+    el.querySelector('.dots').innerHTML = who.map(w => '<i title="Nota de ' + esc(w) + '" style="background:' + esc(colorOf(w)) + '"></i>').join('');
+  });
+}
+$('#tbody').addEventListener('click', e => {
+  if (String(window.getSelection())) return;
+  const pt = e.target.closest('.pt'); if (pt){ seek(+pt.dataset.s); return; }
+  const cue = e.target.closest('.cue'); if (cue) seek(S.cues[+cue.dataset.i][0]);
+});
+$('#tbody').addEventListener('dblclick', e => {
+  const cue = e.target.closest('.cue'); if (!cue) return;
+  const c = S.cues[+cue.dataset.i];
+  window.getSelection().removeAllRanges();
+  pauseQuiet(); openComposer(c[0], true, c[2], c[1]);
+});
+['wheel','touchmove'].forEach(ev => $('#tbody').addEventListener(ev, () => S.userScrollAt = Date.now(), { passive: true }));
+$('#tbody').addEventListener('mousedown', () => S.userScrollAt = Date.now());
+$('#backNow').onclick = () => { S.userScrollAt = 0; const el = document.querySelector('.cue.on'); if (el) scrollCueIntoView(el); };
+let tqT; $('#tq').addEventListener('input', () => {
+  clearTimeout(tqT); tqT = setTimeout(() => {
+    renderTranscript();
+    const first = document.querySelector('.cue.hit'); if (first){ S.userScrollAt = Date.now(); first.scrollIntoView({ block: 'center' }); }
+  }, 200);
+});
+// Seleccionar texto → botón "Anotar esto"
+document.addEventListener('mouseup', e => {
+  if (e.target.id === 'annot') return;
+  setTimeout(() => {
+    const sel = window.getSelection(); const txt = String(sel).replace(/\s+/g,' ').trim();
+    const btn = $('#annot');
+    if (!txt || !sel.rangeCount || !$('#tbody').contains(sel.anchorNode)){ btn.classList.add('hidden'); return; }
+    const range = sel.getRangeAt(0);
+    const startEl = range.startContainer.nodeType === 1 ? range.startContainer : range.startContainer.parentElement;
+    const cue = startEl.closest('.cue') || (startEl.querySelector && startEl.querySelector('.cue'));
+    if (!cue) { btn.classList.add('hidden'); return; }
+    const r = range.getBoundingClientRect();
+    btn.style.left = Math.min(window.innerWidth - 150, Math.max(10, r.right - 60)) + 'px';
+    btn.style.top = (r.bottom + 8) + 'px';
+    const endEl = range.endContainer.nodeType === 1 ? range.endContainer : range.endContainer.parentElement;
+    const endCue = (endEl.closest && endEl.closest('.cue')) || cue;
+    btn.dataset.s = S.cues[+cue.dataset.i][0]; btn.dataset.e = S.cues[+endCue.dataset.i][1]; btn.dataset.t = txt;
+    btn.classList.remove('hidden');
+  }, 0);
+});
+$('#annot').onclick = () => {
+  const b = $('#annot'); b.classList.add('hidden');
+  pauseQuiet(); openComposer(+b.dataset.s, true, b.dataset.t, +b.dataset.e);
+  window.getSelection().removeAllRanges();
+};
+$('#tbody').addEventListener('scroll', () => $('#annot').classList.add('hidden'));
+
+/* ═════════════ marcas en la barra del video ═════════════ */
+function renderMarks(){
+  const box = $('#marks');
+  if (!S.duration){ box.innerHTML = ''; return; }
+  const pct = x => Math.min(100, Math.max(0, x / S.duration * 100));
+  box.innerHTML = visibleNotes(true).map(n => (n.secondsEnd != null ? '<div class="rg" style="left:' + pct(n.seconds) + '%;width:' + Math.max(0.4, pct(n.secondsEnd) - pct(n.seconds)) + '%;background:' + esc(colorOf(n.author)) + '"></div>' : '') +
+    '<div class="mk" data-id="' + esc(n.id) + '" style="left:' + pct(n.seconds) + '%;background:' + esc(colorOf(n.author)) + '"></div>').join('');
+}
+const track = $('#track');
+track.addEventListener('click', e => {
+  const mk = e.target.closest('.mk');
+  if (mk){ const n = S.notes.find(x => x.id === mk.dataset.id); if (n){ seek(n.seconds); flashRow(n.id); } return; }
+  if (!S.duration) return;
+  const r = track.getBoundingClientRect(); seek((e.clientX - r.left) / r.width * S.duration);
+});
+track.addEventListener('mousemove', e => {
+  let tip = track.querySelector('.tip'); if (!tip){ tip = document.createElement('div'); tip.className = 'tip'; track.appendChild(tip); }
+  const r = track.getBoundingClientRect(); const x = e.clientX - r.left;
+  const mk = e.target.closest('.mk');
+  if (mk){ const n = S.notes.find(x => x.id === mk.dataset.id); tip.textContent = n ? (n.author + ': ' + (n.comment || n.says || '(sin texto)')) : ''; }
+  else tip.textContent = S.duration ? secToTc(x / r.width * S.duration).slice(0,8) : '';
+  tip.style.left = Math.max(70, Math.min(r.width - 70, x)) + 'px';
+});
+track.addEventListener('mouseleave', () => { const t = track.querySelector('.tip'); if (t) t.remove(); });
+function flashRow(id){
+  const r = document.querySelector('tr.row[data-id="' + CSS.escape(id) + '"]'); if (!r) return;
+  r.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); r.classList.remove('flash'); void r.offsetWidth; r.classList.add('flash');
+}
+
+/* ═════════════ recuadro de nota nueva ═════════════ */
+function closeComposer(){ S.composer = { open: false }; renderComposer(); }
+function openComposer(sec, focus, says, end){
+  const c = S.composer || {};
+  const writing = c.open && c.touched && ((c.says||'').trim() || (c.comment||'').trim());
+  if (writing && says == null){
+    // ya estaba escribiendo: no se le pisa nada
+  } else {
+    const i = cueIndexAt(sec);
+    S.composer = { open: true, seconds: sec, says: says != null ? says : (i >= 0 ? S.cues[i][2] : ''),
+                   comment: writing ? c.comment : '', tag: writing ? c.tag : '', star: writing ? !!c.star : false,
+                   end: (end != null && end > sec + 0.3) ? end : null, picking: false, touched: says != null };
+    renderComposer();
+  }
+  const box = $('#composer'); box.classList.remove('flash'); void box.offsetWidth; box.classList.add('flash');
+  $('.lower').scrollTo({ top: 0, behavior: 'smooth' });
+  if (focus){ const f = $('#cComment'); if (f){ f.focus(); f.setSelectionRange(f.value.length, f.value.length); } }
+}
+function setEnd(t){
+  const c = S.composer; if (!c || !c.open) return;
+  c.picking = false; c.end = Math.max(t, c.seconds + 0.5); c.touched = true;
+  pauseQuiet(); renderComposer();
+}
+function rangeHtml(c){
+  if (c.picking) return '<span class="to">hasta</span><button class="btn primary sm" id="cEndSet">■ Marcar el final acá (<span id="cEndNow" class="num">' + esc(secToTc(Math.max(now(), c.seconds)).slice(0,8)) + '</span>)</button>' +
+    '<button class="link" id="cEndCancel" style="font-size:14px">Cancelar</button>';
+  if (c.end != null) return '<span class="to">hasta</span><input class="tcin" id="cEndIn" value="' + esc(secToTc(c.end)) + '" title="Podés escribir el timecode a mano"><span class="small">(' + durTxt(c.end - c.seconds) + ')</span>' +
+    '<button class="link" id="cEndClear" style="font-size:14px">Quitar el final</button>';
+  return '<button class="link" id="cEndPick" style="font-size:14px">Marcar hasta dónde va</button><span class="to">o escribí el final:</span><input class="tcin" id="cEndIn" placeholder="hasta…" title="Escribí el timecode del final (opcional)">';
+}
+function renderComposer(){
+  const c = S.composer, box = $('#composer');
+  if (!c || !c.open){ box.className = 'composer hidden'; box.innerHTML = ''; return; }
+  box.className = 'composer open';
+  box.innerHTML =
+    '<div class="c-head"><h3>Nueva nota</h3><div class="c-range"><span class="to">desde</span><input class="tcin" id="cStartIn" value="' + esc(secToTc(c.seconds)) + '" title="Podés escribir el timecode a mano">' +
+      (c.end == null && !c.picking ? '<button class="link" id="cNow" style="font-size:14px">Usar el momento actual</button><span class="to">·</span>' : '') +
+      rangeHtml(c) + '</div></div>' +
+    '<div class="c-grid">' +
+      '<div><label for="cSays">Qué se dice <small>(lo completamos con la transcripción; podés cambiarlo)</small></label>' +
+        '<textarea class="input" id="cSays" rows="2">' + esc(c.says) + '</textarea></div>' +
+      '<div><label for="cComment">Tu comentario</label>' +
+        '<textarea class="input" id="cComment" rows="2" placeholder="Por ejemplo: buscar fotos de archivo de la fábrica">' + esc(c.comment) + '</textarea></div>' +
+    '</div>' +
+    '<div class="c-foot"><button class="pill starp' + (c.star ? ' on' : '') + '" id="cStar">' + (c.star ? '★ Momento clave' : '☆ Momento clave') + '</button>' +
+      '<span class="lbl" style="margin-left:8px">Etiqueta:</span>' +
+      tagList().map(t => '<button class="pill' + (t === c.tag ? ' on' : '') + '" data-tag="' + esc(t) + '">' + esc(t) + '</button>').join('') +
+      (c.newTag ? '<span class="newtag"><input class="input" id="cNewTag" placeholder="Nombre de la etiqueta" maxlength="40"><button class="btn primary sm" id="cNewTagOk">Crear</button><button class="link" id="cNewTagNo" style="font-size:14px">Cancelar</button></span>'
+                : '<button class="pill add" id="cNewTagOpen">＋ Nueva etiqueta</button>') +
+      '<span class="keys">Enter para guardar</span>' +
+      '<button class="btn" id="cCancel">Cancelar</button><button class="btn primary" id="cSave">Guardar nota</button></div>';
+}
+const composerEl = $('#composer');
+composerEl.addEventListener('input', e => {
+  const c = S.composer; if (!c.open) return; c.touched = true;
+  if (e.target.id === 'cSays') c.says = e.target.value;
+  if (e.target.id === 'cComment') c.comment = e.target.value;
+});
+composerEl.addEventListener('click', e => {
+  const t = e.target.closest('button'); if (!t) return;
+  const c = S.composer;
+  if (t.id === 'cNow'){ c.seconds = now(); $('#cStartIn').value = secToTc(c.seconds); }
+  if (t.id === 'cEndPick'){ c.touched = true; c.picking = true; renderComposer(); if (S.playerReady){ S.suppressUntil = 0; S.player.playVideo(); } toast('Dale play y tocá “Marcar el final acá” (o pausá) cuando termine el fragmento.'); }
+  if (t.id === 'cEndSet') setEnd(now());
+  if (t.id === 'cEndCancel'){ c.picking = false; pauseQuiet(); renderComposer(); }
+  if (t.id === 'cEndClear'){ c.end = null; renderComposer(); }
+  if (t.id === 'cStar'){ c.star = !c.star; c.touched = true; t.classList.toggle('on', c.star); t.textContent = c.star ? '★ Momento clave' : '☆ Momento clave'; }
+  if (t.id === 'cNewTagOpen'){ c.newTag = true; c.touched = true; renderComposer(); $('#cNewTag').focus(); return; }
+  if (t.id === 'cNewTagNo'){ c.newTag = false; renderComposer(); return; }
+  if (t.id === 'cNewTagOk'){ createComposerTag(); return; }
+  if (t.id === 'cCancel') closeComposer();
+  if (t.id === 'cSave') saveComposer();
+  if (t.dataset.tag != null){ c.tag = c.tag === t.dataset.tag ? '' : t.dataset.tag; c.touched = true;
+    composerEl.querySelectorAll('.pill[data-tag]').forEach(p => p.classList.toggle('on', p.dataset.tag === c.tag)); }
+});
+composerEl.addEventListener('change', e => {
+  const c = S.composer; if (!c || !c.open) return;
+  if (e.target.id === 'cStartIn'){
+    const s = parseTcInput(e.target.value);
+    if (s == null){ e.target.classList.add('bad'); toast('Ese timecode no es válido. Escribilo como 14:33:20:05 (horas:minutos:segundos:cuadros).', true); return; }
+    c.seconds = s; c.touched = true; if (c.end != null && c.end <= s) c.end = null; renderComposer();
+  }
+  if (e.target.id === 'cEndIn'){
+    if (!e.target.value.trim()){ c.end = null; renderComposer(); return; }
+    const s = parseTcInput(e.target.value);
+    if (s == null || s <= c.seconds){ e.target.classList.add('bad'); toast(s == null ? 'Ese timecode no es válido. Escribilo como 14:33:20:05.' : 'El final tiene que ser después del comienzo.', true); return; }
+    c.end = s; c.touched = true; renderComposer();
+  }
+});
+async function createComposerTag(){
+  const c = S.composer, inp = $('#cNewTag'); if (!inp) return;
+  const name = await addTag(inp.value);
+  if (!name) return;
+  if (S.composer === c){ c.tag = name; c.newTag = false; renderComposer(); }
+}
+composerEl.addEventListener('keydown', e => {
+  if (e.target.classList.contains('tcin') && e.key === 'Enter'){ e.preventDefault(); e.target.blur(); return; }
+  if (e.target.id === 'cNewTag'){
+    if (e.key === 'Enter' && !e.isComposing){ e.preventDefault(); createComposerTag(); }
+    if (e.key === 'Escape'){ e.preventDefault(); S.composer.newTag = false; renderComposer(); }
+    return;
+  }
+  if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.target.tagName === 'TEXTAREA'){ e.preventDefault(); saveComposer(); }
+  if (e.key === 'Escape'){ e.preventDefault(); closeComposer(); }
+});
+function saveComposer(){
+  const c = S.composer;
+  if (!(c.says||'').trim() && !(c.comment||'').trim()){ toast('Escribí algo antes de guardar.'); return; }
+  if (c.picking) setEnd(now());
+  const end = c.end != null ? Math.round(c.end * 1000) / 1000 : null;
+  const note = { id: uid(), interview: S.cur.id, author: S.me.name, seconds: Math.round(c.seconds * 1000) / 1000, tc: secToTc(c.seconds),
+                 secondsEnd: end, tcEnd: end != null ? secToTc(end) : '', star: !!c.star,
+                 says: c.says.trim(), comment: c.comment.trim(), tag: c.tag || '', _pending: true };
+  S.notes.push(note);
+  closeComposer();
+  if (S.who !== 'all' && S.who !== 'mine') S.who = 'all';
+  if (S.onlyStar && !note.star) S.onlyStar = false;
+  renderNotes(); renderMarks(); renderTranscriptDots(); updateCountsLocal(); flashRow(note.id);
+  if (document.activeElement) document.activeElement.blur();
+  toast(note.star ? 'Momento clave guardado' : 'Nota guardada');
+  if (S.playerReady && !isPlaying()) S.player.playVideo();
+  pushNote(note);
+}
+async function pushNote(note){
+  const iv = S.cur;
+  try {
+    const j = await tracked(() => api('saveNote', { note: { id: note.id, interview: note.interview, seconds: note.seconds, tc: note.tc,
+      secondsEnd: note.secondsEnd, tcEnd: note.tcEnd, star: !!note.star, says: note.says, comment: note.comment, tag: note.tag } }));
+    delete note._pending; S.failed.delete(note.id);
+    if (S.cur === iv) Object.assign(note, j.note);
+  } catch (e){
+    S.failed.add(note.id); toast('No se pudo guardar una nota. Revisá la conexión y tocá el aviso de arriba para reintentar.', true);
+  }
+  setSync();
+  if (S.cur === iv) renderRowState(note);
+}
+$('#sync').onclick = () => { S.notes.filter(n => S.failed.has(n.id)).forEach(pushNote); };
+
+/* ═════════════ tabla de notas ═════════════ */
+function visibleNotes(forMarks){
+  const q = forMarks ? '' : S.q.toLowerCase();
+  return S.notes.filter(n => (S.who === 'all' || (S.who === 'mine' ? n.author === S.me.name : n.author === S.who))
+      && (!S.onlyStar || n.star)
+      && (!q || (n.says + ' ' + n.comment + ' ' + n.tag + ' ' + n.author).toLowerCase().includes(q)))
+    .sort((a, b) => a.seconds - b.seconds || String(a.created||'').localeCompare(String(b.created||'')));
+}
+function renderSeg(){
+  const counts = {}; S.notes.forEach(n => counts[n.author] = (counts[n.author]||0) + 1);
+  const others = [...new Set(S.users.map(u => u.name).concat(Object.keys(counts)))].filter(n => n !== S.me.name);
+  const opts = [['all', 'Todas', S.notes.length, null], ['mine', 'Mías', counts[S.me.name] || 0, S.me.name]]
+    .concat(others.map(n => [n, n, counts[n] || 0, n]));
+  $('#seg').innerHTML = opts.map(([k, label, n, who]) => '<button class="' + (S.who === k ? 'on' : '') + '" data-k="' + esc(k) + '">' +
+    (who ? '<i class="dot" style="background:' + esc(colorOf(who)) + '"></i>' : '') + esc(label) + ' <span class="n">' + n + '</span></button>').join('');
+  const stars = S.notes.filter(n => n.star).length;
+  const b = $('#onlyStar'); b.classList.toggle('on', S.onlyStar); b.innerHTML = '★ Solo claves <span class="n">' + stars + '</span>';
+}
+$('#seg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.who = b.dataset.k; renderNotes(); renderMarks(); renderTranscriptDots(); });
+$('#onlyStar').onclick = () => { S.onlyStar = !S.onlyStar; renderNotes(); renderMarks(); renderTranscriptDots(); };
+let nqT; $('#nq').addEventListener('input', e => { clearTimeout(nqT); nqT = setTimeout(() => { S.q = e.target.value.trim(); renderNotes(); }, 150); });
+
+function repliesOf(id){ return S.replies.filter(r => r.note === id).sort((a, b) => String(a.created||'~').localeCompare(String(b.created||'~'))); }
+function repliesHtml(n){
+  const reps = repliesOf(n.id), open = S.replyOpen === n.id;
+  if (!reps.length && !open) return '';
+  return '<tr class="reps" data-for="' + esc(n.id) + '" style="--uc:' + esc(colorOf(n.author)) + '"><td></td><td colspan="6"><div class="replist">' +
+    reps.map(r => '<div class="rep"><b style="color:' + esc(colorOf(r.author)) + '">' + esc(r.author === S.me.name ? 'Vos' : r.author) + ':</b> ' + esc(r.text) +
+      (r.author === S.me.name && !r._pending ? '<button class="rdel" data-rdel="' + esc(r.id) + '">quitar</button>' : '') + '</div>').join('') +
+    (open ? '<div class="repbox"><input class="input" id="repIn" placeholder="Escribí tu respuesta…"><button class="btn primary sm" data-rsend="' + esc(n.id) + '">Enviar</button><button class="btn sm" data-rcancel>Cancelar</button></div>' : '') +
+    '</div></td></tr>';
+}
+function rowHtml(n){
+  const mine = n.author === S.me.name;
+  const color = esc(colorOf(n.author));
+  const tc = n.tc || secToTc(n.seconds);
+  const reps = repliesOf(n.id).length, open = S.replyOpen === n.id;
+  const cls = 'row' + (mine ? ' mine' : '') + (reps || open ? ' has-rep' : '');
+  const whoCell = '<span class="who"><i></i>' + esc(mine ? 'Vos' : n.author) + '</span>';
+  const starCell = mine ? '<button class="star' + (n.star ? ' on' : '') + '" data-act="star" title="' + (n.star ? 'Sacar de momentos clave' : 'Marcar como momento clave') + '">' + (n.star ? '★' : '☆') + '</button>'
+    : (n.star ? '<span class="star on" title="Momento clave">★</span>' : '');
+  const range = n.secondsEnd != null ? '<span class="tcrange num">hasta ' + esc(String(n.tcEnd || secToTc(n.secondsEnd)).slice(0,8)) + ' · ' + durTxt(n.secondsEnd - n.seconds) + '</span>' : '';
+  let tcCell = '<button class="tc num" data-act="seek" title="Ver este momento">' + tcHtml(tc) + '</button>' + range +
+    (mine ? '<button class="tcpen" data-act="tcedit" title="Cambiar el timecode a mano">✎ Cambiar</button>' : '') + (S.failed.has(n.id) ? '<div class="warn">Sin guardar</div>' : '');
+  if (mine && S.tcEdit === n.id) tcCell = '<div class="tcedit"><label>Desde<input class="tcin" data-te="start" value="' + esc(tc) + '"></label>' +
+    '<label>Hasta (opcional)<input class="tcin" data-te="end" value="' + esc(n.secondsEnd != null ? (n.tcEnd || secToTc(n.secondsEnd)) : '') + '" placeholder="—"></label>' +
+    '<div class="row2"><button class="btn primary sm" data-act="tcok">Listo</button><button class="btn sm" data-act="tcno">Cancelar</button></div></div>';
+  const acts = '<div class="acts"><button class="replybtn" data-act="reply">Responder' + (reps ? ' (' + reps + ')' : '') + '</button>' +
+    (mine ? '<button class="del" data-act="del">Quitar</button>' : '') + '</div>';
+  let main;
+  if (mine){
+    const base = tagList(); const tags = base.concat(n.tag && !base.includes(n.tag) ? [n.tag] : []);
+    main = '<td><textarea class="cell says" data-f="says" rows="1" title="Tocá para corregir">' + esc(n.says) + '</textarea></td>' +
+      '<td><textarea class="cell" data-f="comment" rows="1" placeholder="Agregar comentario" title="Tocá para corregir">' + esc(n.comment) + '</textarea></td>' +
+      '<td><select class="tag" data-f="tag"><option value="">Sin etiqueta</option>' + tags.map(t => '<option' + (t === n.tag ? ' selected' : '') + '>' + esc(t) + '</option>').join('') + '<option value="__new">＋ Nueva etiqueta…</option></select></td>';
+  } else {
+    main = '<td><div class="ro says' + (n.says ? '' : ' empty') + '">' + (esc(n.says) || '—') + '</div></td>' +
+      '<td><div class="ro' + (n.comment ? '' : ' empty') + '">' + (esc(n.comment) || '—') + '</div></td>' +
+      '<td>' + (n.tag ? '<span class="tagpill">' + esc(n.tag) + '</span>' : '') + '</td>';
+  }
+  return '<tr class="' + cls + '" data-id="' + esc(n.id) + '" style="--uc:' + color + '"><td>' + starCell + '</td><td>' + tcCell + '</td>' + main +
+    '<td>' + whoCell + '</td><td>' + acts + '</td></tr>' + repliesHtml(n);
+}
+function renderNotes(){
+  renderSeg();
+  const ae = document.activeElement; let restore = null;
+  const r0 = ae && ae.closest && ae.closest('tr.row');
+  if (r0 && ae.dataset.f) restore = { id: r0.dataset.id, f: ae.dataset.f, s: ae.selectionStart, e: ae.selectionEnd };
+  const repDraft = $('#repIn') ? $('#repIn').value : null;
+  const list = visibleNotes();
+  $('#rows').innerHTML = list.map(rowHtml).join('');
+  $('#rows').querySelectorAll('textarea').forEach(autosize);
+  const empty = $('#nempty');
+  $('#ntable').classList.toggle('hidden', !list.length);
+  if (!list.length){
+    empty.classList.remove('hidden');
+    empty.innerHTML = S.notes.length ? '<b>No hay notas que coincidan</b>Probá con “Todas”, sacá “Solo claves” o borrá la búsqueda.'
+      : '<b>Todavía no hay notas en esta entrevista</b>Dale play, y cuando algo te interese, pausá el video.';
+  } else empty.classList.add('hidden');
+  if (restore){
+    const el = document.querySelector('tr.row[data-id="' + CSS.escape(restore.id) + '"] [data-f="' + restore.f + '"]');
+    if (el){ el.focus(); try { el.setSelectionRange(restore.s, restore.e); } catch(e){} }
+  }
+  if (repDraft != null && $('#repIn')) $('#repIn').value = repDraft;
+}
+function renderRowState(n){
+  const r = document.querySelector('tr.row[data-id="' + CSS.escape(n.id) + '"]'); if (!r) return;
+  const td = r.children[1]; const w = td.querySelector('.warn');
+  if (S.failed.has(n.id) && !w) td.insertAdjacentHTML('beforeend', '<div class="warn">Sin guardar</div>');
+  if (!S.failed.has(n.id) && w) w.remove();
+}
+function autosize(el){ el.style.height = 'auto'; el.style.height = (el.scrollHeight + 3) + 'px'; }
+
+const rowsEl = $('#rows');
+const editTimers = {};
+rowsEl.addEventListener('input', async e => {
+  const f = e.target.dataset.f; if (!f) return;
+  const id = e.target.closest('tr').dataset.id; const n = S.notes.find(x => x.id === id); if (!n) return;
+  if (f === 'tag' && e.target.value === '__new'){
+    const sel = e.target; sel.value = n.tag || '';
+    const name = await addTag(prompt('Nombre de la nueva etiqueta:') || '');
+    if (!name){ renderNotes(); return; }
+    n.tag = name; renderNotes(); pushNote(n); return;
+  }
+  n[f] = e.target.value; if (e.target.tagName === 'TEXTAREA') autosize(e.target);
+  clearTimeout(editTimers[id]); editTimers[id] = setTimeout(() => { delete editTimers[id]; pushNote(n); }, f === 'tag' ? 0 : 900);
+});
+rowsEl.addEventListener('focusout', e => {
+  const tr = e.target.closest && e.target.closest('tr.row'); if (!tr || !e.target.dataset.f) return;
+  const id = tr.dataset.id; if (editTimers[id]){ clearTimeout(editTimers[id]); delete editTimers[id]; const n = S.notes.find(x => x.id === id); if (n) pushNote(n); }
+});
+rowsEl.addEventListener('keydown', e => {
+  if (e.target.dataset.te){
+    if (e.key === 'Enter'){ e.preventDefault(); const tr = e.target.closest('tr'); const n = S.notes.find(x => x.id === tr.dataset.id); if (n) saveTcEdit(tr, n); }
+    if (e.key === 'Escape'){ e.preventDefault(); S.tcEdit = null; renderNotes(); }
+    return;
+  }
+  if (e.target.id === 'repIn'){
+    if (e.key === 'Enter' && !e.isComposing){ e.preventDefault(); sendReply(e.target.closest('tr').dataset.for); }
+    if (e.key === 'Escape'){ e.preventDefault(); S.replyOpen = null; renderNotes(); }
+    return;
+  }
+  if (e.key === 'Escape' || (e.key === 'Enter' && !e.shiftKey && e.target.tagName === 'TEXTAREA')){ e.preventDefault(); e.target.blur(); }
+});
+rowsEl.addEventListener('click', async e => {
+  const rs = e.target.closest('[data-rsend]'); if (rs){ sendReply(rs.dataset.rsend); return; }
+  if (e.target.closest('[data-rcancel]')){ S.replyOpen = null; renderNotes(); return; }
+  const rd = e.target.closest('[data-rdel]'); if (rd){ deleteReply(rd.dataset.rdel); return; }
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const id = b.closest('tr').dataset.id; const n = S.notes.find(x => x.id === id); if (!n) return;
+  if (b.dataset.act === 'seek'){ seek(n.seconds, true); return; }
+  if (b.dataset.act === 'tcedit'){ S.tcEdit = id; renderNotes(); const inp = document.querySelector('tr.row[data-id="' + CSS.escape(id) + '"] [data-te="start"]'); if (inp){ inp.focus(); inp.select(); } return; }
+  if (b.dataset.act === 'tcno'){ S.tcEdit = null; renderNotes(); return; }
+  if (b.dataset.act === 'tcok'){ saveTcEdit(b.closest('tr'), n); return; }
+  if (b.dataset.act === 'star'){ n.star = !n.star; renderNotes(); renderMarks(); renderTranscriptDots(); toast(n.star ? 'Marcada como momento clave' : 'Ya no es momento clave'); pushNote(n); return; }
+  if (b.dataset.act === 'reply'){ S.replyOpen = S.replyOpen === id ? null : id; renderNotes(); const inp = $('#repIn'); if (inp) inp.focus(); return; }
+  if (b.dataset.act === 'del'){
+    if (!b.classList.contains('confirm')){ b.classList.add('confirm'); b.textContent = '¿Seguro?'; setTimeout(() => { b.classList.remove('confirm'); b.textContent = 'Quitar'; }, 3000); return; }
+    S.notes = S.notes.filter(x => x.id !== id); renderNotes(); renderMarks(); renderTranscriptDots(); updateCountsLocal();
+    try { await tracked(() => api('deleteNote', { id })); S.failed.delete(id); setSync(); toast('Nota quitada'); }
+    catch (err){ toast('No se pudo quitar: ' + err.message, true); S.notes.push(n); renderNotes(); renderMarks(); }
+  }
+});
+function saveTcEdit(tr, n){
+  const si = tr.querySelector('[data-te="start"]'), ei = tr.querySelector('[data-te="end"]');
+  const s = parseTcInput(si.value);
+  if (s == null){ si.classList.add('bad'); toast('El “desde” no es un timecode válido. Escribilo como 14:33:20:05.', true); return; }
+  let e = null;
+  if (ei.value.trim()){
+    e = parseTcInput(ei.value);
+    if (e == null || e <= s){ ei.classList.add('bad'); toast(e == null ? 'El “hasta” no es un timecode válido.' : 'El “hasta” tiene que ser después del “desde”.', true); return; }
+  }
+  n.seconds = s; n.tc = secToTc(s); n.secondsEnd = e; n.tcEnd = e != null ? secToTc(e) : '';
+  S.tcEdit = null; renderNotes(); renderMarks(); renderTranscriptDots(); flashRow(n.id); toast('Timecode cambiado'); pushNote(n);
+}
+async function sendReply(noteId){
+  const inp = $('#repIn'); const text = inp ? inp.value.trim() : '';
+  if (!text){ toast('Escribí la respuesta antes de enviarla.'); return; }
+  const r = { id: uid(), note: noteId, interview: S.cur.id, author: S.me.name, text, created: '', _pending: true };
+  S.replies.push(r); S.replyOpen = null; renderNotes();
+  try { const j = await tracked(() => api('saveReply', { reply: { id: r.id, note: r.note, interview: r.interview, text } })); Object.assign(r, j.reply); delete r._pending; renderNotes(); }
+  catch (err){ S.replies = S.replies.filter(x => x !== r); S.replyOpen = noteId; renderNotes(); if ($('#repIn')) $('#repIn').value = text; toast('No se pudo enviar la respuesta: ' + err.message, true); }
+}
+async function deleteReply(id){
+  const r = S.replies.find(x => x.id === id); if (!r) return;
+  if (!confirm('¿Quitar tu respuesta?')) return;
+  S.replies = S.replies.filter(x => x.id !== id); renderNotes();
+  try { await tracked(() => api('deleteReply', { id })); }
+  catch (err){ S.replies.push(r); renderNotes(); toast('No se pudo quitar: ' + err.message, true); }
+}
+
+/* ═════════════ atajos de teclado (opcionales) ═════════════ */
+document.addEventListener('keydown', e => {
+  if (!S.cur || $('#modalRoot').children.length) return;
+  const t = e.target; if (/INPUT|TEXTAREA|SELECT/.test(t.tagName) || t.isContentEditable) return;
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (k === ' ' || k === 'k'){ e.preventDefault(); togglePlay(); }
+  else if (e.key === 'ArrowLeft'){ e.preventDefault(); seek(now() - 5); }
+  else if (e.key === 'ArrowRight'){ e.preventDefault(); seek(now() + 5); }
+  else if (k === 'n'){ e.preventDefault(); pauseQuiet(); openComposer(now(), true); }
+});
+
+/* ═════════════ ventanas: ayuda y carga de entrevistas ═════════════ */
+function modal(html){ $('#modalRoot').innerHTML = '<div class="modal-bg"><div class="modal">' + html + '</div></div>'; }
+function closeModal(){ $('#modalRoot').innerHTML = ''; }
+$('#modalRoot').addEventListener('click', e => { if (e.target.matches('[data-close]') || e.target.classList.contains('modal-bg')) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('#modalRoot').children.length) closeModal(); });
+
+function openHelp(){
+  modal('<div class="modal-h"><h3>Cómo se usa</h3><button class="btn quiet sm" data-close>Cerrar</button></div><div class="modal-b">' +
+    '<ol class="steps">' +
+    '<li><div><b>Elegí una entrevista</b>Desde la pantalla de inicio. Siempre volvés con “← Todas las entrevistas”.</div></li>' +
+    '<li><div><b>Mirá el video y leé la transcripción</b>La frase que se está diciendo queda resaltada en amarillo. Si tocás una frase, el video salta a ese momento.</div></li>' +
+    '<li><div><b>Para anotar, pausá el video</b>Se abre el recuadro “Nueva nota” con el momento y la frase ya completados. Escribí tu comentario y tocá “Guardar nota”. Si es importante, marcá ☆ Momento clave.</div></li>' +
+    '<li><div><b>Fragmentos largos: desde–hasta</b>En el recuadro tocá “Marcar hasta dónde va”, dejá correr el video y tocá “Marcar el final acá”. Si seleccionás varias frases de la transcripción, el desde–hasta se completa solo.</div></li>' +
+    '<li><div><b>Mirá y respondé las notas de todas</b>Cada persona tiene su color. Elegí cuáles ver con “Todas”, “Mías” o el nombre de cada una. Con “Responder” podés comentar la nota de otra persona.</div></li>' +
+    '<li><div><b>Dos formas de ver</b>Arriba podés elegir “Con transcripción” o “Solo notas”. En “Solo notas” el video queda al costado y las notas se ven más grandes.</div></li>' +
+    '<li><div><b>Buscá en todas las entrevistas</b>En la pantalla de inicio podés buscar una palabra en todas a la vez, o ver juntos todos los momentos clave.</div></li>' +
+    '</ol>' +
+    '<p class="small">Tus notas se guardan solas: las corregís tocando el texto, con “✎ Cambiar” corregís el timecode a mano, y con “Quitar” las sacás. Las de las demás aparecen cada pocos segundos.</p>' +
+    '<div class="sep"></div><b>Atajos de teclado (opcionales)</b><div class="keys-list">' +
+    '<span><kbd>Espacio</kbd></span><span>Play / pausa</span>' +
+    '<span><kbd>←</kbd> <kbd>→</kbd></span><span>Atrás / adelante 5 segundos</span>' +
+    '<span><kbd>N</kbd></span><span>Nueva nota en este momento</span>' +
+    '<span><kbd>Enter</kbd></span><span>Guardar la nota</span>' +
+    '<span><kbd>Esc</kbd></span><span>Cancelar</span></div></div>');
+}
+$('#helpBtn').onclick = openHelp;
+
+function openAdmin(editId){
+  const iv = editId ? S.interviews.find(i => i.id === editId) : null;
+  let cues = null;
+  const fpsList = ['23.976','24','25','29.97','30','50','59.94','60'];
+  modal('<div class="modal-h"><h3>' + (iv ? 'Editar entrevista' : 'Cargar entrevistas') + '</h3><button class="btn quiet sm" data-close>Cerrar</button></div><div class="modal-b">' +
+    (iv ? '' : '<div>' + (S.interviews.map(i => '<div class="ivrow"><span class="t">' + esc(i.title) + '</span><span class="small">' + (ytId(i.youtube) ? 'Con video' : 'Sin video') + '</span>' +
+        '<button class="btn sm" data-edit="' + esc(i.id) + '">Editar</button><button class="btn quiet sm" data-del="' + esc(i.id) + '">Quitar</button></div>').join('') || '<p class="small">Todavía no cargaste ninguna.</p>') +
+      '</div><div class="sep"></div><h3 style="margin:0 0 14px;font-size:18px">Agregar una entrevista</h3>') +
+    '<form id="ivForm">' +
+      '<label class="field"><span>Nombre</span><input class="input" name="title" required value="' + esc(iv ? iv.title : '') + '" placeholder="Ej: Marta, en la cocina (día 1)"></label>' +
+      '<label class="field"><span>Link del video de YouTube</span><input class="input" name="youtube" value="' + esc(iv ? iv.youtube : '') + '" placeholder="https://youtu.be/…"><small>El video tiene que estar subido como “No listado”.</small></label>' +
+      '<div class="grid2">' +
+        '<label class="field"><span>Timecode de inicio</span><input class="input num" name="tcStart" value="' + esc(iv ? iv.tcStart : '00:00:00:00') + '"><small>El del primer cuadro del video exportado.</small></label>' +
+        '<label class="field"><span>Cuadros por segundo</span><select class="input" name="fps">' + fpsList.map(f => '<option' + (String(iv ? iv.fps : 24) === f ? ' selected' : '') + '>' + f + '</option>').join('') + '</select></label>' +
+      '</div>' +
+      '<div class="drop" id="drop"><input type="file" id="srt" accept=".srt,.vtt,.txt" hidden><div id="dropTxt"><b>Transcripción (.srt)</b><br>Arrastrá el archivo acá o hacé clic para elegirlo.' +
+        (iv ? '<br><span class="small">Si no subís nada, queda la que ya estaba.</span>' : '') + '</div></div>' +
+      '<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">' +
+        (iv ? '<button type="button" class="btn" data-back>Volver</button>' : '') +
+        '<button class="btn primary" id="ivSave">' + (iv ? 'Guardar cambios' : 'Agregar entrevista') + '</button></div>' +
+    '</form></div>');
+  const form = $('#ivForm'), drop = $('#drop'), file = $('#srt');
+  const readFile = f => { const r = new FileReader(); r.onload = () => {
+      cues = parseSubs(r.result);
+      $('#dropTxt').innerHTML = cues.length ? '<b>' + esc(f.name) + '</b><br>' + plural(cues.length, 'frase', 'frases') + ', hasta el minuto ' + fmtShort(cues[cues.length-1][1])
+        : '<b style="color:var(--danger)">No encontré texto en ' + esc(f.name) + '</b><br>Tiene que ser un archivo .srt o .vtt.';
+      if (!cues.length) cues = null;
+    }; r.readAsText(f); };
+  drop.onclick = () => file.click();
+  file.onchange = () => file.files[0] && readFile(file.files[0]);
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add('over'); };
+  drop.ondragleave = () => drop.classList.remove('over');
+  drop.ondrop = e => { e.preventDefault(); drop.classList.remove('over'); if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]); };
+  form.onsubmit = async e => {
+    e.preventDefault();
+    const fd = Object.fromEntries(new FormData(form));
+    if (fd.youtube && !ytId(fd.youtube)){ toast('Ese link de YouTube no parece válido. Copialo de nuevo desde YouTube.', true); return; }
+    const btn = $('#ivSave'); btn.disabled = true; btn.textContent = 'Guardando…';
+    try {
+      const j = await tracked(() => api('saveInterview', { interview: { id: iv ? iv.id : '', title: fd.title.trim(), youtube: fd.youtube.trim(), tcStart: fd.tcStart.trim() || '00:00:00:00', fps: fd.fps }, cues }));
+      const k = S.interviews.findIndex(i => i.id === j.interview.id);
+      if (k >= 0) S.interviews[k] = j.interview; else S.interviews.push(j.interview);
+      closeModal(); toast(iv ? 'Cambios guardados' : 'Entrevista agregada');
+      if (!iv || (S.cur && S.cur.id === j.interview.id)) openInterview(j.interview.id); else if (!S.cur) renderHome();
+    } catch (err){ toast('No se pudo guardar: ' + err.message, true); btn.disabled = false; btn.textContent = iv ? 'Guardar cambios' : 'Agregar entrevista'; }
+  };
+  const root = $('#modalRoot');
+  root.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openAdmin(b.dataset.edit));
+  const back = root.querySelector('[data-back]'); if (back) back.onclick = () => openAdmin();
+  root.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+    const id = b.dataset.del, i = S.interviews.find(x => x.id === id);
+    if (!confirm('¿Quitar “' + i.title + '” de la lista? Las notas quedan guardadas en la planilla.')) return;
+    try { await tracked(() => api('deleteInterview', { id })); S.interviews = S.interviews.filter(x => x.id !== id); openAdmin();
+      if (S.cur && S.cur.id === id) showHome(); else if (!S.cur) renderHome(); }
+    catch (err){ toast('No se pudo quitar: ' + err.message, true); }
+  });
+}
+$('#adminBtn').onclick = () => openAdmin();
+
+// Divisor arrastrable entre el video y las notas (doble clic: tamaño original)
+(function(){
+  const work = $('#work'); const saved = parseFloat(store.get('visor.ph'));
+  if (saved) work.style.setProperty('--ph', saved + 'px');
+  $('#split').addEventListener('mousedown', e => {
+    e.preventDefault();
+    const start = e.clientY, ph0 = $('.player-wrap').getBoundingClientRect().height;
+    document.body.classList.add('dragging');
+    const move = ev => { const ph = Math.max(150, Math.min(window.innerHeight - 300, ph0 + ev.clientY - start)); work.style.setProperty('--ph', ph + 'px'); store.set('visor.ph', String(ph)); };
+    const up = () => { document.body.classList.remove('dragging'); window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up); };
+    window.addEventListener('mousemove', move); window.addEventListener('mouseup', up);
+  });
+  $('#split').addEventListener('dblclick', () => { work.style.removeProperty('--ph'); store.del('visor.ph'); });
+})();
+$('#logout').onclick = () => logout(false);
+
+/* ═════════════ arranque ═════════════ */
+document.title = CONFIG.TITLE; $('#loginTitle').textContent = CONFIG.TITLE;
+$('#loginForm').onsubmit = e => { e.preventDefault(); login($('#pw').value.trim()); };
+closeComposer();
+applyView(store.get('visor.view') || 't');
+(function boot(){
+  const saved = store.get('visor.pw');
+  if (saved) login(saved, true); else $('#login').classList.remove('hidden');
+  if (!API_URL && !window.__MOCK_API__ && !(window.google && google.script)) $('#loginErr').textContent = 'Este archivo solo no funciona: abrí la web desde su dirección de Apps Script.';
+})();
+</script>
+</body>
+</html>
