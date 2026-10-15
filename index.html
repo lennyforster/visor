@@ -80,13 +80,25 @@ button{cursor:pointer}
 .home-in{max-width:760px;margin:0 auto}
 .home-in h2{font-size:28px;margin:0 0 6px}
 .home-in .lead{color:var(--muted);margin:0 0 26px}
-.ivcard{display:flex;align-items:center;gap:18px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:12px;transition:border-color .15s,box-shadow .15s}
+.ivcard{position:relative;display:grid;grid-template-columns:184px minmax(0,1fr) auto;gap:18px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 18px 12px 12px;margin-bottom:12px;transition:border-color .15s,box-shadow .15s}
 .ivcard:hover{border-color:var(--accent);box-shadow:0 6px 20px rgba(35,72,201,.10)}
-.ivcard .main{flex:1;min-width:0}
-.ivcard .t{display:block;font-size:19px;font-weight:700;margin-bottom:4px}
+.ivcard .main{min-width:0}
+.ivopen{display:block;border:0;background:none;padding:0;text-align:left;font-size:19px;font-weight:700;line-height:1.3;margin-bottom:6px;color:var(--ink)}
+.ivopen::after{content:'';position:absolute;inset:0;border-radius:14px}
 .ivcard .meta{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--muted);font-size:15px}
 .ivcard .meta span{display:inline-flex;align-items:center;gap:6px}
+.ivcard .side{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 .ivcard .go{color:var(--accent);font-weight:700;white-space:nowrap}
+.ivedit{position:relative;z-index:1}
+/* miniatura de YouTube */
+.thumb{position:relative;aspect-ratio:16/9;border-radius:9px;overflow:hidden;background:var(--sunk);display:grid;place-items:center;color:var(--faint);font-size:13px}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.thumb .pos{position:absolute;right:6px;bottom:9px;background:rgba(0,0,0,.78);color:#fff;font-size:12px;font-weight:700;padding:1px 6px;border-radius:4px;font-variant-numeric:tabular-nums}
+.thumb .bar{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.35)}
+.thumb .bar i{display:block;height:100%;background:var(--accent)}
+@media (max-width:620px){ .ivcard{grid-template-columns:120px minmax(0,1fr)} .ivcard .side{grid-column:1 / -1;flex-direction:row;justify-content:space-between;align-items:center} }
+.btn.quiet.danger{color:var(--danger)}
+.btn.quiet.danger:hover{background:var(--danger-soft)}
 .home-empty{background:var(--surface);border:1.5px dashed var(--line2);border-radius:14px;padding:34px;text-align:center;color:var(--muted)}
 .home-empty b{display:block;color:var(--ink);font-size:19px;margin-bottom:4px}
 
@@ -423,7 +435,7 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
       <h2>Entrevistas</h2>
       <p class="lead" id="homeLead">Elegí una para verla y anotar.</p>
       <form class="gsearch" id="gsForm"><input class="input" id="gq" type="search" placeholder="Buscar en todas las entrevistas (una palabra o frase)"><button class="btn primary">Buscar</button></form>
-      <div class="homeacts"><button class="btn" id="starsBtn">★ Ver todos los momentos clave</button><button class="btn quiet" id="freeBtn">Notas sueltas del documental</button><button class="btn quiet hidden" id="adminBtn">Cargar o editar entrevistas</button></div>
+      <div class="homeacts"><button class="btn" id="starsBtn">★ Ver todos los momentos clave</button><button class="btn quiet" id="freeBtn">Notas sueltas del documental</button><button class="btn quiet hidden" id="adminBtn">＋ Agregar entrevista</button></div>
       <div id="ivlist"></div>
       <div id="results" class="hidden"></div>
       <div class="free hidden" id="freeHome"></div>
@@ -704,19 +716,28 @@ function renderHome(){
   $('#homeLead').textContent = list.length ? 'Elegí una entrevista para verla y anotar.' : '';
   if (!list.length){
     $('#ivlist').innerHTML = '<div class="home-empty"><b>Todavía no hay entrevistas</b>' +
-      (S.me.admin ? 'Cargá la primera con “Cargar o editar entrevistas”, acá arriba.' : 'Cuando estén cargadas, aparecen acá.') + '</div>';
+      (S.me.admin ? 'Cargá la primera con “＋ Agregar entrevista”, acá arriba.' : 'Cuando estén cargadas, aparecen acá.') + '</div>';
     return;
   }
   $('#ivlist').innerHTML = list.map(iv => {
     const counts = Object.entries(iv.counts || {}).filter(([,n]) => n > 0);
     const pos = parseFloat(store.get('visor.pos.' + iv.id)) || 0;
     const notes = counts.length ? counts.map(([who,n]) => '<span><i class="dot" style="background:' + esc(colorOf(who)) + '"></i>' + esc(who === S.me.name ? 'Vos' : who) + ': ' + plural(n, 'nota', 'notas') + '</span>').join('') : '<span>Sin notas todavía</span>';
-    return '<button class="ivcard" data-id="' + esc(iv.id) + '"><span class="main"><span class="t">' + esc(iv.title) + '</span><span class="meta">' + notes +
-      (iv.stars ? '<span>★ ' + plural(iv.stars, 'momento clave', 'momentos clave') + '</span>' : '') +
-      (pos > 5 ? '<span>Te quedaste en el minuto ' + fmtShort(pos) + '</span>' : '') + '</span></span><span class="go">' + (pos > 5 ? 'Seguir viendo' : 'Abrir') + '</span></button>';
+    const vid = ytId(iv.youtube), dur = parseFloat(store.get('visor.dur.' + iv.id)) || 0;
+    const thumb = '<div class="thumb">' + (vid ? '<img src="https://i.ytimg.com/vi/' + esc(vid) + '/mqdefault.jpg" alt="" loading="lazy" onerror="this.remove()">' : 'Sin video') +
+      (vid && pos > 5 ? '<span class="pos">' + fmtShort(pos) + '</span>' + (dur ? '<span class="bar"><i style="width:' + Math.min(100, pos / dur * 100).toFixed(1) + '%"></i></span>' : '') : '') + '</div>';
+    return '<div class="ivcard" data-id="' + esc(iv.id) + '">' + thumb +
+      '<div class="main"><button class="ivopen">' + esc(iv.title) + '</button><span class="meta">' + notes +
+      (iv.stars ? '<span>★ ' + plural(iv.stars, 'momento clave', 'momentos clave') + '</span>' : '') + '</span></div>' +
+      '<div class="side"><span class="go">' + (pos > 5 ? 'Seguir viendo' : 'Abrir') + '</span>' +
+      (S.me.admin ? '<button class="btn quiet sm ivedit" title="Cambiar nombre, video o transcripción">Editar</button>' : '') + '</div></div>';
   }).join('');
 }
-$('#ivlist').addEventListener('click', e => { const b = e.target.closest('.ivcard'); if (b) openInterview(b.dataset.id); });
+$('#ivlist').addEventListener('click', e => {
+  const c = e.target.closest('.ivcard'); if (!c) return;
+  if (e.target.closest('.ivedit')){ openAdmin(c.dataset.id); return; }
+  openInterview(c.dataset.id);
+});
 
 /* ═════════════ buscar en todas / momentos clave ═════════════ */
 const normTxt = t => String(t || '').toLowerCase().normalize('NFD').replace(new RegExp('[' + String.fromCharCode(0x300) + '-' + String.fromCharCode(0x36f) + ']', 'g'), '');
@@ -918,7 +939,7 @@ function tick(){
   $('#tcNow').innerHTML = S.playerReady ? tcHtml(secToTc(t)) : '--:--:--';
   if (S.composer && S.composer.picking){ const el = $('#cEndNow'); if (el) el.textContent = secToTc(Math.max(t, S.composer.seconds)).slice(0,8); }
   const d = S.playerReady && S.player.getDuration ? S.player.getDuration() : 0;
-  if (d && d !== S.duration){ S.duration = d; renderMarks(); }
+  if (d && d !== S.duration){ S.duration = d; store.set('visor.dur.' + S.cur.id, String(d)); renderMarks(); }
   if (S.duration){ const p = Math.min(100, t / S.duration * 100); $('#head').style.left = p + '%'; $('#prog').style.width = p + '%'; }
   const i = cueIndexAt(t);
   if (S.view === 'n'){ const nl = $('#nowLine'), txt = i >= 0 ? cueSays(i) : (S.cues.length ? '…' : 'Esta entrevista no tiene transcripción.'); if (nl.textContent !== txt) nl.textContent = txt; }
@@ -967,7 +988,7 @@ function buildParas(){
 function renderTranscript(){
   const box = $('#tbody');
   if (!S.cues.length){
-    box.innerHTML = '<div class="tempty">Esta entrevista todavía no tiene transcripción.' + (S.me.admin ? ' Podés subirla desde “Cargar o editar entrevistas”, en la pantalla de inicio.' : '') + '</div>';
+    box.innerHTML = '<div class="tempty">Esta entrevista todavía no tiene transcripción.' + (S.me.admin ? ' Podés subirla con “Editar”, en la tarjeta de la entrevista de la pantalla de inicio.' : '') + '</div>';
     $('.thelp').classList.add('hidden'); return;
   }
   $('.thelp').classList.remove('hidden');
@@ -1627,10 +1648,7 @@ function openAdmin(editId){
   const iv = editId ? S.interviews.find(i => i.id === editId) : null;
   let cues = null;
   const fpsList = ['23.976','24','25','29.97','30','50','59.94','60'];
-  modal('<div class="modal-h"><h3>' + (iv ? 'Editar entrevista' : 'Cargar entrevistas') + '</h3><button class="btn quiet sm" data-close>Cerrar</button></div><div class="modal-b">' +
-    (iv ? '' : '<div>' + (S.interviews.map(i => '<div class="ivrow"><span class="t">' + esc(i.title) + '</span><span class="small">' + (ytId(i.youtube) ? 'Con video' : 'Sin video') + '</span>' +
-        '<button class="btn sm" data-edit="' + esc(i.id) + '">Editar</button><button class="btn quiet sm" data-del="' + esc(i.id) + '">Quitar</button></div>').join('') || '<p class="small">Todavía no cargaste ninguna.</p>') +
-      '</div><div class="sep"></div><h3 style="margin:0 0 14px;font-size:18px">Agregar una entrevista</h3>') +
+  modal('<div class="modal-h"><h3>' + (iv ? 'Editar entrevista' : 'Agregar entrevista') + '</h3><button class="btn quiet sm" data-close>Cerrar</button></div><div class="modal-b">' +
     '<form id="ivForm">' +
       '<label class="field"><span>Nombre</span><input class="input" name="title" required value="' + esc(iv ? iv.title : '') + '" placeholder="Ej: Marta, en la cocina (día 1)"></label>' +
       '<label class="field"><span>Link del video de YouTube</span><input class="input" name="youtube" value="' + esc(iv ? iv.youtube : '') + '" placeholder="https://youtu.be/…"><small>El video tiene que estar subido como “No listado”.</small></label>' +
@@ -1640,8 +1658,9 @@ function openAdmin(editId){
       '</div>' +
       '<div class="drop" id="drop"><input type="file" id="srt" accept=".srt,.vtt,.txt" hidden><div id="dropTxt"><b>Transcripción (.srt)</b><br>Arrastrá el archivo acá o hacé clic para elegirlo.' +
         (iv ? '<br><span class="small">Si no subís nada, queda la que ya estaba.</span>' : '') + '</div></div>' +
-      '<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">' +
-        (iv ? '<button type="button" class="btn" data-back>Volver</button>' : '') +
+      '<div style="display:flex;gap:10px;align-items:center;margin-top:20px">' +
+        (iv ? '<button type="button" class="btn quiet danger" data-del>Quitar entrevista</button>' : '') +
+        '<span style="flex:1"></span><button type="button" class="btn" data-close>Cancelar</button>' +
         '<button class="btn primary" id="ivSave">' + (iv ? 'Guardar cambios' : 'Agregar entrevista') + '</button></div>' +
     '</form></div>');
   const form = $('#ivForm'), drop = $('#drop'), file = $('#srt');
@@ -1669,16 +1688,15 @@ function openAdmin(editId){
       if (!iv || (S.cur && S.cur.id === j.interview.id)) openInterview(j.interview.id); else if (!S.cur) renderHome();
     } catch (err){ toast('No se pudo guardar: ' + err.message, true); btn.disabled = false; btn.textContent = iv ? 'Guardar cambios' : 'Agregar entrevista'; }
   };
-  const root = $('#modalRoot');
-  root.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openAdmin(b.dataset.edit));
-  const back = root.querySelector('[data-back]'); if (back) back.onclick = () => openAdmin();
-  root.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
-    const id = b.dataset.del, i = S.interviews.find(x => x.id === id);
-    if (!confirm('¿Quitar “' + i.title + '” de la lista? Las notas quedan guardadas en la planilla.')) return;
-    try { await tracked(() => api('deleteInterview', { id })); S.interviews = S.interviews.filter(x => x.id !== id); openAdmin();
-      if (S.cur && S.cur.id === id) showHome(); else if (!S.cur) renderHome(); }
-    catch (err){ toast('No se pudo quitar: ' + err.message, true); }
-  });
+  const del = $('#modalRoot').querySelector('[data-del]');
+  if (del) del.onclick = async () => {
+    if (!confirm('¿Quitar “' + iv.title + '” de la lista? Las notas quedan guardadas en la planilla.')) return;
+    try {
+      await tracked(() => api('deleteInterview', { id: iv.id }));
+      S.interviews = S.interviews.filter(x => x.id !== iv.id); closeModal(); toast('Entrevista quitada');
+      if (S.cur && S.cur.id === iv.id) showHome(); else if (!S.cur) renderHome();
+    } catch (err){ toast('No se pudo quitar: ' + err.message, true); }
+  };
 }
 $('#adminBtn').onclick = () => openAdmin();
 
