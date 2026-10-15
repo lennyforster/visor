@@ -157,6 +157,11 @@ button{cursor:pointer}
 .cue:hover{background:var(--hover)}
 .cue.on{background:var(--mark);color:var(--ink);box-shadow:0 0 0 2px var(--mark)}
 .cue.hit{background:var(--hit)}
+/* frases usadas en notas: resaltadas con el color de quien anotó */
+.cue.noted{background:color-mix(in srgb,var(--nc) 22%,transparent);box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--nc) 75%,transparent)}
+.cue.noted:hover{background:color-mix(in srgb,var(--nc) 34%,transparent)}
+.cue.noted.hit{background:var(--hit)}
+.cue.noted.on{background:var(--mark);box-shadow:0 0 0 2px var(--mark), inset 0 -2px 0 color-mix(in srgb,var(--nc) 75%,transparent)}
 .tempty{color:var(--muted);padding:26px 4px;font-size:15px}
 .backnow{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;z-index:3;box-shadow:0 6px 18px rgba(0,0,0,.12)}
 #annot{position:fixed;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.2)}
@@ -1069,13 +1074,37 @@ function renderTranscriptDots(){
     const who = [...new Set(vis.filter(n => n.seconds >= p.start - 0.5 && n.seconds < p.end + 1).map(n => n.author))];
     el.querySelector('.dots').innerHTML = who.map(w => '<i title="Nota de ' + esc(w) + '" style="background:' + esc(colorOf(w)) + '"></i>').join('');
   });
+  // Resaltar las frases que se usaron en una nota (con "hasta": todo el fragmento)
+  const byI = []; document.querySelectorAll('.cue').forEach(el => { byI[+el.dataset.i] = el; });
+  byI.forEach(el => { if (el && el.classList.contains('noted')){ el.classList.remove('noted'); el.style.removeProperty('--nc'); el.removeAttribute('title'); } });
+  S.cueNotes = {};
+  vis.slice().sort((a, b) => String(a.created || '~').localeCompare(String(b.created || '~'))).forEach(n => {
+    cuesForNote(n).forEach(i => {
+      const el = byI[i]; if (!el) return;
+      (S.cueNotes[i] = S.cueNotes[i] || []).push(n.id);
+      el.classList.add('noted'); el.style.setProperty('--nc', colorOf(n.author));
+      const txt = (n.author === S.me.name ? 'Vos' : n.author) + ': ' + (n.comment || n.says || '(sin comentario)');
+      el.title = el.title ? el.title + '\n' + txt : txt;
+    });
+  });
+}
+function cuesForNote(n){
+  const c = S.cues; if (!c.length) return [];
+  const s = n.seconds, e = (n.secondsEnd != null && n.secondsEnd > s) ? n.secondsEnd : null;
+  if (e == null){ const i = cueIndexAt(s); return i >= 0 ? [i] : []; }
+  const out = [];
+  for (let i = 0; i < c.length; i++){ if (c[i][0] >= e - 0.05) break; if (c[i][1] > s + 0.05) out.push(i); }
+  return out;
 }
 $('#tbody').addEventListener('click', e => {
   const sb = e.target.closest('.spk');
   if (sb){ const r = sb.getBoundingClientRect(); openSpkPop(+sb.dataset.ci, r.left, r.bottom + 6); return; }
   if (String(window.getSelection())) return;
   const pt = e.target.closest('.pt'); if (pt){ seek(+pt.dataset.s); return; }
-  const cue = e.target.closest('.cue'); if (cue) seek(S.cues[+cue.dataset.i][0]);
+  const cue = e.target.closest('.cue'); if (!cue) return;
+  seek(S.cues[+cue.dataset.i][0]);
+  const ns = S.cueNotes && S.cueNotes[+cue.dataset.i];
+  if (ns && ns.length) flashRow(ns[ns.length - 1]);
 });
 $('#tbody').addEventListener('dblclick', e => {
   const cue = e.target.closest('.cue'); if (!cue) return;
@@ -1753,6 +1782,7 @@ function openHelp(){
     '<li><div><b>Para anotar, escribí en el cuadro de notas</b>Está siempre abajo del video y sigue el momento que se está viendo. Cuando empezás a escribir, el video se pausa y la nota queda en ese momento. Guardala con “Guardar nota” o Enter. Si es importante, marcá ☆ Momento clave. Con la ✕ lo ocultás.</div></li>' +
     '<li><div><b>Fragmentos largos: desde–hasta</b>En el cuadro tocá “＋ Hasta” y escribí el final, o marcalo reproduciendo el video. Si seleccionás varias frases de la transcripción, el desde–hasta se completa solo.</div></li>' +
     '<li><div><b>Descargar en Excel</b>Con “⬇ Excel”, arriba de la tabla, bajás todas las notas de la entrevista (y sus notas sueltas) para pasárselas al montajista.</div></li>' +
+    '<li><div><b>Lo anotado queda resaltado</b>En la transcripción, las frases que alguien usó en una nota se ven resaltadas con su color. Pasá el mouse para leer la nota, o tocala para encontrarla en la tabla.</div></li>' +
     '<li><div><b>Mirá y respondé las notas de todas</b>Cada persona tiene su color. Elegí cuáles ver con “Todas”, “Mías” o el nombre de cada una. Con “Responder” podés comentar la nota de otra persona.</div></li>' +
     '<li><div><b>Quién habla</b>En entrevistas de a dos, seleccioná la frase donde empieza a hablar otra persona y tocá “¿Quién habla acá?”. La marca vale hasta la próxima. Para cambiarla, tocá el nombre de color en la transcripción.</div></li>' +
     '<li><div><b>Notas sueltas</b>Para ideas que no van en un momento puntual: en cada entrevista, en la pestaña “Notas sueltas” (al lado de “Notas”); y en el inicio, con el botón “Notas sueltas del documental”. No hace falta pausar.</div></li>' +
