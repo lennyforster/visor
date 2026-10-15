@@ -142,25 +142,56 @@ button{cursor:pointer}
 .composer{flex:none;margin:12px 16px 0;background:var(--surface);border:1.5px solid var(--line);border-radius:14px}
 .composer.rest{display:flex;align-items:center;gap:16px;padding:12px 16px}
 .composer.rest p{margin:0;color:var(--muted);flex:1}
-.composer.open{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);padding:14px 16px 14px}
+.composer.open{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);padding:12px 18px 16px}
 .composer.flash{animation:flash .9s}
 @keyframes flash{0%{box-shadow:0 0 0 10px color-mix(in srgb,var(--accent) 30%,transparent)}}
-.c-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-.c-head h3{margin:0;font-size:18px}
-.c-head .when{font-size:18px;color:var(--accent);font-weight:700}
-.c-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.c-grid label{display:block;font-weight:700;font-size:15px;margin-bottom:5px}
-.c-grid label small{font-weight:400;color:var(--muted)}
-.c-grid textarea{resize:none;min-height:46px;max-height:140px;line-height:1.45;overflow:auto}
-.c-foot{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
-.c-foot .lbl{color:var(--muted);font-size:15px;margin-right:2px}
+/* fila de arriba: momento (lo más visible), rango, momento clave y cerrar */
+.c-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:40px}
+.c-lbl{color:var(--muted);font-size:14px;margin-right:2px}
+.tcin.c-tc{width:calc(10ch + 16px);font-size:22px;padding:2px 6px;border-color:transparent;background:transparent}
+.tcin.c-tc:hover{border-color:var(--line2)}
+.tcin.c-tc:focus{border-color:var(--accent);background:var(--surface)}
+.c-arrow{color:var(--faint);font-size:18px;margin:0 2px}
+.c-dur{color:var(--muted);font-size:14px;margin-right:2px}
+.c-ic{border:0;background:none;color:var(--muted);width:34px;height:34px;border-radius:8px;font-size:17px;line-height:1;display:inline-grid;place-items:center;flex:none}
+.c-ic:hover{background:var(--sunk);color:var(--ink)}
+.c-mini{border:0;background:none;color:var(--muted);font-size:14px;padding:4px 6px;border-radius:6px;text-decoration:underline;text-underline-offset:3px}
+.c-mini:hover{color:var(--ink)}
+.c-chip{border:1.5px dashed var(--line2);background:none;color:var(--muted);border-radius:99px;padding:4px 12px;font-size:14px;margin-left:4px}
+.c-chip:hover{border-color:var(--accent);color:var(--accent)}
+.c-sp{flex:1}
+.c-star{border:1.5px solid var(--line2);background:var(--surface);color:var(--muted);border-radius:99px;padding:5px 13px;font-size:14px}
+.c-star:hover{border-color:var(--star);color:var(--star-ink)}
+.c-star.on{background:var(--star-soft);border-color:var(--star);color:var(--star-ink);font-weight:700}
+/* lo que se dice: contexto, en segundo plano */
+.c-quote{display:block;width:100%;resize:none;overflow:hidden;margin:10px 0 0;padding:5px 10px 5px 14px;border:0;border-left:3px solid var(--sc);border-radius:0 8px 8px 0;background:transparent;color:var(--muted);font-size:16px;line-height:1.5;outline:none}
+.c-quote:hover{background:var(--sunk)}
+.c-quote:focus{background:var(--sunk);color:var(--ink)}
+.c-quote::placeholder{color:var(--faint)}
+/* el comentario: lo principal */
+.c-comment{display:block;margin-top:10px;font-size:17px;line-height:1.5;resize:none;overflow:hidden;min-height:78px}
+.c-foot{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.c-tags{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:0}
+.c-tags .pill{padding:4px 11px;font-size:13.5px;border-color:transparent;background:var(--sunk);color:var(--ink)}
+.c-tags .pill:hover{border-color:var(--line2)}
+.c-tags .pill.add{background:none;border:1.5px dashed var(--line2);color:var(--muted)}
+.kbd-hint{font-weight:400;font-size:12px;opacity:.8;border:1px solid currentColor;border-radius:5px;padding:0 5px;margin-left:4px}
+:root[data-theme="dark"] .btn.primary{color:#0E1530}
 .pill{border:1.5px solid var(--line2);background:var(--surface);border-radius:99px;padding:6px 13px;font-size:14px}
 .pill:hover{border-color:var(--faint)}
 .pill.on{background:var(--ink);border-color:var(--ink);color:var(--surface)}
-.c-foot .keys{color:var(--faint);font-size:13px;margin-left:auto;margin-right:6px}
 
 .notesbar{flex:none;display:flex;align-items:center;gap:12px;padding:14px 16px 10px;flex-wrap:wrap}
 .notesbar h3{margin:0;font-size:18px}
+/* pestañas: Notas / Notas sueltas */
+.ltabs{display:flex;gap:4px;flex:none}
+.ltabs button{border:0;background:none;padding:4px 10px 6px;font-size:17px;font-weight:700;color:var(--faint);border-bottom:2.5px solid transparent;border-radius:0;white-space:nowrap}
+.ltabs button:hover{color:var(--muted)}
+.ltabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
+.ltabs button.sub{font-weight:400}
+.ltabs button.sub.on{font-weight:700}
+.ltabs .n{color:var(--faint);font-weight:400;font-size:14px;margin-left:3px}
+.nfilters{display:flex;align-items:center;gap:12px;flex:1 1 480px;flex-wrap:wrap;min-width:0}
 .seg{display:inline-flex;background:var(--sunk);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
 .seg button{border:0;background:transparent;border-radius:8px;padding:6px 12px;font-size:14px;display:inline-flex;align-items:center;gap:7px;color:var(--muted)}
 .seg button.on{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.1)}
@@ -342,21 +373,18 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
 .tagf{border:1.5px solid var(--line2);background:var(--surface);border-radius:10px;padding:6px 10px;font-size:14px;max-width:210px}
 .tagf.has{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 15%,var(--surface));font-weight:700}
 /* notas sueltas */
-.free{flex:none;margin:12px 16px 0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px 14px}
-.free-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.free-h h3{margin:0;font-size:17px}
-.free-h h3 .n{color:var(--faint);font-weight:400}
-.free-h .sub{color:var(--muted);font-size:14px;flex:1;min-width:200px}
-.free-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.free{flex:none;margin:0 16px 24px}
+.free-sub{color:var(--muted);font-size:14px;margin:0 0 10px}
+.free-list{display:flex;flex-direction:column;gap:8px;margin-top:14px}
 .fitem{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;padding:9px 12px;border-radius:10px;border-left:4px solid var(--uc);background:color-mix(in srgb,var(--uc) 7%,var(--surface))}
 .fitem .ro,.fitem .cell{font-size:16px}
 .fitem.mine .cell:hover{border-color:var(--line)}
 .fitem .meta{display:flex;align-items:center;gap:4px;color:var(--faint);font-size:13px;white-space:nowrap;margin-top:1px}
 .fitem .del{padding:3px 8px}
-.free-new{display:flex;gap:8px;align-items:flex-start;margin-top:12px}
-.free-new textarea{resize:none;min-height:44px;line-height:1.45;overflow:hidden}
-.free.closed .free-list,.free.closed .free-new{display:none}
-#home .free{margin:30px 0 0}
+.free-new{display:flex;gap:8px;align-items:flex-start}
+.free-new textarea{resize:none;min-height:46px;line-height:1.45;overflow:hidden;font-size:16px}
+.free .nempty{margin-top:14px}
+#home .free{margin:0}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -395,10 +423,10 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
       <h2>Entrevistas</h2>
       <p class="lead" id="homeLead">Elegí una para verla y anotar.</p>
       <form class="gsearch" id="gsForm"><input class="input" id="gq" type="search" placeholder="Buscar en todas las entrevistas (una palabra o frase)"><button class="btn primary">Buscar</button></form>
-      <div class="homeacts"><button class="btn" id="starsBtn">★ Ver todos los momentos clave</button><button class="btn quiet hidden" id="adminBtn">Cargar o editar entrevistas</button></div>
+      <div class="homeacts"><button class="btn" id="starsBtn">★ Ver todos los momentos clave</button><button class="btn quiet" id="freeBtn">Notas sueltas del documental</button><button class="btn quiet hidden" id="adminBtn">Cargar o editar entrevistas</button></div>
       <div id="ivlist"></div>
       <div id="results" class="hidden"></div>
-      <div class="free" id="freeHome"></div>
+      <div class="free hidden" id="freeHome"></div>
     </div>
   </div>
 
@@ -428,14 +456,16 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
     <div class="split" id="split" title="Arrastrá para agrandar o achicar el video"></div>
     <div class="lower">
       <div class="composer hidden" id="composer"></div>
-      <div class="free" id="freeIv"></div>
       <div class="notesbar">
-        <h3>Notas</h3>
-        <div class="seg" id="seg"></div>
-        <button class="onlystar" id="onlyStar" title="Mostrar solo los momentos clave">★ Solo claves</button>
-        <select class="tagf" id="tagF" title="Mostrar solo una etiqueta"></select>
-        <input class="input" id="nq" placeholder="Buscar en las notas…" type="search">
+        <div class="ltabs" id="ltabs"><button data-lt="notes" class="on">Notas<span class="n" id="ltN"></span></button><button data-lt="free" class="sub" title="Ideas sobre esta entrevista que no van en un momento puntual">Notas sueltas<span class="n" id="ltF"></span></button></div>
+        <div class="nfilters" id="nfilters">
+          <div class="seg" id="seg"></div>
+          <button class="onlystar" id="onlyStar" title="Mostrar solo los momentos clave">★ Solo claves</button>
+          <select class="tagf" id="tagF" title="Mostrar solo una etiqueta"></select>
+          <input class="input" id="nq" placeholder="Buscar en las notas…" type="search">
+        </div>
       </div>
+      <div class="free hidden" id="freeIv"></div>
       <div class="nscroll" id="nscroll">
         <table id="ntable">
           <colgroup><col class="c-st"><col class="c-tc"><col><col><col class="c-tag"><col class="c-who"><col class="c-x"></colgroup>
@@ -567,7 +597,7 @@ const S = {
   player: null, ytReady: false, playerReady: false, prevState: -1, suppressUntil: 0,
   userScrollAt: 0, activeCue: -1, duration: 0,
   composer: null, busy: 0, failed: new Set(), lastNotesJson: '', pollT: null,
-  tagF: '', free: {}, freeJson: {}, freeOpen: store.get('visor.freeOpen') !== '0',
+  tagF: '', free: {}, freeJson: {}, lt: 'notes',
   spk: [], cueSpk: [], speakers: [], spkJson: '', spkPop: null
 };
 const colorOf = name => S.colors[name] || '#9AA3B2';
@@ -714,12 +744,20 @@ function showResults(title, items, q, emptyMsg){
     (groups || '<div class="home-empty"><b>' + emptyMsg + '</b></div>');
 }
 function hideResults(){
-  $('#results').classList.add('hidden'); $('#ivlist').classList.remove('hidden'); $('.homeacts').classList.remove('hidden'); $('#homeLead').classList.remove('hidden'); $('#freeHome').classList.remove('hidden');
+  $('#results').classList.add('hidden'); $('#freeHome').classList.add('hidden');
+  $('#ivlist').classList.remove('hidden'); $('.homeacts').classList.remove('hidden'); $('#homeLead').classList.remove('hidden');
 }
+// Notas sueltas del documental: vista secundaria del inicio
+function showHomeFree(){
+  $('#ivlist').classList.add('hidden'); $('.homeacts').classList.add('hidden'); $('#homeLead').classList.add('hidden'); $('#results').classList.add('hidden');
+  $('#freeHome').classList.remove('hidden'); renderFree('');
+  const t = $('#freeHome .free-new textarea'); if (t) t.focus();
+}
+$('#freeBtn').onclick = showHomeFree;
 $('#results').addEventListener('click', e => {
   if (e.target.closest('#resBack')){ hideResults(); $('#gq').value = ''; return; }
   const h = e.target.closest('.hit'); if (!h) return;
-  if (!h.dataset.iv){ hideResults(); $('#gq').value = ''; $('#freeHome').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  if (!h.dataset.iv){ $('#gq').value = ''; showHomeFree(); return; }
   openInterview(h.dataset.iv, h.dataset.s === '' ? undefined : +h.dataset.s);
 });
 $('#gsForm').onsubmit = async e => {
@@ -763,7 +801,7 @@ async function openInterview(id, at){
   S.spk = []; S.spkJson = ''; applySpk(); closeSpkPop();
   $('#tq').value = ''; $('#nq').value = ''; S.q = ''; S.tagF = '';
   $('#tbody').innerHTML = '<div class="tempty">Cargando la transcripción…</div>';
-  closeComposer(); renderNotes(); renderMarks(); renderFree(iv.id);
+  closeComposer(); setLowerTab('notes'); renderNotes(); renderMarks(); renderFree(iv.id);
   loadVideo();
   try {
     const j = await tracked(() => api('open', { id }));
@@ -1124,37 +1162,45 @@ function setEnd(t){
   pauseQuiet(); renderComposer();
 }
 function rangeHtml(c){
-  if (c.picking) return '<span class="to">hasta</span><button class="btn primary sm" id="cEndSet">■ Marcar el final acá (<span id="cEndNow" class="num">' + esc(secToTc(Math.max(now(), c.seconds)).slice(0,8)) + '</span>)</button>' +
-    '<button class="link" id="cEndCancel" style="font-size:14px">Cancelar</button>';
-  if (c.end != null) return '<span class="to">hasta</span><input class="tcin" id="cEndIn" value="' + esc(secToTc(c.end)) + '" title="Podés escribir el timecode a mano"><span class="small">(' + durTxt(c.end - c.seconds) + ')</span>' +
-    '<button class="link" id="cEndClear" style="font-size:14px">Quitar el final</button>';
-  return '<button class="link" id="cEndPick" style="font-size:14px">Marcar hasta dónde va</button><span class="to">o escribí el final:</span><input class="tcin" id="cEndIn" placeholder="hasta…" title="Escribí el timecode del final (opcional)">';
+  if (c.picking) return '<span class="c-arrow">→</span><button class="btn primary sm" id="cEndSet">■ Marcar el final <span id="cEndNow" class="num">' + esc(secToTc(Math.max(now(), c.seconds)).slice(0,8)) + '</span></button>' +
+    '<button class="c-mini" id="cEndCancel">cancelar</button>';
+  if (c.end != null) return '<span class="c-arrow">→</span><input class="tcin c-tc" id="cEndIn" value="' + esc(secToTc(c.end)) + '" title="Hasta dónde va. Podés escribirlo a mano." aria-label="Hasta">' +
+    '<span class="c-dur">' + durTxt(c.end - c.seconds) + '</span><button class="c-mini" id="cEndClear">quitar</button>';
+  if (c.endEdit) return '<span class="c-arrow">→</span><input class="tcin c-tc" id="cEndIn" placeholder="hasta…" title="Escribí el timecode del final" aria-label="Hasta">' +
+    '<button class="c-mini" id="cEndPlay">o marcalo reproduciendo ▶</button>';
+  return '<button class="c-chip" id="cEndPick" title="Para fragmentos largos: marcá hasta dónde va">＋ Hasta</button>';
 }
 function renderComposer(){
   const c = S.composer, box = $('#composer');
   if (!c || !c.open){ box.className = 'composer hidden'; box.innerHTML = ''; return; }
   box.className = 'composer open';
+  const ci = cueIndexAt(c.seconds), sp = ci >= 0 ? cueSpk(ci) : '';
   box.innerHTML =
-    '<div class="c-head"><h3>Nueva nota</h3><div class="c-range"><span class="to">desde</span><input class="tcin" id="cStartIn" value="' + esc(secToTc(c.seconds)) + '" title="Podés escribir el timecode a mano">' +
-      (c.end == null && !c.picking ? '<button class="link" id="cNow" style="font-size:14px">Usar el momento actual</button><span class="to">·</span>' : '') +
-      rangeHtml(c) + '</div></div>' +
-    '<div class="c-grid">' +
-      '<div><label for="cSays">Qué se dice <small>(lo completamos con la transcripción; podés cambiarlo)</small></label>' +
-        '<textarea class="input" id="cSays" rows="2">' + esc(c.says) + '</textarea></div>' +
-      '<div><label for="cComment">Tu comentario</label>' +
-        '<textarea class="input" id="cComment" rows="2" placeholder="Por ejemplo: buscar fotos de archivo de la fábrica">' + esc(c.comment) + '</textarea></div>' +
+    '<div class="c-top">' +
+      '<span class="c-lbl">Nota en</span>' +
+      '<input class="tcin c-tc" id="cStartIn" value="' + esc(secToTc(c.seconds)) + '" title="Momento de la nota. Podés escribirlo a mano." aria-label="Desde">' +
+      (c.end == null && !c.picking ? '<button class="c-ic" id="cNow" title="Usar el momento actual del video" aria-label="Usar el momento actual del video">↻</button>' : '') +
+      rangeHtml(c) +
+      '<span class="c-sp"></span>' +
+      '<button class="c-star' + (c.star ? ' on' : '') + '" id="cStar" aria-pressed="' + (c.star ? 'true' : 'false') + '">' + (c.star ? '★ Momento clave' : '☆ Momento clave') + '</button>' +
+      '<button class="c-ic" id="cCancel" title="Cancelar (Esc)" aria-label="Cancelar">✕</button>' +
     '</div>' +
-    '<div class="c-foot"><button class="pill starp' + (c.star ? ' on' : '') + '" id="cStar">' + (c.star ? '★ Momento clave' : '☆ Momento clave') + '</button>' +
-      '<span class="lbl" style="margin-left:8px">Etiqueta:</span>' +
-      tagList().map(t => '<button class="pill' + (t === c.tag ? ' on' : '') + '" data-tag="' + esc(t) + '" style="--tc:' + tagColor(t) + '">' + esc(t) + '</button>').join('') +
-      (c.newTag ? '<span class="newtag"><input class="input" id="cNewTag" placeholder="Nombre de la etiqueta" maxlength="40"><button class="btn primary sm" id="cNewTagOk">Crear</button><button class="link" id="cNewTagNo" style="font-size:14px">Cancelar</button></span>'
-                : '<button class="pill add" id="cNewTagOpen">＋ Nueva etiqueta</button>') +
-      '<span class="keys">Enter para guardar</span>' +
-      '<button class="btn" id="cCancel">Cancelar</button><button class="btn primary" id="cSave">Guardar nota</button></div>';
+    '<textarea class="c-quote" id="cSays" rows="1" style="--sc:' + (sp ? spkColor(sp) : 'var(--line2)') + '" placeholder="Qué se dice en este momento (opcional)" aria-label="Qué se dice" title="Lo completamos con la transcripción. Podés cambiarlo.">' + esc(c.says) + '</textarea>' +
+    '<textarea class="input c-comment" id="cComment" rows="2" placeholder="Escribí tu comentario…" aria-label="Tu comentario">' + esc(c.comment) + '</textarea>' +
+    '<div class="c-foot">' +
+      '<div class="c-tags">' +
+        tagList().map(t => '<button class="pill' + (t === c.tag ? ' on' : '') + '" data-tag="' + esc(t) + '" style="--tc:' + tagColor(t) + '">' + esc(t) + '</button>').join('') +
+        (c.newTag ? '<span class="newtag"><input class="input" id="cNewTag" placeholder="Nueva etiqueta" maxlength="40"><button class="btn primary sm" id="cNewTagOk">Crear</button><button class="c-mini" id="cNewTagNo">cancelar</button></span>'
+                  : '<button class="pill add" id="cNewTagOpen" title="Crear una etiqueta nueva">＋ Etiqueta</button>') +
+      '</div>' +
+      '<button class="btn primary" id="cSave">Guardar nota <span class="kbd-hint">Enter</span></button>' +
+    '</div>';
+  box.querySelectorAll('textarea').forEach(autosize);
 }
 const composerEl = $('#composer');
 composerEl.addEventListener('input', e => {
   const c = S.composer; if (!c.open) return; c.touched = true;
+  if (e.target.tagName === 'TEXTAREA') autosize(e.target);
   if (e.target.id === 'cSays') c.says = e.target.value;
   if (e.target.id === 'cComment') c.comment = e.target.value;
 });
@@ -1162,11 +1208,12 @@ composerEl.addEventListener('click', e => {
   const t = e.target.closest('button'); if (!t) return;
   const c = S.composer;
   if (t.id === 'cNow'){ c.seconds = now(); $('#cStartIn').value = secToTc(c.seconds); }
-  if (t.id === 'cEndPick'){ c.touched = true; c.picking = true; renderComposer(); if (S.playerReady){ S.suppressUntil = 0; S.player.playVideo(); } toast('Dale play y tocá “Marcar el final acá” (o pausá) cuando termine el fragmento.'); }
+  if (t.id === 'cEndPick'){ c.touched = true; c.endEdit = true; renderComposer(); const ei = $('#cEndIn'); if (ei) ei.focus(); }
+  if (t.id === 'cEndPlay'){ c.touched = true; c.endEdit = false; c.picking = true; renderComposer(); if (S.playerReady){ S.suppressUntil = 0; S.player.playVideo(); } toast('Cuando termine el fragmento, tocá “Marcar el final” (o pausá).'); }
   if (t.id === 'cEndSet') setEnd(now());
   if (t.id === 'cEndCancel'){ c.picking = false; pauseQuiet(); renderComposer(); }
-  if (t.id === 'cEndClear'){ c.end = null; renderComposer(); }
-  if (t.id === 'cStar'){ c.star = !c.star; c.touched = true; t.classList.toggle('on', c.star); t.textContent = c.star ? '★ Momento clave' : '☆ Momento clave'; }
+  if (t.id === 'cEndClear'){ c.end = null; c.endEdit = false; renderComposer(); }
+  if (t.id === 'cStar'){ c.star = !c.star; c.touched = true; t.classList.toggle('on', c.star); t.setAttribute('aria-pressed', c.star ? 'true' : 'false'); t.textContent = c.star ? '★ Momento clave' : '☆ Momento clave'; }
   if (t.id === 'cNewTagOpen'){ c.newTag = true; c.touched = true; renderComposer(); $('#cNewTag').focus(); return; }
   if (t.id === 'cNewTagNo'){ c.newTag = false; renderComposer(); return; }
   if (t.id === 'cNewTagOk'){ createComposerTag(); return; }
@@ -1183,7 +1230,7 @@ composerEl.addEventListener('change', e => {
     c.seconds = s; c.touched = true; if (c.end != null && c.end <= s) c.end = null; renderComposer();
   }
   if (e.target.id === 'cEndIn'){
-    if (!e.target.value.trim()){ c.end = null; renderComposer(); return; }
+    if (!e.target.value.trim()){ c.end = null; c.endEdit = false; renderComposer(); return; }
     const s = parseTcInput(e.target.value);
     if (s == null || s <= c.seconds){ e.target.classList.add('bad'); toast(s == null ? 'Ese timecode no es válido. Escribilo como 14:33:20:05.' : 'El final tiene que ser después del comienzo.', true); return; }
     c.end = s; c.touched = true; renderComposer();
@@ -1258,6 +1305,7 @@ function renderSeg(){
   $('#seg').innerHTML = opts.map(([k, label, n, who]) => '<button class="' + (S.who === k ? 'on' : '') + '" data-k="' + esc(k) + '">' +
     (who ? '<i class="dot" style="background:' + esc(colorOf(who)) + '"></i>' : '') + esc(label) + ' <span class="n">' + n + '</span></button>').join('');
   const stars = S.notes.filter(n => n.star).length;
+  $('#ltN').textContent = S.notes.length ? ' ' + S.notes.length : '';
   const b = $('#onlyStar'); b.classList.toggle('on', S.onlyStar); b.innerHTML = '★ Solo claves <span class="n">' + stars + '</span>';
   // etiquetas: las de la lista + las que tengan las notas
   const tc = {}; S.notes.forEach(n => { const k = n.tag || '__none'; tc[k] = (tc[k] || 0) + 1; });
@@ -1448,19 +1496,33 @@ function freeHtml(f){
     '<span class="meta">' + (S.failed.has(f.id) ? '<span class="warn" style="margin:0">Sin guardar</span>' : esc(shortDate(f.created))) +
     (mine ? '<button class="del" data-fdel="' + esc(f.id) + '">Quitar</button>' : '') + '</span></div>';
 }
+// Pestañas de abajo en la entrevista: Notas / Notas sueltas
+function setLowerTab(t){
+  S.lt = t === 'free' ? 'free' : 'notes';
+  $('#ltabs').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.lt === S.lt));
+  $('#nfilters').classList.toggle('hidden', S.lt !== 'notes');
+  $('#nscroll').classList.toggle('hidden', S.lt !== 'notes');
+  $('#freeIv').classList.toggle('hidden', S.lt !== 'free');
+  if (S.lt === 'free' && S.cur) renderFree(S.cur.id);
+}
+$('#ltabs').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  setLowerTab(b.dataset.lt);
+  if (S.lt === 'free'){ const t = $('#freeIv .free-new textarea'); if (t) t.focus(); }
+});
 function renderFree(k){
   const box = freeBox(k); if (!box || !S.me) return;
-  const list = (S.free[k] || []).slice().sort((a, b) => String(a.created || '~').localeCompare(String(b.created || '~')));
+  const list = (S.free[k] || []).slice().sort((a, b) => String(b.created || '~').localeCompare(String(a.created || '~')));
+  if (k) $('#ltF').textContent = list.length ? ' ' + list.length : '';
+  else $('#freeBtn').textContent = 'Notas sueltas del documental' + (list.length ? ' (' + list.length + ')' : '');
   const ae = document.activeElement;
   let restore = null;
   if (ae && box.contains(ae) && ae.dataset.fid) restore = { id: ae.dataset.fid, s: ae.selectionStart, e: ae.selectionEnd };
   const old = box.querySelector('.free-new textarea'); const draft = old ? old.value : ''; const draftFocus = !!old && ae === old;
-  box.className = 'free' + (S.freeOpen ? '' : ' closed') + (k === '' && !$('#results').classList.contains('hidden') ? ' hidden' : '');
-  box.innerHTML = '<div class="free-h"><h3>' + (k ? 'Notas sueltas' : 'Notas sueltas del documental') + ' <span class="n">' + list.length + '</span></h3>' +
-    '<span class="sub">' + (k ? 'Ideas sobre esta entrevista que no van en un momento puntual.' : 'Ideas generales, que no son de una entrevista en particular.') + '</span>' +
-    '<button class="btn quiet sm" data-fact="toggle">' + (S.freeOpen ? 'Ocultar' : 'Mostrar') + '</button></div>' +
-    (list.length ? '<div class="free-list">' + list.map(freeHtml).join('') + '</div>' : '') +
-    '<div class="free-new"><textarea class="input" rows="1" placeholder="Escribí una idea suelta… (no hace falta pausar el video)"></textarea><button class="btn primary" data-fact="add">Guardar</button></div>';
+  box.innerHTML = (k ? '' : '<div class="reshead"><h3>Notas sueltas del documental</h3><button class="btn" data-fact="back">← Volver a la lista</button></div>') +
+    '<p class="free-sub">' + (k ? 'Ideas sobre esta entrevista que no van en un momento puntual. No hace falta pausar el video.' : 'Ideas generales, que no son de una entrevista en particular.') + '</p>' +
+    '<div class="free-new"><textarea class="input" rows="1" placeholder="Escribí una idea…"></textarea><button class="btn primary" data-fact="add">Guardar</button></div>' +
+    (list.length ? '<div class="free-list">' + list.map(freeHtml).join('') + '</div>' : '<div class="nempty"><b>Todavía no hay notas sueltas</b>Lo que escribas acá lo ve también la otra directora.</div>');
   const nt = box.querySelector('.free-new textarea'); nt.value = draft;
   box.querySelectorAll('textarea').forEach(autosize);
   if (draftFocus) nt.focus();
@@ -1488,7 +1550,7 @@ async function pushFree(f){
   box.addEventListener('click', async e => {
     const k = key(); if (k == null) return;
     const t = e.target.closest('[data-fact],[data-fdel]'); if (!t) return;
-    if (t.dataset.fact === 'toggle'){ S.freeOpen = !S.freeOpen; store.set('visor.freeOpen', S.freeOpen ? '1' : '0'); renderFree(k); return; }
+    if (t.dataset.fact === 'back'){ hideResults(); return; }
     if (t.dataset.fact === 'add'){ addFree(k); return; }
     if (t.dataset.fdel){
       if (!t.classList.contains('confirm')){ t.classList.add('confirm'); t.textContent = '¿Seguro?'; setTimeout(() => { t.classList.remove('confirm'); t.textContent = 'Quitar'; }, 3000); return; }
@@ -1546,7 +1608,7 @@ function openHelp(){
     '<li><div><b>Fragmentos largos: desde–hasta</b>En el recuadro tocá “Marcar hasta dónde va”, dejá correr el video y tocá “Marcar el final acá”. Si seleccionás varias frases de la transcripción, el desde–hasta se completa solo.</div></li>' +
     '<li><div><b>Mirá y respondé las notas de todas</b>Cada persona tiene su color. Elegí cuáles ver con “Todas”, “Mías” o el nombre de cada una. Con “Responder” podés comentar la nota de otra persona.</div></li>' +
     '<li><div><b>Quién habla</b>En entrevistas de a dos, seleccioná la frase donde empieza a hablar otra persona y tocá “¿Quién habla acá?”. La marca vale hasta la próxima. Para cambiarla, tocá el nombre de color en la transcripción.</div></li>' +
-    '<li><div><b>Notas sueltas</b>Para ideas que no van en un momento puntual: abajo del video en cada entrevista, o en la pantalla de inicio para ideas generales del documental. No hace falta pausar.</div></li>' +
+    '<li><div><b>Notas sueltas</b>Para ideas que no van en un momento puntual: en cada entrevista, en la pestaña “Notas sueltas” (al lado de “Notas”); y en el inicio, con el botón “Notas sueltas del documental”. No hace falta pausar.</div></li>' +
     '<li><div><b>Etiquetas de colores</b>Cada etiqueta tiene su color. Con el selector “Todas las etiquetas”, arriba de la tabla, ves solo las notas de una etiqueta.</div></li>' +
     '<li><div><b>Dos formas de ver</b>Arriba podés elegir “Con transcripción” o “Solo notas”. En “Solo notas” el video queda al costado y las notas se ven más grandes.</div></li>' +
     '<li><div><b>Buscá en todas las entrevistas</b>En la pantalla de inicio podés buscar una palabra en todas a la vez, o ver juntos todos los momentos clave.</div></li>' +
