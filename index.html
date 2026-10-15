@@ -317,6 +317,46 @@ kbd{font:700 13px/1 var(--ui);background:var(--sunk);border:1px solid var(--line
 
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:12px;z-index:200;font-size:15px;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:90vw}
 .toast.bad{background:var(--danger);color:#fff}
+/* quién habla */
+.para .tx.spkd{border-left:3px solid var(--sc);padding-left:12px}
+.spk{display:block;border:0;background:none;padding:0;margin:0 0 3px;font-size:13px;font-weight:700;color:var(--sc);cursor:pointer;user-select:none;-webkit-user-select:none}
+.spk:hover{text-decoration:underline}
+#spkBtn{position:fixed;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+#spkPop{position:fixed;z-index:60;width:310px;background:var(--surface);border:1px solid var(--line2);border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,.22);padding:14px 16px}
+#spkPop .q{color:var(--muted);font-size:14px;margin:2px 0 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#spkPop .names{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+#spkPop .names .pill{display:inline-flex;align-items:center;gap:7px}
+#spkPop .names .pill::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--sc)}
+#spkPop .names .pill.on{background:var(--sc);border-color:var(--sc);color:#fff}
+#spkPop .names .pill.on::before{background:#fff}
+#spkPop .new{display:flex;gap:6px}
+#spkPop .new .input{padding:7px 10px;font-size:14px}
+#spkPop .foot{display:flex;justify-content:space-between;margin-top:12px}
+/* etiquetas con color */
+.tagpill{display:inline-flex;align-items:center;gap:6px;background:color-mix(in srgb,var(--tc,#8A92A0) 15%,var(--surface));border-color:color-mix(in srgb,var(--tc,#8A92A0) 45%,var(--surface))}
+.tagpill::before,.pill[data-tag]::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--tc);flex:none}
+.pill[data-tag]{display:inline-flex;align-items:center;gap:7px}
+.pill[data-tag].on{background:var(--tc);border-color:var(--tc);color:#fff}
+.pill[data-tag].on::before{background:#fff}
+select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border-color:color-mix(in srgb,var(--tc) 55%,var(--surface))}
+.tagf{border:1.5px solid var(--line2);background:var(--surface);border-radius:10px;padding:6px 10px;font-size:14px;max-width:210px}
+.tagf.has{border-color:var(--tc);background:color-mix(in srgb,var(--tc) 15%,var(--surface));font-weight:700}
+/* notas sueltas */
+.free{flex:none;margin:12px 16px 0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px 14px}
+.free-h{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.free-h h3{margin:0;font-size:17px}
+.free-h h3 .n{color:var(--faint);font-weight:400}
+.free-h .sub{color:var(--muted);font-size:14px;flex:1;min-width:200px}
+.free-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.fitem{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start;padding:9px 12px;border-radius:10px;border-left:4px solid var(--uc);background:color-mix(in srgb,var(--uc) 7%,var(--surface))}
+.fitem .ro,.fitem .cell{font-size:16px}
+.fitem.mine .cell:hover{border-color:var(--line)}
+.fitem .meta{display:flex;align-items:center;gap:4px;color:var(--faint);font-size:13px;white-space:nowrap;margin-top:1px}
+.fitem .del{padding:3px 8px}
+.free-new{display:flex;gap:8px;align-items:flex-start;margin-top:12px}
+.free-new textarea{resize:none;min-height:44px;line-height:1.45;overflow:hidden}
+.free.closed .free-list,.free.closed .free-new{display:none}
+#home .free{margin:30px 0 0}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -358,6 +398,7 @@ kbd{font:700 13px/1 var(--ui);background:var(--sunk);border:1px solid var(--line
       <div class="homeacts"><button class="btn" id="starsBtn">★ Ver todos los momentos clave</button><button class="btn quiet hidden" id="adminBtn">Cargar o editar entrevistas</button></div>
       <div id="ivlist"></div>
       <div id="results" class="hidden"></div>
+      <div class="free" id="freeHome"></div>
     </div>
   </div>
 
@@ -378,7 +419,7 @@ kbd{font:700 13px/1 var(--ui);background:var(--sunk);border:1px solid var(--line
             <h3>Lo que se dice</h3>
             <input class="input" id="tq" placeholder="Buscar una palabra…" type="search">
           </div>
-          <div class="thelp">Tocá una frase para ir a ese momento. Seleccioná texto para anotarlo.</div>
+          <div class="thelp">Tocá una frase para ir a ese momento. Seleccioná texto para anotarlo o para marcar quién habla.</div>
           <div class="tbody" id="tbody"></div>
           <button class="btn sm backnow hidden" id="backNow">Volver a lo que se está diciendo</button>
         </div>
@@ -387,10 +428,12 @@ kbd{font:700 13px/1 var(--ui);background:var(--sunk);border:1px solid var(--line
     <div class="split" id="split" title="Arrastrá para agrandar o achicar el video"></div>
     <div class="lower">
       <div class="composer hidden" id="composer"></div>
+      <div class="free" id="freeIv"></div>
       <div class="notesbar">
         <h3>Notas</h3>
         <div class="seg" id="seg"></div>
         <button class="onlystar" id="onlyStar" title="Mostrar solo los momentos clave">★ Solo claves</button>
+        <select class="tagf" id="tagF" title="Mostrar solo una etiqueta"></select>
         <input class="input" id="nq" placeholder="Buscar en las notas…" type="search">
       </div>
       <div class="nscroll" id="nscroll">
@@ -406,6 +449,8 @@ kbd{font:700 13px/1 var(--ui);background:var(--sunk);border:1px solid var(--line
 </section>
 
 <button id="annot" class="btn primary sm hidden">Anotar esto</button>
+<button id="spkBtn" class="btn sm hidden">¿Quién habla acá?</button>
+<div id="spkPop" class="hidden"></div>
 <div id="modalRoot"></div>
 
 <script>
@@ -521,10 +566,20 @@ const S = {
   tags: [], view: 't', cues: [], paras: null, notes: [], replies: [], who: 'all', q: '', onlyStar: false, replyOpen: null, tcEdit: null, pendingSeek: null,
   player: null, ytReady: false, playerReady: false, prevState: -1, suppressUntil: 0,
   userScrollAt: 0, activeCue: -1, duration: 0,
-  composer: null, busy: 0, failed: new Set(), lastNotesJson: '', pollT: null
+  composer: null, busy: 0, failed: new Set(), lastNotesJson: '', pollT: null,
+  tagF: '', free: {}, freeJson: {}, freeOpen: store.get('visor.freeOpen') !== '0',
+  spk: [], cueSpk: [], speakers: [], spkJson: '', spkPop: null
 };
 const colorOf = name => S.colors[name] || '#9AA3B2';
 const tagList = () => (S.tags && S.tags.length) ? S.tags : CONFIG.TAGS;
+// Cada etiqueta tiene su color (según el orden en que se crearon)
+const TAG_COLORS = ['#D9822B', '#2E9D8F', '#8B5CF6', '#D64560', '#3B7DD8', '#9A7B0A', '#4E9A3A', '#C2569B', '#64748B', '#1597B3'];
+function tagColor(t){
+  if (!t) return '';
+  let i = tagList().indexOf(t);
+  if (i < 0){ i = 0; for (const ch of String(t)) i = (i * 31 + ch.charCodeAt(0)) % 9973; }
+  return TAG_COLORS[i % TAG_COLORS.length];
+}
 async function addTag(name){
   name = String(name || '').replace(/\s+/g, ' ').trim();
   if (!name) return null;
@@ -542,7 +597,7 @@ async function api(action, data){
   } else {
     if (!API_URL) throw new Error('Falta configurar la dirección del servidor.');
     // Si se corta la conexión, reintenta solo (únicamente lo que no duplica datos)
-    const safe = /^(login|open|notes|search|starred|saveNote)$/.test(action);
+    const safe = /^(login|open|notes|search|starred|saveNote|free|saveFree|setSpeaker)$/.test(action);
     for (let i = 0; ; i++){
       try {
         const r = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow' });
@@ -575,6 +630,7 @@ async function login(pw, silent){
     const j = await api('login');
     if ($('#remember').checked || silent) store.set('visor.pw', pw);
     S.me = j.me; S.users = j.users; S.interviews = j.interviews; S.tags = j.tags || [];
+    setFree('', j.free || []); S.freeJson[''] = JSON.stringify(j.free || []);
     S.colors = {}; S.users.forEach(u => S.colors[u.name] = u.color);
     enterApp();
   } catch (e){
@@ -604,7 +660,7 @@ function enterApp(){
 
 /* ═════════════ inicio ═════════════ */
 function showHome(){
-  savePos();
+  savePos(); closeSpkPop();
   if (S.player && S.playerReady){ try { S.player.pauseVideo(); } catch(e){} }
   S.cur = null; try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
   $('#work').classList.add('hidden'); $('#home').classList.remove('hidden'); $('#viewSw').classList.add('hidden');
@@ -613,6 +669,7 @@ function showHome(){
 }
 function renderHome(){
   hideResults();
+  renderFree('');
   const list = S.interviews;
   $('#homeLead').textContent = list.length ? 'Elegí una entrevista para verla y anotar.' : '';
   if (!list.length){
@@ -640,30 +697,36 @@ function highlight(text, q){
   return esc(t.slice(0, i)) + '<mark>' + esc(t.slice(i, i + nq.length)) + '</mark>' + esc(t.slice(i + nq.length));
 }
 function showResults(title, items, q, emptyMsg){
-  $('#ivlist').classList.add('hidden'); $('.homeacts').classList.add('hidden'); $('#homeLead').classList.add('hidden');
+  $('#ivlist').classList.add('hidden'); $('.homeacts').classList.add('hidden'); $('#homeLead').classList.add('hidden'); $('#freeHome').classList.add('hidden');
   const box = $('#results'); box.classList.remove('hidden');
   const byIv = {}; items.forEach(it => (byIv[it.interview] = byIv[it.interview] || []).push(it));
-  const groups = S.interviews.filter(iv => byIv[iv.id]).map(iv => '<div class="resgroup"><h4>' + esc(iv.title) + '</h4>' +
-    byIv[iv.id].map(it => '<button class="hit" data-iv="' + esc(iv.id) + '" data-s="' + it.seconds + '"><span class="t num">' + esc(secToTcFor(iv, it.seconds).slice(0,8)) + '</span><span>' +
-      '<span class="k">' + (it.kind === 'transcript' ? 'Se dice' : ((it.star ? '★ ' : '') + 'Nota de ' + esc(it.author === S.me.name ? 'vos' : it.author))) + '</span>' +
+  const who = a => esc(a === S.me.name ? 'vos' : a);
+  const hit = (iv, it) => '<button class="hit" data-iv="' + esc(iv ? iv.id : '') + '" data-s="' + (it.kind === 'free' ? '' : it.seconds) + '"><span class="t num">' +
+      (it.kind === 'free' ? 'Suelta' : esc(secToTcFor(iv, it.seconds).slice(0,8))) + '</span><span>' +
+      '<span class="k">' + (it.kind === 'transcript' ? 'Se dice' + (it.speaker ? ' · ' + esc(it.speaker) : '') : it.kind === 'free' ? 'Nota suelta de ' + who(it.author) : ((it.star ? '★ ' : '') + 'Nota de ' + who(it.author))) + '</span>' +
       '<span class="x">' + highlight(it.kind === 'transcript' ? it.text : (it.comment || it.text || ''), q) + '</span>' +
-      (it.kind !== 'transcript' && it.says && it.says !== (it.comment || it.text) ? '<span class="k" style="margin-top:4px">“' + highlight(it.says, q) + '”</span>' : '') +
-      '</span></button>').join('') + '</div>').join('');
+      (it.kind === 'note' && it.says && it.says !== (it.comment || it.text) ? '<span class="k" style="margin-top:4px">“' + highlight(it.says, q) + '”</span>' : '') +
+      '</span></button>';
+  const groups = (byIv[''] ? '<div class="resgroup"><h4>Notas sueltas del documental</h4>' + byIv[''].map(it => hit(null, it)).join('') + '</div>' : '') +
+    S.interviews.filter(iv => byIv[iv.id]).map(iv => '<div class="resgroup"><h4>' + esc(iv.title) + '</h4>' +
+    byIv[iv.id].map(it => hit(iv, it)).join('') + '</div>').join('');
   box.innerHTML = '<div class="reshead"><h3>' + title + '</h3><button class="btn" id="resBack">← Volver a la lista</button></div>' +
     (groups || '<div class="home-empty"><b>' + emptyMsg + '</b></div>');
 }
 function hideResults(){
-  $('#results').classList.add('hidden'); $('#ivlist').classList.remove('hidden'); $('.homeacts').classList.remove('hidden'); $('#homeLead').classList.remove('hidden');
+  $('#results').classList.add('hidden'); $('#ivlist').classList.remove('hidden'); $('.homeacts').classList.remove('hidden'); $('#homeLead').classList.remove('hidden'); $('#freeHome').classList.remove('hidden');
 }
 $('#results').addEventListener('click', e => {
   if (e.target.closest('#resBack')){ hideResults(); $('#gq').value = ''; return; }
-  const h = e.target.closest('.hit'); if (h) openInterview(h.dataset.iv, +h.dataset.s);
+  const h = e.target.closest('.hit'); if (!h) return;
+  if (!h.dataset.iv){ hideResults(); $('#gq').value = ''; $('#freeHome').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+  openInterview(h.dataset.iv, h.dataset.s === '' ? undefined : +h.dataset.s);
 });
 $('#gsForm').onsubmit = async e => {
   e.preventDefault();
   const q = $('#gq').value.trim();
   if (q.length < 2){ toast('Escribí al menos dos letras.'); return; }
-  $('#results').classList.remove('hidden'); $('#ivlist').classList.add('hidden');
+  $('#results').classList.remove('hidden'); $('#ivlist').classList.add('hidden'); $('#freeHome').classList.add('hidden');
   $('#results').innerHTML = '<p class="small">Buscando “' + esc(q) + '” en todas las entrevistas…</p>';
   try {
     const j = await tracked(() => api('search', { q }));
@@ -672,7 +735,7 @@ $('#gsForm').onsubmit = async e => {
   } catch (err){ hideResults(); toast('No se pudo buscar: ' + err.message, true); }
 };
 $('#starsBtn').onclick = async () => {
-  $('#results').classList.remove('hidden'); $('#ivlist').classList.add('hidden');
+  $('#results').classList.remove('hidden'); $('#ivlist').classList.add('hidden'); $('#freeHome').classList.add('hidden');
   $('#results').innerHTML = '<p class="small">Juntando los momentos clave…</p>';
   try {
     const j = await tracked(() => api('starred'));
@@ -697,15 +760,18 @@ async function openInterview(id, at){
   $('#home').classList.add('hidden'); $('#work').classList.remove('hidden'); $('#viewSw').classList.remove('hidden');
   $('#backBtn').classList.remove('hidden'); $('#topTitle').textContent = iv.title;
   S.cues = []; S.paras = null; S.notes = []; S.replies = []; S.replyOpen = null; S.lastNotesJson = ''; S.activeCue = -1; S.duration = 0;
-  $('#tq').value = ''; $('#nq').value = ''; S.q = '';
+  S.spk = []; S.spkJson = ''; applySpk(); closeSpkPop();
+  $('#tq').value = ''; $('#nq').value = ''; S.q = ''; S.tagF = '';
   $('#tbody').innerHTML = '<div class="tempty">Cargando la transcripción…</div>';
-  closeComposer(); renderNotes(); renderMarks();
+  closeComposer(); renderNotes(); renderMarks(); renderFree(iv.id);
   loadVideo();
   try {
     const j = await tracked(() => api('open', { id }));
     if (S.cur !== iv) return;
     S.cues = j.transcript || []; setNotes(j.notes || [], j.replies || []);
-    renderTranscript(); renderNotes(); renderMarks(); updateCountsLocal();
+    setFree(iv.id, j.free || []); S.freeJson[iv.id] = JSON.stringify(j.free || []);
+    S.spk = j.spk || []; S.spkJson = JSON.stringify(S.spk); applySpk();
+    renderTranscript(); renderNotes(); renderMarks(); updateCountsLocal(); renderFree(iv.id);
   } catch (e){ toast('No se pudo abrir la entrevista: ' + e.message, true); $('#tbody').innerHTML = '<div class="tempty">No se pudo cargar. <button class="link" id="retryOpen">Volver a intentar</button></div>'; const rb = $('#retryOpen'); if (rb) rb.onclick = () => openInterview(id); }
 }
 function setNotes(list, reps){
@@ -717,12 +783,22 @@ function setNotes(list, reps){
   S.lastNotesJson = JSON.stringify(list) + '|' + JSON.stringify(reps || []);
 }
 async function poll(){
-  if (!S.cur || document.hidden || S.busy) return;
+  if (document.hidden || S.busy || !S.me) return;
+  if (!S.cur){
+    if ($('#home').classList.contains('hidden')) return;
+    try { const j = await api('free', { id: '' }); if (!S.cur) updateFree('', j.free); } catch(e){}
+    return;
+  }
   const iv = S.cur;
   try {
     const j = await api('notes', { id: iv.id });
     if (S.cur !== iv) return;
     if (j.tags) S.tags = j.tags;
+    if (j.free) updateFree(iv.id, j.free);
+    if (j.spk){
+      const sj = JSON.stringify(j.spk);
+      if (sj !== S.spkJson && S.spkPop == null && !String(window.getSelection())){ S.spkJson = sj; S.spk = j.spk; applySpk(); renderTranscript(); }
+    }
     const json = JSON.stringify(j.notes) + '|' + JSON.stringify(j.replies || []);
     if (json === S.lastNotesJson) return;
     if (document.activeElement && document.activeElement.closest('.repbox')) return; // está escribiendo una respuesta
@@ -807,7 +883,7 @@ function tick(){
   if (d && d !== S.duration){ S.duration = d; renderMarks(); }
   if (S.duration){ const p = Math.min(100, t / S.duration * 100); $('#head').style.left = p + '%'; $('#prog').style.width = p + '%'; }
   const i = cueIndexAt(t);
-  if (S.view === 'n'){ const nl = $('#nowLine'), txt = i >= 0 ? S.cues[i][2] : (S.cues.length ? '…' : 'Esta entrevista no tiene transcripción.'); if (nl.textContent !== txt) nl.textContent = txt; }
+  if (S.view === 'n'){ const nl = $('#nowLine'), txt = i >= 0 ? cueSays(i) : (S.cues.length ? '…' : 'Esta entrevista no tiene transcripción.'); if (nl.textContent !== txt) nl.textContent = txt; }
   if (i !== S.activeCue){
     const old = document.querySelector('.cue.on'); if (old) old.classList.remove('on');
     S.activeCue = i;
@@ -844,7 +920,8 @@ function buildParas(){
     const gap = prev ? c[0] - prev[1] : 99;
     const len = cur ? cur.len : 0;
     const endsSentence = prev && /[.?!…"»]$/.test(prev[2]);
-    if (!cur || gap > 2.5 || (len > 380 && endsSentence) || len > 900){ cur = { start: c[0], end: c[1], idx: [], len: 0 }; paras.push(cur); }
+    const newSpk = prev && cueSpk(i) !== cueSpk(i - 1);
+    if (!cur || newSpk || gap > 2.5 || (len > 380 && endsSentence) || len > 900){ cur = { start: c[0], end: c[1], idx: [], len: 0, spk: cueSpk(i) }; paras.push(cur); }
     cur.idx.push(i); cur.len += c[2].length; cur.end = c[1];
   });
   return paras;
@@ -859,7 +936,8 @@ function renderTranscript(){
   S.paras = buildParas();
   const q = ($('#tq').value || '').trim().toLowerCase();
   box.innerHTML = S.paras.map((p, pi) => '<div class="para" data-p="' + pi + '"><div class="pt num" data-s="' + p.start + '" title="Ir a este momento">' +
-      esc(secToTc(p.start).slice(0,8)) + '<div class="dots"></div></div><div class="tx">' +
+      esc(secToTc(p.start).slice(0,8)) + '<div class="dots"></div></div><div class="tx' + (p.spk ? ' spkd' : '') + '" style="--sc:' + (p.spk ? spkColor(p.spk) : 'transparent') + '">' +
+      (p.spk && (pi === 0 || S.paras[pi - 1].spk !== p.spk) ? '<button class="spk" data-ci="' + p.idx[0] + '" title="Cambiar quién habla">' + esc(p.spk) + '</button>' : '') +
       p.idx.map(i => '<span class="cue' + (q && S.cues[i][2].toLowerCase().includes(q) ? ' hit' : '') + '" data-i="' + i + '">' + esc(S.cues[i][2]) + '</span>').join(' ') +
       '</div></div>').join('');
   S.activeCue = -2; renderTranscriptDots(); tick();
@@ -874,6 +952,8 @@ function renderTranscriptDots(){
   });
 }
 $('#tbody').addEventListener('click', e => {
+  const sb = e.target.closest('.spk');
+  if (sb){ const r = sb.getBoundingClientRect(); openSpkPop(+sb.dataset.ci, r.left, r.bottom + 6); return; }
   if (String(window.getSelection())) return;
   const pt = e.target.closest('.pt'); if (pt){ seek(+pt.dataset.s); return; }
   const cue = e.target.closest('.cue'); if (cue) seek(S.cues[+cue.dataset.i][0]);
@@ -882,7 +962,7 @@ $('#tbody').addEventListener('dblclick', e => {
   const cue = e.target.closest('.cue'); if (!cue) return;
   const c = S.cues[+cue.dataset.i];
   window.getSelection().removeAllRanges();
-  pauseQuiet(); openComposer(c[0], true, c[2], c[1]);
+  pauseQuiet(); openComposer(c[0], true, cueSays(+cue.dataset.i), c[1]);
 });
 ['wheel','touchmove'].forEach(ev => $('#tbody').addEventListener(ev, () => S.userScrollAt = Date.now(), { passive: true }));
 $('#tbody').addEventListener('mousedown', () => S.userScrollAt = Date.now());
@@ -895,30 +975,101 @@ let tqT; $('#tq').addEventListener('input', () => {
 });
 // Seleccionar texto → botón "Anotar esto"
 document.addEventListener('mouseup', e => {
-  if (e.target.id === 'annot') return;
+  if (e.target.id === 'annot' || e.target.id === 'spkBtn' || (e.target.closest && e.target.closest('#spkPop'))) return;
   setTimeout(() => {
     const sel = window.getSelection(); const txt = String(sel).replace(/\s+/g,' ').trim();
-    const btn = $('#annot');
-    if (!txt || !sel.rangeCount || !$('#tbody').contains(sel.anchorNode)){ btn.classList.add('hidden'); return; }
+    const btn = $('#annot'); const hideBoth = () => { btn.classList.add('hidden'); $('#spkBtn').classList.add('hidden'); };
+    if (!txt || !sel.rangeCount || !$('#tbody').contains(sel.anchorNode)){ hideBoth(); return; }
     const range = sel.getRangeAt(0);
     const startEl = range.startContainer.nodeType === 1 ? range.startContainer : range.startContainer.parentElement;
     const cue = startEl.closest('.cue') || (startEl.querySelector && startEl.querySelector('.cue'));
-    if (!cue) { btn.classList.add('hidden'); return; }
+    if (!cue) { hideBoth(); return; }
     const r = range.getBoundingClientRect();
     btn.style.left = Math.min(window.innerWidth - 150, Math.max(10, r.right - 60)) + 'px';
     btn.style.top = (r.bottom + 8) + 'px';
     const endEl = range.endContainer.nodeType === 1 ? range.endContainer : range.endContainer.parentElement;
     const endCue = (endEl.closest && endEl.closest('.cue')) || cue;
-    btn.dataset.s = S.cues[+cue.dataset.i][0]; btn.dataset.e = S.cues[+endCue.dataset.i][1]; btn.dataset.t = txt;
+    btn.dataset.s = S.cues[+cue.dataset.i][0]; btn.dataset.e = S.cues[+endCue.dataset.i][1]; btn.dataset.t = txt; btn.dataset.ci = cue.dataset.i;
     btn.classList.remove('hidden');
+    const b2 = $('#spkBtn'); b2.dataset.ci = cue.dataset.i; b2.classList.remove('hidden');
+    const left = Math.max(10, Math.min(window.innerWidth - btn.offsetWidth - b2.offsetWidth - 18, r.right - 60));
+    btn.style.left = left + 'px'; b2.style.left = (left + btn.offsetWidth + 8) + 'px'; b2.style.top = btn.style.top;
   }, 0);
 });
 $('#annot').onclick = () => {
-  const b = $('#annot'); b.classList.add('hidden');
-  pauseQuiet(); openComposer(+b.dataset.s, true, b.dataset.t, +b.dataset.e);
+  const b = $('#annot'); b.classList.add('hidden'); $('#spkBtn').classList.add('hidden');
+  const sp = cueSpk(+b.dataset.ci);
+  pauseQuiet(); openComposer(+b.dataset.s, true, (sp ? sp + ': ' : '') + b.dataset.t, +b.dataset.e);
   window.getSelection().removeAllRanges();
 };
-$('#tbody').addEventListener('scroll', () => $('#annot').classList.add('hidden'));
+$('#tbody').addEventListener('scroll', () => { $('#annot').classList.add('hidden'); $('#spkBtn').classList.add('hidden'); });
+
+/* ═════════════ quién habla (marcado a mano) ═════════════ */
+// Una marca en una frase vale para esa frase y las siguientes, hasta la próxima marca.
+const SPK_COLORS = ['#6D5BD0', '#C2410C', '#0F8B8D', '#B83280', '#4D7C0F', '#1D4ED8'];
+function applySpk(){
+  const m = S.spk || []; let k = 0, cur = '';
+  S.cueSpk = S.cues.map(c => { while (k < m.length && m[k][0] <= c[0] + 0.001){ cur = m[k][1]; k++; } return cur; });
+  S.speakers = [...new Set(m.map(x => x[1]))];
+}
+const cueSpk = i => (S.cueSpk && S.cueSpk[i]) || '';
+const cueSays = i => (cueSpk(i) ? cueSpk(i) + ': ' : '') + S.cues[i][2];
+const spkColor = n => SPK_COLORS[Math.max(0, (S.speakers || []).indexOf(n)) % SPK_COLORS.length];
+function closeSpkPop(){ const p = $('#spkPop'); p.classList.add('hidden'); p.innerHTML = ''; S.spkPop = null; }
+function openSpkPop(ci, x, y){
+  const c = S.cues[ci]; if (!c) return;
+  $('#annot').classList.add('hidden'); $('#spkBtn').classList.add('hidden');
+  const mark = (S.spk || []).find(m => Math.abs(m[0] - c[0]) < 0.001);
+  const curName = cueSpk(ci);
+  S.spkPop = ci;
+  const p = $('#spkPop');
+  p.innerHTML = '<b>¿Quién habla desde acá?</b><div class="q">“' + esc(c[2]) + '”</div>' +
+    (S.speakers.length ? '<div class="names">' + S.speakers.map(n => '<button class="pill' + (n === curName ? ' on' : '') + '" data-name="' + esc(n) + '" style="--sc:' + spkColor(n) + '">' + esc(n) + '</button>').join('') + '</div>' : '') +
+    '<div class="new"><input class="input" id="spkNew" placeholder="' + (S.speakers.length ? 'Otro nombre' : 'Nombre (ej: Norma)') + '" maxlength="60"><button class="btn primary sm" data-new>Listo</button></div>' +
+    '<div class="foot">' + (mark ? '<button class="link" data-clear style="font-size:14px">Quitar esta marca</button>' : '<span></span>') +
+    '<button class="link" data-cancel style="font-size:14px">Cancelar</button></div>' +
+    '<p class="small" style="margin:10px 0 0">Vale para esta frase y las que siguen, hasta la próxima marca.</p>';
+  p.classList.remove('hidden');
+  p.style.left = Math.max(10, Math.min(window.innerWidth - p.offsetWidth - 10, x)) + 'px';
+  p.style.top = Math.max(10, Math.min(window.innerHeight - p.offsetHeight - 10, y)) + 'px';
+  if (!S.speakers.length) $('#spkNew').focus();
+}
+async function setSpeaker(ci, name){
+  const c = S.cues[ci], iv = S.cur; if (!c || !iv) return;
+  closeSpkPop();
+  const t = c[0];
+  S.spk = (S.spk || []).filter(m => Math.abs(m[0] - t) >= 0.001);
+  if (name) S.spk.push([t, name]);
+  S.spk.sort((a, b) => a[0] - b[0]);
+  applySpk(); renderTranscript();
+  toast(name ? 'Desde acá habla ' + name : 'Marca quitada');
+  try {
+    const j = await tracked(() => api('setSpeaker', { id: iv.id, start: t, name }));
+    if (S.cur === iv){ S.spk = j.spk; S.spkJson = JSON.stringify(j.spk); applySpk(); renderTranscript(); }
+  } catch (err){ toast('No se pudo guardar quién habla: ' + err.message, true); }
+}
+const spkName = () => { const el = $('#spkNew'); return el ? el.value.replace(/\s+/g, ' ').trim() : ''; };
+$('#spkPop').addEventListener('click', e => {
+  const ci = S.spkPop; if (ci == null) return;
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.name != null) setSpeaker(ci, b.dataset.name);
+  else if (b.hasAttribute('data-new')){ const v = spkName(); if (v) setSpeaker(ci, v); else $('#spkNew').focus(); }
+  else if (b.hasAttribute('data-clear')) setSpeaker(ci, '');
+  else if (b.hasAttribute('data-cancel')) closeSpkPop();
+});
+$('#spkPop').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'spkNew'){ e.preventDefault(); const v = spkName(); if (v) setSpeaker(S.spkPop, v); }
+  if (e.key === 'Escape'){ e.preventDefault(); closeSpkPop(); }
+});
+document.addEventListener('mousedown', e => {
+  if (S.spkPop != null && !e.target.closest('#spkPop') && !e.target.closest('.spk') && e.target.id !== 'spkBtn') closeSpkPop();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.spkPop != null){ e.preventDefault(); closeSpkPop(); } });
+$('#spkBtn').onclick = () => {
+  const b = $('#spkBtn'); const r = b.getBoundingClientRect();
+  window.getSelection().removeAllRanges();
+  openSpkPop(+b.dataset.ci, r.left, r.bottom + 6);
+};
 
 /* ═════════════ marcas en la barra del video ═════════════ */
 function renderMarks(){
@@ -958,7 +1109,7 @@ function openComposer(sec, focus, says, end){
     // ya estaba escribiendo: no se le pisa nada
   } else {
     const i = cueIndexAt(sec);
-    S.composer = { open: true, seconds: sec, says: says != null ? says : (i >= 0 ? S.cues[i][2] : ''),
+    S.composer = { open: true, seconds: sec, says: says != null ? says : (i >= 0 ? cueSays(i) : ''),
                    comment: writing ? c.comment : '', tag: writing ? c.tag : '', star: writing ? !!c.star : false,
                    end: (end != null && end > sec + 0.3) ? end : null, picking: false, touched: says != null };
     renderComposer();
@@ -995,7 +1146,7 @@ function renderComposer(){
     '</div>' +
     '<div class="c-foot"><button class="pill starp' + (c.star ? ' on' : '') + '" id="cStar">' + (c.star ? '★ Momento clave' : '☆ Momento clave') + '</button>' +
       '<span class="lbl" style="margin-left:8px">Etiqueta:</span>' +
-      tagList().map(t => '<button class="pill' + (t === c.tag ? ' on' : '') + '" data-tag="' + esc(t) + '">' + esc(t) + '</button>').join('') +
+      tagList().map(t => '<button class="pill' + (t === c.tag ? ' on' : '') + '" data-tag="' + esc(t) + '" style="--tc:' + tagColor(t) + '">' + esc(t) + '</button>').join('') +
       (c.newTag ? '<span class="newtag"><input class="input" id="cNewTag" placeholder="Nombre de la etiqueta" maxlength="40"><button class="btn primary sm" id="cNewTagOk">Crear</button><button class="link" id="cNewTagNo" style="font-size:14px">Cancelar</button></span>'
                 : '<button class="pill add" id="cNewTagOpen">＋ Nueva etiqueta</button>') +
       '<span class="keys">Enter para guardar</span>' +
@@ -1085,13 +1236,17 @@ async function pushNote(note){
   setSync();
   if (S.cur === iv) renderRowState(note);
 }
-$('#sync').onclick = () => { S.notes.filter(n => S.failed.has(n.id)).forEach(pushNote); };
+$('#sync').onclick = () => {
+  S.notes.filter(n => S.failed.has(n.id)).forEach(pushNote);
+  Object.keys(S.free).forEach(k => S.free[k].filter(f => S.failed.has(f.id)).forEach(pushFree));
+};
 
 /* ═════════════ tabla de notas ═════════════ */
 function visibleNotes(forMarks){
   const q = forMarks ? '' : S.q.toLowerCase();
   return S.notes.filter(n => (S.who === 'all' || (S.who === 'mine' ? n.author === S.me.name : n.author === S.who))
       && (!S.onlyStar || n.star)
+      && (!S.tagF || (S.tagF === '__none' ? !n.tag : n.tag === S.tagF))
       && (!q || (n.says + ' ' + n.comment + ' ' + n.tag + ' ' + n.author).toLowerCase().includes(q)))
     .sort((a, b) => a.seconds - b.seconds || String(a.created||'').localeCompare(String(b.created||'')));
 }
@@ -1104,9 +1259,20 @@ function renderSeg(){
     (who ? '<i class="dot" style="background:' + esc(colorOf(who)) + '"></i>' : '') + esc(label) + ' <span class="n">' + n + '</span></button>').join('');
   const stars = S.notes.filter(n => n.star).length;
   const b = $('#onlyStar'); b.classList.toggle('on', S.onlyStar); b.innerHTML = '★ Solo claves <span class="n">' + stars + '</span>';
+  // etiquetas: las de la lista + las que tengan las notas
+  const tc = {}; S.notes.forEach(n => { const k = n.tag || '__none'; tc[k] = (tc[k] || 0) + 1; });
+  const tl = tagList().concat(Object.keys(tc).filter(t => t !== '__none' && !tagList().includes(t)));
+  if (S.tagF && S.tagF !== '__none' && !tl.includes(S.tagF)) S.tagF = '';
+  const f = $('#tagF');
+  f.innerHTML = '<option value="">Todas las etiquetas</option>' + tl.map(t => '<option value="' + esc(t) + '">' + esc(t) + ' (' + (tc[t] || 0) + ')</option>').join('') +
+    '<option value="__none">Sin etiqueta (' + (tc.__none || 0) + ')</option>';
+  f.value = S.tagF;
+  const col = S.tagF && S.tagF !== '__none' ? tagColor(S.tagF) : '';
+  f.classList.toggle('has', !!S.tagF); f.style.setProperty('--tc', col || 'var(--accent)');
 }
 $('#seg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.who = b.dataset.k; renderNotes(); renderMarks(); renderTranscriptDots(); });
 $('#onlyStar').onclick = () => { S.onlyStar = !S.onlyStar; renderNotes(); renderMarks(); renderTranscriptDots(); };
+$('#tagF').onchange = e => { S.tagF = e.target.value; renderNotes(); renderMarks(); renderTranscriptDots(); };
 let nqT; $('#nq').addEventListener('input', e => { clearTimeout(nqT); nqT = setTimeout(() => { S.q = e.target.value.trim(); renderNotes(); }, 150); });
 
 function repliesOf(id){ return S.replies.filter(r => r.note === id).sort((a, b) => String(a.created||'~').localeCompare(String(b.created||'~'))); }
@@ -1141,11 +1307,11 @@ function rowHtml(n){
     const base = tagList(); const tags = base.concat(n.tag && !base.includes(n.tag) ? [n.tag] : []);
     main = '<td><textarea class="cell says" data-f="says" rows="1" title="Tocá para corregir">' + esc(n.says) + '</textarea></td>' +
       '<td><textarea class="cell" data-f="comment" rows="1" placeholder="Agregar comentario" title="Tocá para corregir">' + esc(n.comment) + '</textarea></td>' +
-      '<td><select class="tag" data-f="tag"><option value="">Sin etiqueta</option>' + tags.map(t => '<option' + (t === n.tag ? ' selected' : '') + '>' + esc(t) + '</option>').join('') + '<option value="__new">＋ Nueva etiqueta…</option></select></td>';
+      '<td><select class="tag' + (n.tag ? ' has' : '') + '" data-f="tag" style="--tc:' + tagColor(n.tag) + '"><option value="">Sin etiqueta</option>' + tags.map(t => '<option' + (t === n.tag ? ' selected' : '') + '>' + esc(t) + '</option>').join('') + '<option value="__new">＋ Nueva etiqueta…</option></select></td>';
   } else {
     main = '<td><div class="ro says' + (n.says ? '' : ' empty') + '">' + (esc(n.says) || '—') + '</div></td>' +
       '<td><div class="ro' + (n.comment ? '' : ' empty') + '">' + (esc(n.comment) || '—') + '</div></td>' +
-      '<td>' + (n.tag ? '<span class="tagpill">' + esc(n.tag) + '</span>' : '') + '</td>';
+      '<td>' + (n.tag ? '<span class="tagpill" style="--tc:' + tagColor(n.tag) + '">' + esc(n.tag) + '</span>' : '') + '</td>';
   }
   return '<tr class="' + cls + '" data-id="' + esc(n.id) + '" style="--uc:' + color + '"><td>' + starCell + '</td><td>' + tcCell + '</td>' + main +
     '<td>' + whoCell + '</td><td>' + acts + '</td></tr>' + repliesHtml(n);
@@ -1163,7 +1329,7 @@ function renderNotes(){
   $('#ntable').classList.toggle('hidden', !list.length);
   if (!list.length){
     empty.classList.remove('hidden');
-    empty.innerHTML = S.notes.length ? '<b>No hay notas que coincidan</b>Probá con “Todas”, sacá “Solo claves” o borrá la búsqueda.'
+    empty.innerHTML = S.notes.length ? '<b>No hay notas que coincidan</b>Probá con “Todas”, sacá “Solo claves”, elegí “Todas las etiquetas” o borrá la búsqueda.'
       : '<b>Todavía no hay notas en esta entrevista</b>Dale play, y cuando algo te interese, pausá el video.';
   } else empty.classList.add('hidden');
   if (restore){
@@ -1192,6 +1358,7 @@ rowsEl.addEventListener('input', async e => {
     n.tag = name; renderNotes(); pushNote(n); return;
   }
   n[f] = e.target.value; if (e.target.tagName === 'TEXTAREA') autosize(e.target);
+  if (f === 'tag'){ e.target.classList.toggle('has', !!n.tag); e.target.style.setProperty('--tc', tagColor(n.tag)); }
   clearTimeout(editTimers[id]); editTimers[id] = setTimeout(() => { delete editTimers[id]; pushNote(n); }, f === 'tag' ? 0 : 900);
 });
 rowsEl.addEventListener('focusout', e => {
@@ -1258,6 +1425,100 @@ async function deleteReply(id){
   catch (err){ S.replies.push(r); renderNotes(); toast('No se pudo quitar: ' + err.message, true); }
 }
 
+/* ═════════════ notas sueltas (sin timecode) ═════════════ */
+// '' = generales del documental (inicio); id de entrevista = de esa entrevista
+const freeBox = k => k ? $('#freeIv') : $('#freeHome');
+const shortDate = s => { const m = String(s || '').match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? (+m[3]) + '/' + (+m[2]) : ''; };
+function setFree(k, list){
+  const local = (S.free[k] || []).filter(f => f._pending || S.failed.has(f.id));
+  const ids = new Set(list.map(f => f.id));
+  S.free[k] = list.concat(local.filter(f => !ids.has(f.id)));
+}
+function freeEditing(k){ const ae = document.activeElement; return !!(ae && ae.dataset && ae.dataset.fid && freeBox(k).contains(ae)); }
+function updateFree(k, list){
+  const js = JSON.stringify(list || []);
+  if (js === S.freeJson[k] || freeEditing(k)) return;
+  S.freeJson[k] = js; setFree(k, list || []); refreshFree(k);
+}
+function refreshFree(k){ if (k === '' ? (!S.cur && S.me) : (S.cur && S.cur.id === k)) renderFree(k); }
+function freeHtml(f){
+  const mine = f.author === S.me.name;
+  return '<div class="fitem' + (mine ? ' mine' : '') + '" style="--uc:' + esc(colorOf(f.author)) + '"><span class="who"><i></i>' + esc(mine ? 'Vos' : f.author) + '</span>' +
+    (mine ? '<textarea class="cell" rows="1" data-fid="' + esc(f.id) + '" title="Tocá para corregir">' + esc(f.text) + '</textarea>' : '<div class="ro">' + esc(f.text) + '</div>') +
+    '<span class="meta">' + (S.failed.has(f.id) ? '<span class="warn" style="margin:0">Sin guardar</span>' : esc(shortDate(f.created))) +
+    (mine ? '<button class="del" data-fdel="' + esc(f.id) + '">Quitar</button>' : '') + '</span></div>';
+}
+function renderFree(k){
+  const box = freeBox(k); if (!box || !S.me) return;
+  const list = (S.free[k] || []).slice().sort((a, b) => String(a.created || '~').localeCompare(String(b.created || '~')));
+  const ae = document.activeElement;
+  let restore = null;
+  if (ae && box.contains(ae) && ae.dataset.fid) restore = { id: ae.dataset.fid, s: ae.selectionStart, e: ae.selectionEnd };
+  const old = box.querySelector('.free-new textarea'); const draft = old ? old.value : ''; const draftFocus = !!old && ae === old;
+  box.className = 'free' + (S.freeOpen ? '' : ' closed') + (k === '' && !$('#results').classList.contains('hidden') ? ' hidden' : '');
+  box.innerHTML = '<div class="free-h"><h3>' + (k ? 'Notas sueltas' : 'Notas sueltas del documental') + ' <span class="n">' + list.length + '</span></h3>' +
+    '<span class="sub">' + (k ? 'Ideas sobre esta entrevista que no van en un momento puntual.' : 'Ideas generales, que no son de una entrevista en particular.') + '</span>' +
+    '<button class="btn quiet sm" data-fact="toggle">' + (S.freeOpen ? 'Ocultar' : 'Mostrar') + '</button></div>' +
+    (list.length ? '<div class="free-list">' + list.map(freeHtml).join('') + '</div>' : '') +
+    '<div class="free-new"><textarea class="input" rows="1" placeholder="Escribí una idea suelta… (no hace falta pausar el video)"></textarea><button class="btn primary" data-fact="add">Guardar</button></div>';
+  const nt = box.querySelector('.free-new textarea'); nt.value = draft;
+  box.querySelectorAll('textarea').forEach(autosize);
+  if (draftFocus) nt.focus();
+  if (restore){ const el = box.querySelector('[data-fid="' + CSS.escape(restore.id) + '"]'); if (el){ el.focus(); try { el.setSelectionRange(restore.s, restore.e); } catch(e){} } }
+}
+function addFree(k){
+  const ta = freeBox(k).querySelector('.free-new textarea'); const text = ta ? ta.value.trim() : '';
+  if (!text){ toast('Escribí algo antes de guardar.'); return; }
+  const f = { id: uid(), interview: k, author: S.me.name, text, created: '', _pending: true };
+  (S.free[k] = S.free[k] || []).push(f); ta.value = '';
+  renderFree(k); toast('Nota suelta guardada');
+  pushFree(f);
+}
+async function pushFree(f){
+  if (!String(f.text || '').trim()) return;
+  try {
+    const j = await tracked(() => api('saveFree', { item: { id: f.id, interview: f.interview, text: f.text } }));
+    delete f._pending; S.failed.delete(f.id); if (!f.created) f.created = j.item.created;
+  } catch (e){ S.failed.add(f.id); toast('No se pudo guardar una nota suelta. Revisá la conexión y tocá el aviso de arriba para reintentar.', true); }
+  setSync(); if (!freeEditing(f.interview)) refreshFree(f.interview);
+}
+['#freeIv', '#freeHome'].forEach(sel => {
+  const box = $(sel);
+  const key = () => sel === '#freeHome' ? '' : (S.cur ? S.cur.id : null);
+  box.addEventListener('click', async e => {
+    const k = key(); if (k == null) return;
+    const t = e.target.closest('[data-fact],[data-fdel]'); if (!t) return;
+    if (t.dataset.fact === 'toggle'){ S.freeOpen = !S.freeOpen; store.set('visor.freeOpen', S.freeOpen ? '1' : '0'); renderFree(k); return; }
+    if (t.dataset.fact === 'add'){ addFree(k); return; }
+    if (t.dataset.fdel){
+      if (!t.classList.contains('confirm')){ t.classList.add('confirm'); t.textContent = '¿Seguro?'; setTimeout(() => { t.classList.remove('confirm'); t.textContent = 'Quitar'; }, 3000); return; }
+      const id = t.dataset.fdel; const f = (S.free[k] || []).find(x => x.id === id); if (!f) return;
+      S.free[k] = S.free[k].filter(x => x.id !== id); renderFree(k);
+      try { await tracked(() => api('deleteFree', { id })); S.failed.delete(id); setSync(); toast('Nota quitada'); }
+      catch (err){ toast('No se pudo quitar: ' + err.message, true); S.free[k].push(f); renderFree(k); }
+    }
+  });
+  box.addEventListener('keydown', e => {
+    const k = key(); if (k == null) return;
+    const isNew = !!e.target.closest('.free-new');
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && (isNew || e.target.dataset.fid)){ e.preventDefault(); if (isNew) addFree(k); else e.target.blur(); return; }
+    if (e.key === 'Escape' && e.target.tagName === 'TEXTAREA'){ e.preventDefault(); e.target.blur(); }
+  });
+  box.addEventListener('input', e => {
+    const k = key(); if (k == null || e.target.tagName !== 'TEXTAREA') return;
+    autosize(e.target);
+    const id = e.target.dataset.fid; if (!id) return;
+    const f = (S.free[k] || []).find(x => x.id === id); if (!f) return;
+    f.text = e.target.value;
+    clearTimeout(editTimers['f' + id]); editTimers['f' + id] = setTimeout(() => { delete editTimers['f' + id]; pushFree(f); }, 900);
+  });
+  box.addEventListener('focusout', e => {
+    const id = e.target.dataset && e.target.dataset.fid; if (!id || !editTimers['f' + id]) return;
+    clearTimeout(editTimers['f' + id]); delete editTimers['f' + id];
+    const k = key(); const f = k != null && (S.free[k] || []).find(x => x.id === id); if (f) pushFree(f);
+  });
+});
+
 /* ═════════════ atajos de teclado (opcionales) ═════════════ */
 document.addEventListener('keydown', e => {
   if (!S.cur || $('#modalRoot').children.length) return;
@@ -1284,6 +1545,9 @@ function openHelp(){
     '<li><div><b>Para anotar, pausá el video</b>Se abre el recuadro “Nueva nota” con el momento y la frase ya completados. Escribí tu comentario y tocá “Guardar nota”. Si es importante, marcá ☆ Momento clave.</div></li>' +
     '<li><div><b>Fragmentos largos: desde–hasta</b>En el recuadro tocá “Marcar hasta dónde va”, dejá correr el video y tocá “Marcar el final acá”. Si seleccionás varias frases de la transcripción, el desde–hasta se completa solo.</div></li>' +
     '<li><div><b>Mirá y respondé las notas de todas</b>Cada persona tiene su color. Elegí cuáles ver con “Todas”, “Mías” o el nombre de cada una. Con “Responder” podés comentar la nota de otra persona.</div></li>' +
+    '<li><div><b>Quién habla</b>En entrevistas de a dos, seleccioná la frase donde empieza a hablar otra persona y tocá “¿Quién habla acá?”. La marca vale hasta la próxima. Para cambiarla, tocá el nombre de color en la transcripción.</div></li>' +
+    '<li><div><b>Notas sueltas</b>Para ideas que no van en un momento puntual: abajo del video en cada entrevista, o en la pantalla de inicio para ideas generales del documental. No hace falta pausar.</div></li>' +
+    '<li><div><b>Etiquetas de colores</b>Cada etiqueta tiene su color. Con el selector “Todas las etiquetas”, arriba de la tabla, ves solo las notas de una etiqueta.</div></li>' +
     '<li><div><b>Dos formas de ver</b>Arriba podés elegir “Con transcripción” o “Solo notas”. En “Solo notas” el video queda al costado y las notas se ven más grandes.</div></li>' +
     '<li><div><b>Buscá en todas las entrevistas</b>En la pantalla de inicio podés buscar una palabra en todas a la vez, o ver juntos todos los momentos clave.</div></li>' +
     '</ol>' +
