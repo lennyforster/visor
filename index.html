@@ -5,26 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Visor de entrevistas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F3F4F7; --surface:#FFFFFF; --sunk:#EEF0F4; --line:#DFE3EA; --line2:#C9CFD9;
   --ink:#1B2130; --muted:#5B6474; --faint:#8A92A0;
-  --accent:#2348C9; --accent-hover:#1B3AA6; --accent-soft:#E7ECFB;
+  --accent:#9C1F72; --accent-hover:#821860; --accent-soft:#F7E4EF;
   --mark:#FFE58A; --danger:#C2372B; --ok:#2C8A55;
-  --ui:'Helvetica Neue',Helvetica,Arial,sans-serif;
+  --ui:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
   --read:var(--ui);
-  --hover:#EEF1F8; --hit:#D7E3FF; --near:#FFF8D6; --prog:#A9B6E6; --pline:#F0F2F5; --readc:#2A3142;
+  --hover:#F4EEF2; --hit:#F5D6E9; --near:#FFF8D6; --prog:#D9A9C8; --pline:#F0F2F5; --readc:#2A3142;
   --star:#E8A400; --star-soft:#FFF1C2; --star-ink:#6B4C00; --danger-soft:#FBEDEC; --head:#FAFBFC; --thumb:#CBD0D9;
   color-scheme:light;
 }
 /* modo oscuro */
 :root[data-theme="dark"]{
-  --bg:#121419; --surface:#1B1E25; --sunk:#252933; --line:#2D323C; --line2:#3D4350;
-  --ink:#E9EBEF; --muted:#A5ACB8; --faint:#7B8391;
-  --accent:#7E9CFF; --accent-hover:#97B0FF; --accent-soft:#232C48;
-  --mark:#6A5714; --danger:#F2776D; --ok:#4CC38A;
-  --hover:#262B36; --hit:#24345E; --near:#2E2A17; --prog:#3D4B7A; --pline:#252932; --readc:#D9DCE2;
-  --star:#F2B634; --star-soft:#3A3017; --star-ink:#F5D07A; --danger-soft:#3A2224; --head:#20242C; --thumb:#3D4350;
+  --bg:#121113; --surface:#1B1A1D; --sunk:#252328; --line:#2F2C33; --line2:#443F49;
+  --ink:#EEEBF0; --muted:#ABA5B1; --faint:#7D7784;
+  --accent:#EE8BDD; --accent-hover:#F6A9E8; --accent-soft:#3A2437;
+  --mark:#5E4B16; --danger:#F2776D; --ok:#4CC38A;
+  --hover:#29262C; --hit:#4A2A45; --near:#2E2A17; --prog:#6E4767; --pline:#262329; --readc:#DDD8E0;
+  --star:#F2B634; --star-soft:#3A3017; --star-ink:#F5D07A; --danger-soft:#3A2224; --head:#211F24; --thumb:#443F49;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -64,8 +67,11 @@ button{cursor:pointer}
 
 /* ── estructura ── */
 #app{height:100%;display:flex;flex-direction:column}
-.top{flex:none;display:flex;align-items:center;gap:14px;height:60px;padding:0 20px;background:var(--surface);border-bottom:1px solid var(--line)}
-.top .title{font-size:19px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.top{flex:none;display:flex;align-items:center;gap:10px;min-height:62px;padding:8px 20px;background:var(--surface);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.top .title{font-size:19px;font-weight:800;font-stretch:112%;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.homenav{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.homenav .btn{font-weight:600}
+.topsep{width:1px;height:22px;background:var(--line);margin:0 6px}
 .spacer{flex:1}
 .status{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:14px;white-space:nowrap}
 .status i{width:9px;height:9px;border-radius:50%;background:var(--ok)}
@@ -76,27 +82,40 @@ button{cursor:pointer}
 .dot{display:inline-block;width:12px;height:12px;border-radius:50%;flex:none}
 
 /* ── inicio ── */
-#home{flex:1;overflow:auto;padding:40px 24px 60px}
-.home-in{max-width:760px;margin:0 auto}
-.home-in h2{font-size:28px;margin:0 0 6px}
-.home-in .lead{color:var(--muted);margin:0 0 26px}
-.ivcard{position:relative;display:grid;grid-template-columns:184px minmax(0,1fr) auto;gap:18px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 18px 12px 12px;margin-bottom:12px;transition:border-color .15s,box-shadow .15s}
-.ivcard:hover{border-color:var(--accent);box-shadow:0 6px 20px rgba(35,72,201,.10)}
-.ivcard .main{min-width:0}
-.ivopen{display:block;border:0;background:none;padding:0;text-align:left;font-size:19px;font-weight:700;line-height:1.3;margin-bottom:6px;color:var(--ink)}
+#home{flex:1;overflow:auto;padding:34px 32px 64px}
+.home-in{max-width:1760px;margin:0 auto}
+.hero{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;margin:0 0 30px}
+.hero h2{margin:0;font-size:clamp(44px,6vw,76px);line-height:.95;font-weight:850;font-stretch:125%;letter-spacing:-.035em;flex:1 1 auto}
+.hero h2 .cnt{font-size:.38em;font-weight:500;font-stretch:100%;letter-spacing:0;color:var(--faint);vertical-align:super;margin-left:.25em}
+.hero .gsearch{flex:0 1 460px;margin:0}
+.hero .gsearch .input{border-radius:99px;padding-left:18px}
+.hero .gsearch .btn{border-radius:99px}
+#results,#freeHome{max-width:1040px}
+.ivgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:26px 20px}
+.ivcard{position:relative;display:flex;flex-direction:column;min-width:0}
+.ivcard .thumb{border-radius:14px;outline:1px solid var(--line);outline-offset:-1px;transition:outline-color .15s}
+.ivcard:hover .thumb{outline:2px solid var(--accent);outline-offset:-2px}
+.ivcard .thumb img{transition:transform .35s ease}
+.ivcard:hover .thumb img{transform:scale(1.035)}
+.ivbody{padding:12px 2px 0;display:flex;flex-direction:column;gap:5px;min-width:0}
+.ivopen{display:block;border:0;background:none;padding:0;text-align:left;font-size:18px;font-weight:750;font-stretch:106%;line-height:1.25;letter-spacing:-.01em;color:var(--ink)}
 .ivopen::after{content:'';position:absolute;inset:0;border-radius:14px}
-.ivcard .meta{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--muted);font-size:15px}
+.ivcard .meta{display:flex;flex-wrap:wrap;gap:3px 12px;color:var(--muted);font-size:14px}
 .ivcard .meta span{display:inline-flex;align-items:center;gap:6px}
-.ivcard .side{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
-.ivcard .go{color:var(--accent);font-weight:700;white-space:nowrap}
-.ivedit{position:relative;z-index:1}
+.ivedit{position:absolute;top:10px;right:10px;z-index:2;border:0;border-radius:99px;padding:6px 12px;font-size:13px;font-weight:600;background:rgba(10,8,12,.72);color:#fff;opacity:0;transition:opacity .15s}
+.ivcard:hover .ivedit,.ivedit:focus-visible{opacity:1}
+@media (hover:none){ .ivedit{opacity:1} }
+.thumb .resume{position:absolute;left:10px;bottom:12px;background:rgba(10,8,12,.78);color:#fff;font-size:12.5px;font-weight:700;padding:3px 9px;border-radius:99px;font-variant-numeric:tabular-nums}
+.thumb .pips{position:absolute;right:10px;bottom:12px;display:flex;gap:4px}
+.thumb .pips i{width:10px;height:10px;border-radius:50%;border:2px solid rgba(255,255,255,.9)}
+.thumb .noimg{font-size:14px;font-weight:600;color:var(--faint)}
 /* miniatura de YouTube */
 .thumb{position:relative;aspect-ratio:16/9;border-radius:9px;overflow:hidden;background:var(--sunk);display:grid;place-items:center;color:var(--faint);font-size:13px}
 .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.thumb .pos{position:absolute;right:6px;bottom:9px;background:rgba(0,0,0,.78);color:#fff;font-size:12px;font-weight:700;padding:1px 6px;border-radius:4px;font-variant-numeric:tabular-nums}
 .thumb .bar{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.35)}
 .thumb .bar i{display:block;height:100%;background:var(--accent)}
-@media (max-width:620px){ .ivcard{grid-template-columns:120px minmax(0,1fr)} .ivcard .side{grid-column:1 / -1;flex-direction:row;justify-content:space-between;align-items:center} }
+@media (max-width:620px){ #home{padding:24px 16px 48px} .ivgrid{grid-template-columns:1fr 1fr;gap:20px 12px} .ivopen{font-size:16px} }
+@media (max-width:420px){ .ivgrid{grid-template-columns:1fr} }
 .btn.quiet.danger{color:var(--danger)}
 .btn.quiet.danger:hover{background:var(--danger-soft)}
 .home-empty{background:var(--surface);border:1.5px dashed var(--line2);border-radius:14px;padding:34px;text-align:center;color:var(--muted)}
@@ -152,9 +171,14 @@ button{cursor:pointer}
 
 /* recuadro de nota nueva */
 .composer{flex:none;margin:12px 16px 0;background:var(--surface);border:1.5px solid var(--line);border-radius:14px}
-.composer.rest{display:flex;align-items:center;gap:16px;padding:12px 16px}
+.composer.rest{display:flex;align-items:center;gap:14px;padding:8px 12px;border-style:dashed;background:transparent}
+.c-show{border:0;background:none;color:var(--accent);font-weight:700;font-size:15px;padding:4px 6px;border-radius:8px}
+.c-show:hover{background:var(--accent-soft)}
 .composer.rest p{margin:0;color:var(--muted);flex:1}
-.composer.open{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);padding:12px 18px 16px}
+.composer.open{padding:12px 18px 16px;transition:border-color .15s,box-shadow .15s}
+.composer.open.active,.composer.open:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.c-lbl .live{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--danger);margin-right:7px;vertical-align:1px}
+.xls{white-space:nowrap}
 .composer.flash{animation:flash .9s}
 @keyframes flash{0%{box-shadow:0 0 0 10px color-mix(in srgb,var(--accent) 30%,transparent)}}
 /* fila de arriba: momento (lo más visible), rango, momento clave y cerrar */
@@ -188,7 +212,7 @@ button{cursor:pointer}
 .c-tags .pill:hover{border-color:var(--line2)}
 .c-tags .pill.add{background:none;border:1.5px dashed var(--line2);color:var(--muted)}
 .kbd-hint{font-weight:400;font-size:12px;opacity:.8;border:1px solid currentColor;border-radius:5px;padding:0 5px;margin-left:4px}
-:root[data-theme="dark"] .btn.primary{color:#0E1530}
+:root[data-theme="dark"] .btn.primary{color:#1E0B1A}
 .pill{border:1.5px solid var(--line2);background:var(--surface);border-radius:99px;padding:6px 13px;font-size:14px}
 .pill:hover{border-color:var(--faint)}
 .pill.on{background:var(--ink);border-color:var(--ink);color:var(--surface)}
@@ -423,6 +447,12 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
     <div class="title" id="topTitle">Entrevistas</div>
     <div class="spacer"></div>
     <div class="viewsw hidden" id="viewSw" title="Cambiar cómo se ve la entrevista"><button data-v="t">Con transcripción</button><button data-v="n">Solo notas</button></div>
+    <nav class="homenav" id="homeNav" aria-label="Inicio">
+      <button class="btn quiet sm" id="starsBtn">★ Momentos clave</button>
+      <button class="btn quiet sm" id="freeBtn">Notas sueltas</button>
+      <button class="btn primary sm hidden" id="adminBtn">＋ Agregar entrevista</button>
+    </nav>
+    <span class="topsep" id="topSep"></span>
     <div class="status hidden" id="sync" title="Tocá para reintentar"><i></i><span></span></div>
     <button class="btn quiet sm" id="themeBtn" title="Cambiar entre fondo claro y oscuro">Modo oscuro</button>
     <button class="btn quiet sm" id="helpBtn">¿Cómo se usa?</button>
@@ -432,11 +462,11 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
   <!-- inicio: lista de entrevistas -->
   <div id="home">
     <div class="home-in">
-      <h2>Entrevistas</h2>
-      <p class="lead" id="homeLead">Elegí una para verla y anotar.</p>
-      <form class="gsearch" id="gsForm"><input class="input" id="gq" type="search" placeholder="Buscar en todas las entrevistas (una palabra o frase)"><button class="btn primary">Buscar</button></form>
-      <div class="homeacts"><button class="btn" id="starsBtn">★ Ver todos los momentos clave</button><button class="btn quiet" id="freeBtn">Notas sueltas del documental</button><button class="btn quiet hidden" id="adminBtn">＋ Agregar entrevista</button></div>
-      <div id="ivlist"></div>
+      <div class="hero">
+        <h2>Entrevistas<span class="cnt" id="ivCount"></span></h2>
+        <form class="gsearch" id="gsForm"><input class="input" id="gq" type="search" placeholder="Buscar en todas las entrevistas"><button class="btn primary">Buscar</button></form>
+      </div>
+      <div id="ivlist" class="ivgrid"></div>
       <div id="results" class="hidden"></div>
       <div class="free hidden" id="freeHome"></div>
     </div>
@@ -475,6 +505,7 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
           <button class="onlystar" id="onlyStar" title="Mostrar solo los momentos clave">★ Solo claves</button>
           <select class="tagf" id="tagF" title="Mostrar solo una etiqueta"></select>
           <input class="input" id="nq" placeholder="Buscar en las notas…" type="search">
+          <button class="btn sm xls" id="xlsBtn" title="Descargar todas las notas de esta entrevista en un Excel">⬇ Excel</button>
         </div>
       </div>
       <div class="free hidden" id="freeIv"></div>
@@ -682,7 +713,7 @@ async function login(pw, silent){
   } finally { btn.disabled = false; btn.textContent = 'Entrar'; }
 }
 function logout(expired){
-  store.del('visor.pw'); S.pw = null; S.cur = null;
+  store.del('visor.pw'); S.pw = null; S.cur = null; trClear();
   try { if (S.player && S.player.stopVideo) S.player.stopVideo(); } catch(e){}
   try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
   closeModal();
@@ -706,6 +737,7 @@ function showHome(){
   if (S.player && S.playerReady){ try { S.player.pauseVideo(); } catch(e){} }
   S.cur = null; try { history.replaceState(null, '', location.pathname + location.search); } catch(e){}
   $('#work').classList.add('hidden'); $('#home').classList.remove('hidden'); $('#viewSw').classList.add('hidden');
+  $('#homeNav').classList.remove('hidden'); $('#topSep').classList.remove('hidden');
   $('#backBtn').classList.add('hidden'); $('#topTitle').textContent = CONFIG.TITLE;
   renderHome();
 }
@@ -713,7 +745,7 @@ function renderHome(){
   hideResults();
   renderFree('');
   const list = S.interviews;
-  $('#homeLead').textContent = list.length ? 'Elegí una entrevista para verla y anotar.' : '';
+  $('#ivCount').textContent = list.length || '';
   if (!list.length){
     $('#ivlist').innerHTML = '<div class="home-empty"><b>Todavía no hay entrevistas</b>' +
       (S.me.admin ? 'Cargá la primera con “＋ Agregar entrevista”, acá arriba.' : 'Cuando estén cargadas, aparecen acá.') + '</div>';
@@ -722,15 +754,16 @@ function renderHome(){
   $('#ivlist').innerHTML = list.map(iv => {
     const counts = Object.entries(iv.counts || {}).filter(([,n]) => n > 0);
     const pos = parseFloat(store.get('visor.pos.' + iv.id)) || 0;
-    const notes = counts.length ? counts.map(([who,n]) => '<span><i class="dot" style="background:' + esc(colorOf(who)) + '"></i>' + esc(who === S.me.name ? 'Vos' : who) + ': ' + plural(n, 'nota', 'notas') + '</span>').join('') : '<span>Sin notas todavía</span>';
+    const notes = counts.length ? counts.map(([who,n]) => '<span><i class="dot" style="background:' + esc(colorOf(who)) + '"></i>' + esc(who === S.me.name ? 'Vos' : who) + ' · ' + n + '</span>').join('') : '<span>Sin notas todavía</span>';
     const vid = ytId(iv.youtube), dur = parseFloat(store.get('visor.dur.' + iv.id)) || 0;
-    const thumb = '<div class="thumb">' + (vid ? '<img src="https://i.ytimg.com/vi/' + esc(vid) + '/mqdefault.jpg" alt="" loading="lazy" onerror="this.remove()">' : 'Sin video') +
-      (vid && pos > 5 ? '<span class="pos">' + fmtShort(pos) + '</span>' + (dur ? '<span class="bar"><i style="width:' + Math.min(100, pos / dur * 100).toFixed(1) + '%"></i></span>' : '') : '') + '</div>';
+    const thumb = '<div class="thumb">' + (vid ? '<img src="https://i.ytimg.com/vi/' + esc(vid) + '/mqdefault.jpg" alt="" loading="lazy" onerror="this.remove()">' : '<span class="noimg">Sin video</span>') +
+      (pos > 5 ? '<span class="resume">▶ Seguir en ' + fmtShort(pos) + '</span>' : '') +
+      (counts.length ? '<span class="pips">' + counts.map(([who]) => '<i style="background:' + esc(colorOf(who)) + '"></i>').join('') + '</span>' : '') +
+      (pos > 5 && dur ? '<span class="bar"><i style="width:' + Math.min(100, pos / dur * 100).toFixed(1) + '%"></i></span>' : '') + '</div>';
     return '<div class="ivcard" data-id="' + esc(iv.id) + '">' + thumb +
-      '<div class="main"><button class="ivopen">' + esc(iv.title) + '</button><span class="meta">' + notes +
-      (iv.stars ? '<span>★ ' + plural(iv.stars, 'momento clave', 'momentos clave') + '</span>' : '') + '</span></div>' +
-      '<div class="side"><span class="go">' + (pos > 5 ? 'Seguir viendo' : 'Abrir') + '</span>' +
-      (S.me.admin ? '<button class="btn quiet sm ivedit" title="Cambiar nombre, video o transcripción">Editar</button>' : '') + '</div></div>';
+      '<div class="ivbody"><button class="ivopen">' + esc(iv.title) + '</button><span class="meta">' + notes +
+      (iv.stars ? '<span>★ ' + iv.stars + '</span>' : '') + '</span></div>' +
+      (S.me.admin ? '<button class="ivedit" title="Cambiar nombre, video o transcripción">Editar</button>' : '') + '</div>';
   }).join('');
 }
 $('#ivlist').addEventListener('click', e => {
@@ -748,7 +781,7 @@ function highlight(text, q){
   return esc(t.slice(0, i)) + '<mark>' + esc(t.slice(i, i + nq.length)) + '</mark>' + esc(t.slice(i + nq.length));
 }
 function showResults(title, items, q, emptyMsg){
-  $('#ivlist').classList.add('hidden'); $('.homeacts').classList.add('hidden'); $('#homeLead').classList.add('hidden'); $('#freeHome').classList.add('hidden');
+  $('#ivlist').classList.add('hidden'); $('#freeHome').classList.add('hidden');
   const box = $('#results'); box.classList.remove('hidden');
   const byIv = {}; items.forEach(it => (byIv[it.interview] = byIv[it.interview] || []).push(it));
   const who = a => esc(a === S.me.name ? 'vos' : a);
@@ -766,11 +799,12 @@ function showResults(title, items, q, emptyMsg){
 }
 function hideResults(){
   $('#results').classList.add('hidden'); $('#freeHome').classList.add('hidden');
-  $('#ivlist').classList.remove('hidden'); $('.homeacts').classList.remove('hidden'); $('#homeLead').classList.remove('hidden');
+  $('#ivlist').classList.remove('hidden');
 }
 // Notas sueltas del documental: vista secundaria del inicio
 function showHomeFree(){
-  $('#ivlist').classList.add('hidden'); $('.homeacts').classList.add('hidden'); $('#homeLead').classList.add('hidden'); $('#results').classList.add('hidden');
+  if (S.cur) showHome();
+  $('#ivlist').classList.add('hidden'); $('#results').classList.add('hidden');
   $('#freeHome').classList.remove('hidden'); renderFree('');
   const t = $('#freeHome .free-new textarea'); if (t) t.focus();
 }
@@ -794,6 +828,7 @@ $('#gsForm').onsubmit = async e => {
   } catch (err){ hideResults(); toast('No se pudo buscar: ' + err.message, true); }
 };
 $('#starsBtn').onclick = async () => {
+  if (S.cur) showHome();
   $('#results').classList.remove('hidden'); $('#ivlist').classList.add('hidden'); $('#freeHome').classList.add('hidden');
   $('#results').innerHTML = '<p class="small">Juntando los momentos clave…</p>';
   try {
@@ -817,21 +852,52 @@ async function openInterview(id, at){
   S.pendingSeek = (at != null && !isNaN(at)) ? Math.max(0, at - 2) : null;
   S.cur = iv; try { location.hash = encodeURIComponent(id); } catch(e){}
   $('#home').classList.add('hidden'); $('#work').classList.remove('hidden'); $('#viewSw').classList.remove('hidden');
+  $('#homeNav').classList.add('hidden'); $('#topSep').classList.add('hidden');
   $('#backBtn').classList.remove('hidden'); $('#topTitle').textContent = iv.title;
   S.cues = []; S.paras = null; S.notes = []; S.replies = []; S.replyOpen = null; S.lastNotesJson = ''; S.activeCue = -1; S.duration = 0;
   S.spk = []; S.spkJson = ''; applySpk(); closeSpkPop();
   $('#tq').value = ''; $('#nq').value = ''; S.q = ''; S.tagF = '';
   $('#tbody').innerHTML = '<div class="tempty">Cargando la transcripción…</div>';
+  S.trLoaded = false;
   closeComposer(); setLowerTab('notes'); renderNotes(); renderMarks(); renderFree(iv.id);
   loadVideo();
-  try {
-    const j = await tracked(() => api('open', { id }));
+  // Si ya la abriste antes en esta computadora, la transcripción aparece al instante y se actualiza por detrás
+  const cached = trLoad(id);
+  if (cached && Array.isArray(cached.cues)){ S.cues = cached.cues; S.spk = cached.spk || []; applySpk(); S.trLoaded = true; renderTranscript(); }
+  const failed = () => { $('#tbody').innerHTML = '<div class="tempty">No se pudo cargar. <button class="link" id="retryOpen">Volver a intentar</button></div>'; const rb = $('#retryOpen'); if (rb) rb.onclick = () => openInterview(id); };
+  const pTr = tracked(() => api('transcript', { id })).then(j => {
     if (S.cur !== iv) return;
-    S.cues = j.transcript || []; setNotes(j.notes || [], j.replies || []);
+    const fresh = j.transcript || [];
+    if (!S.trLoaded || JSON.stringify(fresh) !== JSON.stringify(S.cues)){ S.cues = fresh; applySpk(); S.trLoaded = true; renderTranscript(); renderMarks(); }
+    trSave(id, { cues: S.cues, spk: S.spk });
+  }).catch(e => { if (S.cur === iv && !S.trLoaded){ toast('No se pudo cargar la transcripción: ' + e.message, true); failed(); } });
+  try {
+    const j = await tracked(() => api('open', { id, noTr: true }));
+    if (S.cur !== iv) return;
+    setNotes(j.notes || [], j.replies || []);
     setFree(iv.id, j.free || []); S.freeJson[iv.id] = JSON.stringify(j.free || []);
     S.spk = j.spk || []; S.spkJson = JSON.stringify(S.spk); applySpk();
-    renderTranscript(); renderNotes(); renderMarks(); updateCountsLocal(); renderFree(iv.id);
-  } catch (e){ toast('No se pudo abrir la entrevista: ' + e.message, true); $('#tbody').innerHTML = '<div class="tempty">No se pudo cargar. <button class="link" id="retryOpen">Volver a intentar</button></div>'; const rb = $('#retryOpen'); if (rb) rb.onclick = () => openInterview(id); }
+    if (S.trLoaded){ renderTranscript(); trSave(id, { cues: S.cues, spk: S.spk }); }
+    renderNotes(); renderMarks(); updateCountsLocal(); renderFree(iv.id);
+  } catch (e){ toast('No se pudo abrir la entrevista: ' + e.message, true); if (!S.trLoaded) failed(); }
+  await pTr;
+}
+// Transcripciones guardadas en esta computadora (las últimas 12 abiertas). Se borran al salir.
+function trLoad(id){ try { const s = localStorage.getItem('visor.tr.' + id); return s ? JSON.parse(s) : null; } catch(e){ return null; } }
+function trSave(id, data){
+  try {
+    const idx = (JSON.parse(localStorage.getItem('visor.trIdx') || '[]') || []).filter(x => x !== id); idx.unshift(id);
+    while (idx.length > 12) localStorage.removeItem('visor.tr.' + idx.pop());
+    const s = JSON.stringify(data);
+    for (let k = 0; k < 6; k++){
+      try { localStorage.setItem('visor.tr.' + id, s); break; }
+      catch(e){ const old = idx.length > 1 ? idx.pop() : null; if (!old) break; localStorage.removeItem('visor.tr.' + old); }
+    }
+    localStorage.setItem('visor.trIdx', JSON.stringify(idx));
+  } catch(e){}
+}
+function trClear(){
+  try { (JSON.parse(localStorage.getItem('visor.trIdx') || '[]') || []).forEach(x => localStorage.removeItem('visor.tr.' + x)); localStorage.removeItem('visor.trIdx'); } catch(e){}
 }
 function setNotes(list, reps){
   const pendingLocal = S.notes.filter(n => n._pending || S.failed.has(n.id));
@@ -856,7 +922,7 @@ async function poll(){
     if (j.free) updateFree(iv.id, j.free);
     if (j.spk){
       const sj = JSON.stringify(j.spk);
-      if (sj !== S.spkJson && S.spkPop == null && !String(window.getSelection())){ S.spkJson = sj; S.spk = j.spk; applySpk(); renderTranscript(); }
+      if (sj !== S.spkJson && S.spkPop == null && !String(window.getSelection())){ S.spkJson = sj; S.spk = j.spk; applySpk(); renderTranscript(); if (S.trLoaded) trSave(iv.id, { cues: S.cues, spk: S.spk }); }
     }
     const json = JSON.stringify(j.notes) + '|' + JSON.stringify(j.replies || []);
     if (json === S.lastNotesJson) return;
@@ -918,14 +984,6 @@ function onPlayerState(e){
   const st = e.data, prev = S.prevState; S.prevState = st;
   // Eligiendo "hasta dónde": la pausa marca el final
   if (st === 2 && S.composer && S.composer.open && S.composer.picking){ setEnd(now()); savePos(); return; }
-  // La persona puso pausa → se abre el recuadro de nota nueva en ese momento
-  if (st === 2 && prev === 1 && Date.now() > S.suppressUntil){
-    const ae = document.activeElement;
-    const typing = ae && /INPUT|TEXTAREA|SELECT/.test(ae.tagName) && !ae.closest('#composer');
-    if (!typing) openComposer(now(), true);
-  }
-  // Volvió a darle play sin escribir nada → el recuadro se cierra solo
-  if (st === 1 && S.composer && S.composer.open && !S.composer.touched) closeComposer();
   if (st === 2) savePos();
 }
 function savePos(){ if (S.cur && S.playerReady) { const t = now(); if (t > 0) store.set('visor.pos.' + S.cur.id, String(t)); } }
@@ -938,6 +996,7 @@ function tick(){
   const t = now();
   $('#tcNow').innerHTML = S.playerReady ? tcHtml(secToTc(t)) : '--:--:--';
   if (S.composer && S.composer.picking){ const el = $('#cEndNow'); if (el) el.textContent = secToTc(Math.max(t, S.composer.seconds)).slice(0,8); }
+  followComposer(false);
   const d = S.playerReady && S.player.getDuration ? S.player.getDuration() : 0;
   if (d && d !== S.duration){ S.duration = d; store.set('visor.dur.' + S.cur.id, String(d)); renderMarks(); }
   if (S.duration){ const p = Math.min(100, t / S.duration * 100); $('#head').style.left = p + '%'; $('#prog').style.width = p + '%'; }
@@ -987,6 +1046,7 @@ function buildParas(){
 }
 function renderTranscript(){
   const box = $('#tbody');
+  if (!S.trLoaded) return;
   if (!S.cues.length){
     box.innerHTML = '<div class="tempty">Esta entrevista todavía no tiene transcripción.' + (S.me.admin ? ' Podés subirla con “Editar”, en la tarjeta de la entrevista de la pantalla de inicio.' : '') + '</div>';
     $('.thelp').classList.add('hidden'); return;
@@ -1021,7 +1081,7 @@ $('#tbody').addEventListener('dblclick', e => {
   const cue = e.target.closest('.cue'); if (!cue) return;
   const c = S.cues[+cue.dataset.i];
   window.getSelection().removeAllRanges();
-  pauseQuiet(); openComposer(c[0], true, cueSays(+cue.dataset.i), c[1]);
+  openComposer(c[0], true, cueSays(+cue.dataset.i), c[1]);
 });
 ['wheel','touchmove'].forEach(ev => $('#tbody').addEventListener(ev, () => S.userScrollAt = Date.now(), { passive: true }));
 $('#tbody').addEventListener('mousedown', () => S.userScrollAt = Date.now());
@@ -1058,7 +1118,7 @@ document.addEventListener('mouseup', e => {
 $('#annot').onclick = () => {
   const b = $('#annot'); b.classList.add('hidden'); $('#spkBtn').classList.add('hidden');
   const sp = cueSpk(+b.dataset.ci);
-  pauseQuiet(); openComposer(+b.dataset.s, true, (sp ? sp + ': ' : '') + b.dataset.t, +b.dataset.e);
+  openComposer(+b.dataset.s, true, (sp ? sp + ': ' : '') + b.dataset.t, +b.dataset.e);
   window.getSelection().removeAllRanges();
 };
 $('#tbody').addEventListener('scroll', () => { $('#annot').classList.add('hidden'); $('#spkBtn').classList.add('hidden'); });
@@ -1160,19 +1220,44 @@ function flashRow(id){
 }
 
 /* ═════════════ recuadro de nota nueva ═════════════ */
-function closeComposer(){ S.composer = { open: false }; renderComposer(); }
+// Está siempre abierto: mientras no escribís, sigue al video ("Ahora"). Cuando empezás a escribir,
+// el video se pausa y la nota queda fija en ese momento. Con la ✕ se oculta.
+S.cHidden = store.get('visor.composer') === 'off';
+function freshComposer(){ return { open: !S.cHidden, seconds: now(), says: '', comment: '', tag: '', star: false, end: null, picking: false, touched: false, resume: false }; }
+function closeComposer(){ S.composer = freshComposer(); followComposer(true); renderComposer(); }
+function discardComposer(){ const r = S.composer && S.composer.resume; closeComposer(); if (r && S.playerReady) S.player.playVideo(); }
+function followComposer(force){
+  const c = S.composer; if (!c || c.touched || c.picking || !S.cur) return;
+  const t = now();
+  if (!force && Math.abs(t - c.seconds) < 0.04) return;
+  c.seconds = t;
+  const i = cueIndexAt(t); c.says = i >= 0 ? cueSays(i) : '';
+  if (!c.open) return;
+  const si = $('#cStartIn'); if (si && document.activeElement !== si) si.value = secToTc(t);
+  const q = $('#cSays');
+  if (q && document.activeElement !== q && q.value !== c.says){ q.value = c.says; autosize(q); const sp = i >= 0 ? cueSpk(i) : ''; q.style.setProperty('--sc', sp ? spkColor(sp) : 'var(--line2)'); }
+}
+function touchComposer(){
+  const c = S.composer; if (!c || c.touched) return;
+  c.touched = true;
+  if (isPlaying()){ pauseQuiet(); c.resume = true; }
+  const box = $('#composer'); box.classList.add('active');
+  const l = $('#cLbl'); if (l) l.textContent = 'Nota en';
+  box.querySelectorAll('.when-touched').forEach(el => el.classList.remove('hidden'));
+}
 function openComposer(sec, focus, says, end){
-  const c = S.composer || {};
-  const writing = c.open && c.touched && ((c.says||'').trim() || (c.comment||'').trim());
-  if (writing && says == null){
-    // ya estaba escribiendo: no se le pisa nada
-  } else {
+  const c = S.composer || freshComposer();
+  const wasPlaying = isPlaying(); if (wasPlaying) pauseQuiet();
+  if (S.cHidden){ S.cHidden = false; store.set('visor.composer', 'on'); }
+  const writing = c.touched && (c.comment || '').trim();
+  if (says != null || !writing){
     const i = cueIndexAt(sec);
     S.composer = { open: true, seconds: sec, says: says != null ? says : (i >= 0 ? cueSays(i) : ''),
                    comment: writing ? c.comment : '', tag: writing ? c.tag : '', star: writing ? !!c.star : false,
-                   end: (end != null && end > sec + 0.3) ? end : null, picking: false, touched: says != null };
-    renderComposer();
+                   end: (end != null && end > sec + 0.3) ? end : null, picking: false, touched: says != null, resume: wasPlaying || !!c.resume };
   }
+  S.composer.open = true;
+  renderComposer();
   const box = $('#composer'); box.classList.remove('flash'); void box.offsetWidth; box.classList.add('flash');
   $('.lower').scrollTo({ top: 0, behavior: 'smooth' });
   if (focus){ const f = $('#cComment'); if (f){ f.focus(); f.setSelectionRange(f.value.length, f.value.length); } }
@@ -1193,18 +1278,24 @@ function rangeHtml(c){
 }
 function renderComposer(){
   const c = S.composer, box = $('#composer');
-  if (!c || !c.open){ box.className = 'composer hidden'; box.innerHTML = ''; return; }
-  box.className = 'composer open';
+  if (!c) return;
+  if (!c.open){
+    box.className = 'composer rest';
+    box.innerHTML = '<button class="c-show" id="cShow">＋ Escribir una nota</button><span class="small">El cuadro de notas está oculto.</span>';
+    return;
+  }
+  box.className = 'composer open' + (c.touched ? ' active' : '');
   const ci = cueIndexAt(c.seconds), sp = ci >= 0 ? cueSpk(ci) : '';
+  const wt = c.touched ? '' : ' hidden';
   box.innerHTML =
     '<div class="c-top">' +
-      '<span class="c-lbl">Nota en</span>' +
+      '<span class="c-lbl" id="cLbl">' + (c.touched ? 'Nota en' : '<i class="live"></i>Ahora') + '</span>' +
       '<input class="tcin c-tc" id="cStartIn" value="' + esc(secToTc(c.seconds)) + '" title="Momento de la nota. Podés escribirlo a mano." aria-label="Desde">' +
-      (c.end == null && !c.picking ? '<button class="c-ic" id="cNow" title="Usar el momento actual del video" aria-label="Usar el momento actual del video">↻</button>' : '') +
+      (c.end == null && !c.picking ? '<button class="c-ic when-touched' + wt + '" id="cNow" title="Usar el momento actual del video" aria-label="Usar el momento actual del video">↻</button>' : '') +
       rangeHtml(c) +
       '<span class="c-sp"></span>' +
       '<button class="c-star' + (c.star ? ' on' : '') + '" id="cStar" aria-pressed="' + (c.star ? 'true' : 'false') + '">' + (c.star ? '★ Momento clave' : '☆ Momento clave') + '</button>' +
-      '<button class="c-ic" id="cCancel" title="Cancelar (Esc)" aria-label="Cancelar">✕</button>' +
+      '<button class="c-ic" id="cCancel" title="Ocultar el cuadro de notas" aria-label="Ocultar el cuadro de notas">✕</button>' +
     '</div>' +
     '<textarea class="c-quote" id="cSays" rows="1" style="--sc:' + (sp ? spkColor(sp) : 'var(--line2)') + '" placeholder="Qué se dice en este momento (opcional)" aria-label="Qué se dice" title="Lo completamos con la transcripción. Podés cambiarlo.">' + esc(c.says) + '</textarea>' +
     '<textarea class="input c-comment" id="cComment" rows="2" placeholder="Escribí tu comentario…" aria-label="Tu comentario">' + esc(c.comment) + '</textarea>' +
@@ -1214,13 +1305,14 @@ function renderComposer(){
         (c.newTag ? '<span class="newtag"><input class="input" id="cNewTag" placeholder="Nueva etiqueta" maxlength="40"><button class="btn primary sm" id="cNewTagOk">Crear</button><button class="c-mini" id="cNewTagNo">cancelar</button></span>'
                   : '<button class="pill add" id="cNewTagOpen" title="Crear una etiqueta nueva">＋ Etiqueta</button>') +
       '</div>' +
+      '<button class="c-mini when-touched' + wt + '" id="cDiscard" title="Borrar lo escrito (Esc)">descartar</button>' +
       '<button class="btn primary" id="cSave">Guardar nota <span class="kbd-hint">Enter</span></button>' +
     '</div>';
   box.querySelectorAll('textarea').forEach(autosize);
 }
 const composerEl = $('#composer');
 composerEl.addEventListener('input', e => {
-  const c = S.composer; if (!c.open) return; c.touched = true;
+  const c = S.composer; if (!c.open) return; touchComposer();
   if (e.target.tagName === 'TEXTAREA') autosize(e.target);
   if (e.target.id === 'cSays') c.says = e.target.value;
   if (e.target.id === 'cComment') c.comment = e.target.value;
@@ -1228,6 +1320,10 @@ composerEl.addEventListener('input', e => {
 composerEl.addEventListener('click', e => {
   const t = e.target.closest('button'); if (!t) return;
   const c = S.composer;
+  if (t.id === 'cShow'){ S.cHidden = false; store.set('visor.composer', 'on'); c.open = true; followComposer(true); renderComposer(); const f = $('#cComment'); if (f) f.focus(); return; }
+  if (t.id === 'cCancel'){ S.cHidden = true; store.set('visor.composer', 'off'); c.open = false; renderComposer(); return; }
+  if (t.id === 'cDiscard'){ discardComposer(); return; }
+  if (t.id !== 'cSave') touchComposer();
   if (t.id === 'cNow'){ c.seconds = now(); $('#cStartIn').value = secToTc(c.seconds); }
   if (t.id === 'cEndPick'){ c.touched = true; c.endEdit = true; renderComposer(); const ei = $('#cEndIn'); if (ei) ei.focus(); }
   if (t.id === 'cEndPlay'){ c.touched = true; c.endEdit = false; c.picking = true; renderComposer(); if (S.playerReady){ S.suppressUntil = 0; S.player.playVideo(); } toast('Cuando termine el fragmento, tocá “Marcar el final” (o pausá).'); }
@@ -1238,13 +1334,13 @@ composerEl.addEventListener('click', e => {
   if (t.id === 'cNewTagOpen'){ c.newTag = true; c.touched = true; renderComposer(); $('#cNewTag').focus(); return; }
   if (t.id === 'cNewTagNo'){ c.newTag = false; renderComposer(); return; }
   if (t.id === 'cNewTagOk'){ createComposerTag(); return; }
-  if (t.id === 'cCancel') closeComposer();
   if (t.id === 'cSave') saveComposer();
   if (t.dataset.tag != null){ c.tag = c.tag === t.dataset.tag ? '' : t.dataset.tag; c.touched = true;
     composerEl.querySelectorAll('.pill[data-tag]').forEach(p => p.classList.toggle('on', p.dataset.tag === c.tag)); }
 });
 composerEl.addEventListener('change', e => {
   const c = S.composer; if (!c || !c.open) return;
+  touchComposer();
   if (e.target.id === 'cStartIn'){
     const s = parseTcInput(e.target.value);
     if (s == null){ e.target.classList.add('bad'); toast('Ese timecode no es válido. Escribilo como 14:33:20:05 (horas:minutos:segundos:cuadros).', true); return; }
@@ -1271,11 +1367,12 @@ composerEl.addEventListener('keydown', e => {
     return;
   }
   if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && e.target.tagName === 'TEXTAREA'){ e.preventDefault(); saveComposer(); }
-  if (e.key === 'Escape'){ e.preventDefault(); closeComposer(); }
+  if (e.key === 'Escape'){ e.preventDefault(); if (document.activeElement) document.activeElement.blur(); discardComposer(); }
 });
 function saveComposer(){
   const c = S.composer;
-  if (!(c.says||'').trim() && !(c.comment||'').trim()){ toast('Escribí algo antes de guardar.'); return; }
+  if (!c.touched || (!(c.says||'').trim() && !(c.comment||'').trim())){ toast('Escribí algo antes de guardar.'); const f = $('#cComment'); if (f) f.focus(); return; }
+  const resume = !!c.resume;
   if (c.picking) setEnd(now());
   const end = c.end != null ? Math.round(c.end * 1000) / 1000 : null;
   const note = { id: uid(), interview: S.cur.id, author: S.me.name, seconds: Math.round(c.seconds * 1000) / 1000, tc: secToTc(c.seconds),
@@ -1288,7 +1385,7 @@ function saveComposer(){
   renderNotes(); renderMarks(); renderTranscriptDots(); updateCountsLocal(); flashRow(note.id);
   if (document.activeElement) document.activeElement.blur();
   toast(note.star ? 'Momento clave guardado' : 'Nota guardada');
-  if (S.playerReady && !isPlaying()) S.player.playVideo();
+  if (resume && S.playerReady && !isPlaying()) S.player.playVideo();
   pushNote(note);
 }
 async function pushNote(note){
@@ -1341,6 +1438,34 @@ function renderSeg(){
 }
 $('#seg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; S.who = b.dataset.k; renderNotes(); renderMarks(); renderTranscriptDots(); });
 $('#onlyStar').onclick = () => { S.onlyStar = !S.onlyStar; renderNotes(); renderMarks(); renderTranscriptDots(); };
+// Descargar las notas de la entrevista en Excel (.xlsx)
+let xlsxP = null;
+function loadXLSX(){
+  if (window.XLSX) return Promise.resolve();
+  if (!xlsxP) xlsxP = new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload = res; s.onerror = () => { xlsxP = null; rej(new Error('sin conexión')); }; document.head.appendChild(s); });
+  return xlsxP;
+}
+async function exportExcel(){
+  const iv = S.cur; if (!iv) return;
+  const b = $('#xlsBtn'); b.disabled = true; b.textContent = 'Preparando…';
+  try { await loadXLSX(); }
+  catch (e){ toast('No se pudo preparar el Excel. Revisá la conexión.', true); b.disabled = false; b.textContent = '⬇ Excel'; return; }
+  const head = ['Momento', 'Hasta', 'Duración', 'Qué se dice', 'Comentario', 'Etiqueta', 'Momento clave', 'Quién', 'Respuestas', 'Creada'];
+  const rows = S.notes.slice().sort((a, c) => a.seconds - c.seconds).map(n => [
+    n.tc || secToTc(n.seconds), n.secondsEnd != null ? (n.tcEnd || secToTc(n.secondsEnd)) : '', n.secondsEnd != null ? durTxt(n.secondsEnd - n.seconds) : '',
+    n.says || '', n.comment || '', n.tag || '', n.star ? 'Sí' : '', n.author, repliesOf(n.id).map(r => r.author + ': ' + r.text).join('\n'), n.created || '']);
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([head].concat(rows));
+  ws['!cols'] = [13, 13, 10, 50, 50, 20, 9, 14, 40, 16].map(w => ({ wch: w }));
+  XLSX.utils.book_append_sheet(wb, ws, 'Notas');
+  const free = (S.free[iv.id] || []).map(f => [f.text, f.author, f.created || '']);
+  if (free.length){ const ws2 = XLSX.utils.aoa_to_sheet([['Nota suelta', 'Quién', 'Creada']].concat(free)); ws2['!cols'] = [{ wch: 80 }, { wch: 14 }, { wch: 16 }]; XLSX.utils.book_append_sheet(wb, ws2, 'Notas sueltas'); }
+  const name = String(iv.title).replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim() || 'entrevista';
+  XLSX.writeFile(wb, 'Notas - ' + name + '.xlsx');
+  b.disabled = false; b.textContent = '⬇ Excel';
+  toast('Excel descargado: ' + plural(rows.length, 'nota', 'notas'));
+}
+$('#xlsBtn').onclick = exportExcel;
 $('#tagF').onchange = e => { S.tagF = e.target.value; renderNotes(); renderMarks(); renderTranscriptDots(); };
 let nqT; $('#nq').addEventListener('input', e => { clearTimeout(nqT); nqT = setTimeout(() => { S.q = e.target.value.trim(); renderNotes(); }, 150); });
 
@@ -1399,7 +1524,7 @@ function renderNotes(){
   if (!list.length){
     empty.classList.remove('hidden');
     empty.innerHTML = S.notes.length ? '<b>No hay notas que coincidan</b>Probá con “Todas”, sacá “Solo claves”, elegí “Todas las etiquetas” o borrá la búsqueda.'
-      : '<b>Todavía no hay notas en esta entrevista</b>Dale play, y cuando algo te interese, pausá el video.';
+      : '<b>Todavía no hay notas en esta entrevista</b>Dale play y escribí en el cuadro de notas cuando algo te interese.';
   } else empty.classList.add('hidden');
   if (restore){
     const el = document.querySelector('tr.row[data-id="' + CSS.escape(restore.id) + '"] [data-f="' + restore.f + '"]');
@@ -1535,7 +1660,7 @@ function renderFree(k){
   const box = freeBox(k); if (!box || !S.me) return;
   const list = (S.free[k] || []).slice().sort((a, b) => String(b.created || '~').localeCompare(String(a.created || '~')));
   if (k) $('#ltF').textContent = list.length ? ' ' + list.length : '';
-  else $('#freeBtn').textContent = 'Notas sueltas del documental' + (list.length ? ' (' + list.length + ')' : '');
+  else $('#freeBtn').textContent = 'Notas sueltas' + (list.length ? ' (' + list.length + ')' : '');
   const ae = document.activeElement;
   let restore = null;
   if (ae && box.contains(ae) && ae.dataset.fid) restore = { id: ae.dataset.fid, s: ae.selectionStart, e: ae.selectionEnd };
@@ -1611,7 +1736,7 @@ document.addEventListener('keydown', e => {
   if (k === ' ' || k === 'k'){ e.preventDefault(); togglePlay(); }
   else if (e.key === 'ArrowLeft'){ e.preventDefault(); seek(now() - 5); }
   else if (e.key === 'ArrowRight'){ e.preventDefault(); seek(now() + 5); }
-  else if (k === 'n'){ e.preventDefault(); pauseQuiet(); openComposer(now(), true); }
+  else if (k === 'n'){ e.preventDefault(); openComposer(now(), true); }
 });
 
 /* ═════════════ ventanas: ayuda y carga de entrevistas ═════════════ */
@@ -1625,8 +1750,9 @@ function openHelp(){
     '<ol class="steps">' +
     '<li><div><b>Elegí una entrevista</b>Desde la pantalla de inicio. Siempre volvés con “← Todas las entrevistas”.</div></li>' +
     '<li><div><b>Mirá el video y leé la transcripción</b>La frase que se está diciendo queda resaltada en amarillo. Si tocás una frase, el video salta a ese momento.</div></li>' +
-    '<li><div><b>Para anotar, pausá el video</b>Se abre el recuadro “Nueva nota” con el momento y la frase ya completados. Escribí tu comentario y tocá “Guardar nota”. Si es importante, marcá ☆ Momento clave.</div></li>' +
-    '<li><div><b>Fragmentos largos: desde–hasta</b>En el recuadro tocá “Marcar hasta dónde va”, dejá correr el video y tocá “Marcar el final acá”. Si seleccionás varias frases de la transcripción, el desde–hasta se completa solo.</div></li>' +
+    '<li><div><b>Para anotar, escribí en el cuadro de notas</b>Está siempre abajo del video y sigue el momento que se está viendo. Cuando empezás a escribir, el video se pausa y la nota queda en ese momento. Guardala con “Guardar nota” o Enter. Si es importante, marcá ☆ Momento clave. Con la ✕ lo ocultás.</div></li>' +
+    '<li><div><b>Fragmentos largos: desde–hasta</b>En el cuadro tocá “＋ Hasta” y escribí el final, o marcalo reproduciendo el video. Si seleccionás varias frases de la transcripción, el desde–hasta se completa solo.</div></li>' +
+    '<li><div><b>Descargar en Excel</b>Con “⬇ Excel”, arriba de la tabla, bajás todas las notas de la entrevista (y sus notas sueltas) para pasárselas al montajista.</div></li>' +
     '<li><div><b>Mirá y respondé las notas de todas</b>Cada persona tiene su color. Elegí cuáles ver con “Todas”, “Mías” o el nombre de cada una. Con “Responder” podés comentar la nota de otra persona.</div></li>' +
     '<li><div><b>Quién habla</b>En entrevistas de a dos, seleccioná la frase donde empieza a hablar otra persona y tocá “¿Quién habla acá?”. La marca vale hasta la próxima. Para cambiarla, tocá el nombre de color en la transcripción.</div></li>' +
     '<li><div><b>Notas sueltas</b>Para ideas que no van en un momento puntual: en cada entrevista, en la pestaña “Notas sueltas” (al lado de “Notas”); y en el inicio, con el botón “Notas sueltas del documental”. No hace falta pausar.</div></li>' +
