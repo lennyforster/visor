@@ -165,6 +165,12 @@ button{cursor:pointer}
 .tempty{color:var(--muted);padding:26px 4px;font-size:15px}
 .backnow{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;z-index:3;box-shadow:0 6px 18px rgba(0,0,0,.12)}
 #annot{position:fixed;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+/* modo corrección de la transcripción */
+#fixBtn{flex:none;white-space:nowrap}
+.tcol.fixing .thelp{color:var(--ink);background:var(--accent-soft)}
+.tcol.fixing .cue{cursor:text}
+.tcol.fixing .cue:hover{background:var(--hover);box-shadow:inset 0 -1px 0 var(--accent)}
+.tcol.fixing .tbody .cue.editing{background:var(--surface);color:var(--ink);box-shadow:0 0 0 2px var(--accent);outline:none;border-radius:3px}
 
 .split{height:10px;flex:none;cursor:row-resize;background:var(--bg);border-top:1px solid var(--line);position:relative}
 .split::after{content:'';position:absolute;left:50%;top:3px;width:44px;height:4px;margin-left:-22px;border-radius:4px;background:var(--line2)}
@@ -492,9 +498,10 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
         <div class="tinner">
           <div class="thead">
             <h3>Lo que se dice</h3>
+            <button class="btn sm hidden" id="fixBtn" title="Corregir errores de la transcripción">✎ Corregir</button>
             <input class="input" id="tq" placeholder="Buscar una palabra…" type="search">
           </div>
-          <div class="thelp">Tocá una frase para ir a ese momento. Seleccioná texto para anotarlo o para marcar quién habla.</div>
+          <div class="thelp" id="thelp">Tocá una frase para ir a ese momento. Seleccioná texto para anotarlo o para marcar quién habla.</div>
           <div class="tbody" id="tbody"></div>
           <button class="btn sm backnow hidden" id="backNow">Volver a lo que se está diciendo</button>
         </div>
@@ -675,7 +682,7 @@ async function api(action, data){
   } else {
     if (!API_URL) throw new Error('Falta configurar la dirección del servidor.');
     // Si se corta la conexión, reintenta solo (únicamente lo que no duplica datos)
-    const safe = /^(login|open|notes|search|starred|saveNote|free|saveFree|setSpeaker)$/.test(action);
+    const safe = /^(login|open|notes|search|starred|saveNote|free|saveFree|setSpeaker|fixCue)$/.test(action);
     for (let i = 0; ; i++){
       try {
         const r = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload), headers: { 'Content-Type': 'text/plain;charset=utf-8' }, redirect: 'follow' });
@@ -854,6 +861,7 @@ function updateCountsLocal(){
 async function openInterview(id, at){
   const iv = S.interviews.find(i => i.id === id); if (!iv) return;
   savePos();
+  if (S.fixMode) setFixMode(false);
   S.pendingSeek = (at != null && !isNaN(at)) ? Math.max(0, at - 2) : null;
   S.cur = iv; try { location.hash = encodeURIComponent(id); } catch(e){}
   $('#home').classList.add('hidden'); $('#work').classList.remove('hidden'); $('#viewSw').classList.remove('hidden');
@@ -1011,7 +1019,7 @@ function tick(){
     const old = document.querySelector('.cue.on'); if (old) old.classList.remove('on');
     S.activeCue = i;
     const el = i >= 0 ? document.querySelector('.cue[data-i="' + i + '"]') : null;
-    if (el){ el.classList.add('on'); if (Date.now() - S.userScrollAt > 5000) scrollCueIntoView(el); }
+    if (el){ el.classList.add('on'); if (Date.now() - S.userScrollAt > 5000 && !S.fixMode) scrollCueIntoView(el); }
   }
   const onEl = document.querySelector('.cue.on'); let off = false;
   if (onEl){ const r = onEl.getBoundingClientRect(), b = $('#tbody').getBoundingClientRect(); off = r.bottom < b.top || r.top > b.bottom; }
@@ -1052,6 +1060,9 @@ function buildParas(){
 function renderTranscript(){
   const box = $('#tbody');
   if (!S.trLoaded) return;
+  if (S.fixing){ S.fixDirty = true; return; } // no pisar una frase que se está corrigiendo
+  $('#fixBtn').classList.toggle('hidden', !S.cues.length);
+  if (!S.cues.length && S.fixMode) setFixMode(false);
   if (!S.cues.length){
     box.innerHTML = '<div class="tempty">Esta entrevista todavía no tiene transcripción.' + (S.me.admin ? ' Podés subirla con “Editar”, en la tarjeta de la entrevista de la pantalla de inicio.' : '') + '</div>';
     $('.thelp').classList.add('hidden'); return;
@@ -1097,6 +1108,7 @@ function cuesForNote(n){
   return out;
 }
 $('#tbody').addEventListener('click', e => {
+  if (S.fixMode){ const fc = e.target.closest('.cue'); if (fc){ fixStart(fc, e); return; } }
   const sb = e.target.closest('.spk');
   if (sb){ const r = sb.getBoundingClientRect(); openSpkPop(+sb.dataset.ci, r.left, r.bottom + 6); return; }
   if (String(window.getSelection())) return;
@@ -1107,6 +1119,7 @@ $('#tbody').addEventListener('click', e => {
   if (ns && ns.length) flashRow(ns[ns.length - 1]);
 });
 $('#tbody').addEventListener('dblclick', e => {
+  if (S.fixMode) return;
   const cue = e.target.closest('.cue'); if (!cue) return;
   const c = S.cues[+cue.dataset.i];
   window.getSelection().removeAllRanges();
@@ -1123,6 +1136,7 @@ let tqT; $('#tq').addEventListener('input', () => {
 });
 // Seleccionar texto → botón "Anotar esto"
 document.addEventListener('mouseup', e => {
+  if (S.fixMode){ $('#annot').classList.add('hidden'); $('#spkBtn').classList.add('hidden'); return; }
   if (e.target.id === 'annot' || e.target.id === 'spkBtn' || (e.target.closest && e.target.closest('#spkPop'))) return;
   setTimeout(() => {
     const sel = window.getSelection(); const txt = String(sel).replace(/\s+/g,' ').trim();
@@ -1151,6 +1165,78 @@ $('#annot').onclick = () => {
   window.getSelection().removeAllRanges();
 };
 $('#tbody').addEventListener('scroll', () => { $('#annot').classList.add('hidden'); $('#spkBtn').classList.add('hidden'); });
+
+/* ═════════════ corregir la transcripción ═════════════ */
+// Modo corrección: tocando una frase se edita ahí mismo. Enter guarda, Esc cancela.
+const THELP = $('#thelp').textContent;
+function setFixMode(on){
+  if (!on) fixFinish(true);
+  S.fixMode = !!on;
+  $('.tcol').classList.toggle('fixing', S.fixMode);
+  const b = $('#fixBtn'); b.textContent = S.fixMode ? 'Listo' : '✎ Corregir'; b.classList.toggle('primary', S.fixMode);
+  $('#thelp').textContent = S.fixMode ? 'Corrigiendo: tocá una frase y escribí. Enter guarda, Esc cancela. Cuando termines, tocá “Listo”.' : THELP;
+  if (S.fixMode){ $('#annot').classList.add('hidden'); $('#spkBtn').classList.add('hidden'); window.getSelection().removeAllRanges(); }
+}
+$('#fixBtn').onclick = () => setFixMode(!S.fixMode);
+function fixStart(el, ev){
+  if (S.fixing && S.fixing.el === el) return;
+  fixFinish(true);
+  const i = +el.dataset.i, c = S.cues[i]; if (!c) return;
+  S.fixing = { el, i, iv: S.cur, start: c[0], old: c[2] };
+  el.classList.add('editing'); el.removeAttribute('title');
+  try { el.contentEditable = 'plaintext-only'; } catch(e){}
+  if (el.contentEditable !== 'plaintext-only') el.contentEditable = 'true';
+  el.spellcheck = true;
+  el.focus();
+  // el cursor queda donde tocaste
+  let r = null;
+  try {
+    if (ev && document.caretPositionFromPoint){ const p = document.caretPositionFromPoint(ev.clientX, ev.clientY); if (p && el.contains(p.offsetNode)){ r = document.createRange(); r.setStart(p.offsetNode, p.offset); } }
+    else if (ev && document.caretRangeFromPoint){ const q = document.caretRangeFromPoint(ev.clientX, ev.clientY); if (q && el.contains(q.startContainer)) r = q; }
+  } catch(e){ r = null; }
+  if (!r){ r = document.createRange(); r.selectNodeContents(el); }
+  r.collapse(!!ev && r.startContainer !== el);
+  const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+}
+function fixFinish(save){
+  const f = S.fixing; if (!f) return;
+  S.fixing = null;
+  const el = f.el;
+  el.removeAttribute('contenteditable'); el.classList.remove('editing');
+  const text = el.textContent.replace(/\s+/g, ' ').trim();
+  if (!save || text === f.old) el.textContent = f.old;
+  else if (!text){ el.textContent = f.old; toast('La frase no puede quedar vacía. Quedó como estaba.', true); }
+  else {
+    el.textContent = text;
+    if (S.cur === f.iv && S.cues[f.i] && S.cues[f.i][0] === f.start){ S.cues[f.i][2] = text; trSave(f.iv.id, { cues: S.cues, spk: S.spk }); }
+    saveFix(f, text);
+  }
+  if (S.fixDirty){ S.fixDirty = false; renderTranscript(); } else renderTranscriptDots();
+}
+async function saveFix(f, text){
+  try {
+    await tracked(() => api('fixCue', { id: f.iv.id, start: f.start, text }));
+    toast('Frase corregida');
+  } catch (err){
+    toast('No se pudo guardar la corrección: ' + err.message, true);
+    if (S.cur === f.iv && S.cues[f.i] && S.cues[f.i][0] === f.start && S.cues[f.i][2] === text){
+      S.cues[f.i][2] = f.old; trSave(f.iv.id, { cues: S.cues, spk: S.spk });
+      if (S.fixing) S.fixDirty = true; else renderTranscript();
+    }
+  }
+}
+$('#tbody').addEventListener('keydown', e => {
+  if (!S.fixing || e.target !== S.fixing.el) return;
+  e.stopPropagation();
+  if (e.key === 'Enter' || e.key === 'Escape'){ e.preventDefault(); const el = S.fixing.el; fixFinish(e.key === 'Enter'); el.blur(); }
+});
+$('#tbody').addEventListener('focusout', e => { if (S.fixing && e.target === S.fixing.el) fixFinish(true); });
+$('#tbody').addEventListener('paste', e => {
+  if (!S.fixing || !S.fixing.el.contains(e.target)) return;
+  e.preventDefault();
+  const t = (e.clipboardData || window.clipboardData).getData('text').replace(/\s+/g, ' ');
+  document.execCommand('insertText', false, t);
+});
 
 /* ═════════════ quién habla (marcado a mano) ═════════════ */
 // Una marca en una frase vale para esa frase y las siguientes, hasta la próxima marca.
@@ -1785,6 +1871,7 @@ function openHelp(){
     '<li><div><b>Lo anotado queda resaltado</b>En la transcripción, las frases que alguien usó en una nota se ven resaltadas con su color. Pasá el mouse para leer la nota, o tocala para encontrarla en la tabla.</div></li>' +
     '<li><div><b>Mirá y respondé las notas de todas</b>Cada persona tiene su color. Elegí cuáles ver con “Todas”, “Mías” o el nombre de cada una. Con “Responder” podés comentar la nota de otra persona.</div></li>' +
     '<li><div><b>Quién habla</b>En entrevistas de a dos, seleccioná la frase donde empieza a hablar otra persona y tocá “¿Quién habla acá?”. La marca vale hasta la próxima. Para cambiarla, tocá el nombre de color en la transcripción.</div></li>' +
+    '<li><div><b>Corregir la transcripción</b>Si una frase está mal transcripta, tocá “✎ Corregir” (arriba de la transcripción), tocá la frase y escribí. Enter guarda, Esc cancela. Cuando termines, “Listo”. Las demás ven la corrección la próxima vez que abran la entrevista.</div></li>' +
     '<li><div><b>Notas sueltas</b>Para ideas que no van en un momento puntual: en cada entrevista, en la pestaña “Notas sueltas” (al lado de “Notas”); y en el inicio, con el botón “Notas sueltas del documental”. No hace falta pausar.</div></li>' +
     '<li><div><b>Etiquetas de colores</b>Cada etiqueta tiene su color. Con el selector “Todas las etiquetas”, arriba de la tabla, ves solo las notas de una etiqueta.</div></li>' +
     '<li><div><b>Dos formas de ver</b>Arriba podés elegir “Con transcripción” o “Solo notas”. En “Solo notas” el video queda al costado y las notas se ven más grandes.</div></li>' +
