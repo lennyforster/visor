@@ -432,6 +432,61 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
 .free-new textarea{resize:none;min-height:46px;line-height:1.45;overflow:hidden;font-size:16px}
 .free .nempty{margin-top:14px}
 #home .free{margin:0}
+/* material de archivo */
+.arc-new{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1.2fr) minmax(0,1fr) auto;gap:8px;align-items:start}
+.arc-new .input{font-size:15px;padding:9px 12px}
+.arc-sec{margin-top:22px}
+.arc-sec h4{margin:0 0 8px;font-size:16px;display:flex;align-items:baseline;gap:6px}
+.arc-sec h4 .n{color:var(--faint);font-weight:400;font-size:14px}
+.arc-sec .hint{color:var(--muted);font-size:14px;margin:-4px 0 10px}
+.apend{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px 8px 12px;border-radius:10px;border:1.5px dashed color-mix(in srgb,var(--tc) 60%,var(--line2));background:color-mix(in srgb,var(--tc) 5%,var(--surface));margin-bottom:6px}
+.apend .tc{margin-top:0}
+.apend .x{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aitem{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-bottom:8px}
+.aitem.editing{grid-template-columns:1fr}
+.a-title{font-size:16px;font-weight:700;color:var(--ink);text-decoration:none;word-break:break-word}
+.a-title:hover{color:var(--accent);text-decoration:underline}
+.a-host{color:var(--faint);font-size:13px;margin-left:8px;white-space:nowrap}
+.a-det{color:var(--muted);font-size:14px;margin-top:3px;white-space:pre-wrap}
+.a-uses{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px;font-size:13px;color:var(--faint)}
+.ause{border:1.5px solid var(--line2);background:var(--surface);border-radius:99px;padding:2px 10px 2px 8px;font-size:13px;display:inline-flex;align-items:center;gap:6px;color:var(--ink);max-width:100%}
+.ause i{width:8px;height:8px;border-radius:50%;background:var(--uc);flex:none}
+.ause .x{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:420px;color:var(--muted)}
+.ause:hover{border-color:var(--accent);color:var(--accent)}
+.a-meta{display:flex;flex-direction:column;align-items:flex-end;gap:6px;color:var(--faint);font-size:13px;white-space:nowrap}
+.a-acts{display:flex;gap:4px;align-items:center}
+.a-acts .del{padding:3px 8px}
+.a-edit{display:grid;gap:8px}
+.a-edit .row2{display:flex;gap:8px}
+.arcs{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.achip{display:inline-block;max-width:100%;padding:3px 10px;border-radius:99px;font-size:13px;text-decoration:none;color:var(--ink);background:color-mix(in srgb,var(--accent) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.achip:hover{border-color:var(--accent);color:var(--accent)}
+.alink{border:1.5px dashed var(--line2);background:none;border-radius:99px;padding:2px 10px;font-size:13px;color:var(--muted)}
+.alink:hover,.alink.want{border-color:color-mix(in srgb,var(--accent) 60%,transparent);color:var(--accent)}
+#arcPop{position:fixed;z-index:60;width:380px;max-width:calc(100vw - 20px);background:var(--surface);border:1px solid var(--line2);border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,.22);padding:14px 16px}
+#arcPop .q{color:var(--muted);font-size:14px;margin:2px 0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#arcPop .alist{display:flex;flex-direction:column;gap:2px;max-height:220px;overflow:auto;margin-bottom:10px}
+#arcPop .aopt{display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:15px;min-width:0}
+#arcPop .aopt:hover{background:var(--hover)}
+#arcPop .aopt input{accent-color:var(--accent);width:16px;height:16px;flex:none}
+#arcPop .aopt span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#arcPop .aopt small{color:var(--faint);margin-left:auto;padding-left:8px;font-size:12px;white-space:nowrap}
+#arcPop .anew{display:grid;gap:6px;padding-top:10px;border-top:1px solid var(--line)}
+#arcPop .anew .input{padding:7px 10px;font-size:14px}
+#arcPop .foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.c-arc{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
+.c-arc .c-arcl{font-size:14px;color:var(--muted)}
+.c-arc select{font-size:14px;padding:7px 10px;max-width:280px;width:auto}
+.c-arc .input:not(select){flex:1;min-width:150px;font-size:14px;padding:7px 10px}
+#ltA.pend::after{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-left:5px;vertical-align:2px}
+.resgroup h4.arc-h{display:flex;align-items:center;gap:10px}
+.arc-h .t{flex:1}
+.arc-h .n{font-weight:400;color:var(--faint);font-size:14px}
+.garc{padding:12px 16px;border-bottom:1px solid var(--pline)}
+.garc:last-child{border-bottom:0}
+.garc .k{font-size:13px;color:var(--muted);margin-bottom:6px}
+.garc.pend .ause{margin:0 6px 6px 0}
+@media (max-width:760px){.arc-new{grid-template-columns:1fr}.apend{grid-template-columns:auto minmax(0,1fr)}.apend .who{display:none}.apend .btn{grid-column:1/-1}}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -461,6 +516,7 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
     <nav class="homenav" id="homeNav" aria-label="Inicio">
       <button class="btn quiet sm" id="starsBtn">★ Momentos clave</button>
       <button class="btn quiet sm" id="freeBtn">Notas sueltas</button>
+      <button class="btn quiet sm" id="arcBtn" title="Todo el material de archivo, por entrevista">Archivo</button>
       <button class="btn primary sm hidden" id="adminBtn">＋ Agregar entrevista</button>
     </nav>
     <span class="topsep" id="topSep"></span>
@@ -511,7 +567,7 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
     <div class="lower">
       <div class="composer hidden" id="composer"></div>
       <div class="notesbar">
-        <div class="ltabs" id="ltabs"><button data-lt="notes" class="on">Notas<span class="n" id="ltN"></span></button><button data-lt="free" class="sub" title="Ideas sobre esta entrevista que no van en un momento puntual">Notas sueltas<span class="n" id="ltF"></span></button></div>
+        <div class="ltabs" id="ltabs"><button data-lt="notes" class="on">Notas<span class="n" id="ltN"></span></button><button data-lt="free" class="sub" title="Ideas sobre esta entrevista que no van en un momento puntual">Notas sueltas<span class="n" id="ltF"></span></button><button data-lt="arc" class="sub" title="Links al material de archivo de esta entrevista">Archivo<span class="n" id="ltA"></span></button></div>
         <div class="nfilters" id="nfilters">
           <div class="seg" id="seg"></div>
           <button class="onlystar" id="onlyStar" title="Mostrar solo los momentos clave">★ Solo claves</button>
@@ -521,6 +577,7 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
         </div>
       </div>
       <div class="free hidden" id="freeIv"></div>
+      <div class="free hidden" id="arcIv"></div>
       <div class="nscroll" id="nscroll">
         <table id="ntable">
           <colgroup><col class="c-st"><col class="c-tc"><col><col><col class="c-tag"><col class="c-who"><col class="c-x"></colgroup>
@@ -536,6 +593,7 @@ select.tag.has{background:color-mix(in srgb,var(--tc) 15%,var(--surface));border
 <button id="annot" class="btn primary sm hidden">Anotar esto</button>
 <button id="spkBtn" class="btn sm hidden">¿Quién habla acá?</button>
 <div id="spkPop" class="hidden"></div>
+<div id="arcPop" class="hidden"></div>
 <div id="modalRoot"></div>
 
 <script>
@@ -653,7 +711,8 @@ const S = {
   userScrollAt: 0, activeCue: -1, duration: 0,
   composer: null, busy: 0, failed: new Set(), lastNotesJson: '', pollT: null,
   tagF: '', free: {}, freeJson: {}, lt: 'notes',
-  spk: [], cueSpk: [], speakers: [], spkJson: '', spkPop: null
+  spk: [], cueSpk: [], speakers: [], spkJson: '', spkPop: null,
+  arc: {}, arcJson: {}, arcEdit: null, arcPop: null
 };
 const colorOf = name => S.colors[name] || '#9AA3B2';
 const tagList = () => (S.tags && S.tags.length) ? S.tags : CONFIG.TAGS;
@@ -703,7 +762,7 @@ async function api(action, data){
 function setSync(){
   const el = $('#sync');
   el.className = 'status' + (S.failed.size ? ' bad' : ' hidden');
-  el.querySelector('span').textContent = S.failed.size ? ('No se guardaron ' + plural(S.failed.size, 'nota', 'notas') + '. Tocá para reintentar') : '';
+  el.querySelector('span').textContent = S.failed.size ? ('No se guardaron ' + plural(S.failed.size, 'cambio', 'cambios') + '. Tocá para reintentar') : '';
 }
 async function tracked(fn){ S.busy++; setSync(); try { return await fn(); } finally { S.busy--; setSync(); } }
 
@@ -823,6 +882,8 @@ function showHomeFree(){
 $('#freeBtn').onclick = showHomeFree;
 $('#results').addEventListener('click', e => {
   if (e.target.closest('#resBack')){ hideResults(); $('#gq').value = ''; return; }
+  const ia = e.target.closest('[data-ivarc]'); if (ia){ openInterview(ia.dataset.ivarc); setLowerTab('arc'); return; }
+  const au = e.target.closest('.ause[data-iv]'); if (au){ openInterview(au.dataset.iv, +au.dataset.s); return; }
   const h = e.target.closest('.hit'); if (!h) return;
   if (!h.dataset.iv){ $('#gq').value = ''; showHomeFree(); return; }
   openInterview(h.dataset.iv, h.dataset.s === '' ? undefined : +h.dataset.s);
@@ -868,7 +929,7 @@ async function openInterview(id, at){
   $('#homeNav').classList.add('hidden'); $('#topSep').classList.add('hidden');
   $('#backBtn').classList.remove('hidden'); $('#topTitle').textContent = iv.title;
   S.cues = []; S.paras = null; S.notes = []; S.replies = []; S.replyOpen = null; S.lastNotesJson = ''; S.activeCue = -1; S.duration = 0;
-  S.spk = []; S.spkJson = ''; applySpk(); closeSpkPop();
+  S.spk = []; S.spkJson = ''; applySpk(); closeSpkPop(); closeArcPop(); S.arcEdit = null;
   $('#tq').value = ''; $('#nq').value = ''; S.q = ''; S.tagF = '';
   $('#tbody').innerHTML = '<div class="tempty">Cargando la transcripción…</div>';
   S.trLoaded = false;
@@ -889,6 +950,7 @@ async function openInterview(id, at){
     if (S.cur !== iv) return;
     setNotes(j.notes || [], j.replies || []);
     setFree(iv.id, j.free || []); S.freeJson[iv.id] = JSON.stringify(j.free || []);
+    setArc(iv.id, j.archive || []); S.arcJson[iv.id] = JSON.stringify(j.archive || []);
     S.spk = j.spk || []; S.spkJson = JSON.stringify(S.spk); applySpk();
     if (S.trLoaded){ renderTranscript(); trSave(id, { cues: S.cues, spk: S.spk }); }
     renderNotes(); renderMarks(); updateCountsLocal(); renderFree(iv.id);
@@ -933,6 +995,7 @@ async function poll(){
     if (S.cur !== iv) return;
     if (j.tags) S.tags = j.tags;
     if (j.free) updateFree(iv.id, j.free);
+    if (j.archive) updateArc(iv.id, j.archive);
     if (j.spk){
       const sj = JSON.stringify(j.spk);
       if (sj !== S.spkJson && S.spkPop == null && !String(window.getSelection())){ S.spkJson = sj; S.spk = j.spk; applySpk(); renderTranscript(); if (S.trLoaded) trSave(iv.id, { cues: S.cues, spk: S.spk }); }
@@ -1338,7 +1401,7 @@ function flashRow(id){
 // Está siempre abierto: mientras no escribís, sigue al video ("Ahora"). Cuando empezás a escribir,
 // el video se pausa y la nota queda fija en ese momento. Con la ✕ se oculta.
 S.cHidden = store.get('visor.composer') === 'off';
-function freshComposer(){ return { open: !S.cHidden, seconds: now(), says: '', comment: '', tag: '', star: false, end: null, picking: false, touched: false, resume: false }; }
+function freshComposer(){ return { open: !S.cHidden, seconds: now(), says: '', comment: '', tag: '', star: false, end: null, picking: false, touched: false, resume: false, arc: '', arcT: '', arcL: '' }; }
 function closeComposer(){ S.composer = freshComposer(); followComposer(true); renderComposer(); }
 function discardComposer(){ const r = S.composer && S.composer.resume; closeComposer(); if (r && S.playerReady) S.player.playVideo(); }
 function followComposer(force){
@@ -1369,6 +1432,7 @@ function openComposer(sec, focus, says, end){
     const i = cueIndexAt(sec);
     S.composer = { open: true, seconds: sec, says: says != null ? says : (i >= 0 ? cueSays(i) : ''),
                    comment: writing ? c.comment : '', tag: writing ? c.tag : '', star: writing ? !!c.star : false,
+                   arc: writing ? (c.arc || '') : '', arcT: writing ? (c.arcT || '') : '', arcL: writing ? (c.arcL || '') : '',
                    end: (end != null && end > sec + 0.3) ? end : null, picking: false, touched: says != null, resume: wasPlaying || !!c.resume };
   }
   S.composer.open = true;
@@ -1414,6 +1478,7 @@ function renderComposer(){
     '</div>' +
     '<textarea class="c-quote" id="cSays" rows="1" style="--sc:' + (sp ? spkColor(sp) : 'var(--line2)') + '" placeholder="Qué se dice en este momento (opcional)" aria-label="Qué se dice" title="Lo completamos con la transcripción. Podés cambiarlo.">' + esc(c.says) + '</textarea>' +
     '<textarea class="input c-comment" id="cComment" rows="2" placeholder="Escribí tu comentario…" aria-label="Tu comentario">' + esc(c.comment) + '</textarea>' +
+    arcRowHtml(c) +
     '<div class="c-foot">' +
       '<div class="c-tags">' +
         tagList().map(t => '<button class="pill' + (t === c.tag ? ' on' : '') + '" data-tag="' + esc(t) + '" style="--tc:' + tagColor(t) + '">' + esc(t) + '</button>').join('') +
@@ -1431,6 +1496,8 @@ composerEl.addEventListener('input', e => {
   if (e.target.tagName === 'TEXTAREA') autosize(e.target);
   if (e.target.id === 'cSays') c.says = e.target.value;
   if (e.target.id === 'cComment') c.comment = e.target.value;
+  if (e.target.id === 'cArcT') c.arcT = e.target.value;
+  if (e.target.id === 'cArcL') c.arcL = e.target.value;
 });
 composerEl.addEventListener('click', e => {
   const t = e.target.closest('button'); if (!t) return;
@@ -1450,12 +1517,14 @@ composerEl.addEventListener('click', e => {
   if (t.id === 'cNewTagNo'){ c.newTag = false; renderComposer(); return; }
   if (t.id === 'cNewTagOk'){ createComposerTag(); return; }
   if (t.id === 'cSave') saveComposer();
-  if (t.dataset.tag != null){ c.tag = c.tag === t.dataset.tag ? '' : t.dataset.tag; c.touched = true;
-    composerEl.querySelectorAll('.pill[data-tag]').forEach(p => p.classList.toggle('on', p.dataset.tag === c.tag)); }
+  if (t.dataset.tag != null){ const wasArc = isArcTag(c.tag); c.tag = c.tag === t.dataset.tag ? '' : t.dataset.tag; c.touched = true;
+    if (wasArc !== isArcTag(c.tag)) renderComposer();
+    else composerEl.querySelectorAll('.pill[data-tag]').forEach(p => p.classList.toggle('on', p.dataset.tag === c.tag)); }
 });
 composerEl.addEventListener('change', e => {
   const c = S.composer; if (!c || !c.open) return;
   touchComposer();
+  if (e.target.id === 'cArc'){ c.arc = e.target.value; renderComposer(); const f = $(c.arc === '__new' ? '#cArcL' : '#cComment'); if (f) f.focus(); return; }
   if (e.target.id === 'cStartIn'){
     const s = parseTcInput(e.target.value);
     if (s == null){ e.target.classList.add('bad'); toast('Ese timecode no es válido. Escribilo como 14:33:20:05 (horas:minutos:segundos:cuadros).', true); return; }
@@ -1476,6 +1545,7 @@ async function createComposerTag(){
 }
 composerEl.addEventListener('keydown', e => {
   if (e.target.classList.contains('tcin') && e.key === 'Enter'){ e.preventDefault(); e.target.blur(); return; }
+  if ((e.target.id === 'cArcL' || e.target.id === 'cArcT') && e.key === 'Enter' && !e.isComposing){ e.preventDefault(); saveComposer(); return; }
   if (e.target.id === 'cNewTag'){
     if (e.key === 'Enter' && !e.isComposing){ e.preventDefault(); createComposerTag(); }
     if (e.key === 'Escape'){ e.preventDefault(); S.composer.newTag = false; renderComposer(); }
@@ -1487,13 +1557,24 @@ composerEl.addEventListener('keydown', e => {
 function saveComposer(){
   const c = S.composer;
   if (!c.touched || (!(c.says||'').trim() && !(c.comment||'').trim())){ toast('Escribí algo antes de guardar.'); const f = $('#cComment'); if (f) f.focus(); return; }
+  // Archivo: link nuevo pegado en el cuadro, o uno que ya estaba en la entrevista
+  let arcNew = null, arcIds = [];
+  if (isArcTag(c.tag)){
+    if (c.arc === '__new' && (c.arcL || '').trim()){
+      const L = fixLink(c.arcL);
+      if (!L){ toast('Ese link no parece válido. Copialo entero desde el navegador (empieza con https://).', true); const f = $('#cArcL'); if (f) f.focus(); return; }
+      arcNew = { id: uid(), interview: S.cur.id, title: (c.arcT || '').replace(/\s+/g, ' ').trim() || linkHost(L) || L, link: L, detail: '', author: S.me.name, created: '', _pending: true };
+      arcIds = [arcNew.id];
+    } else if (c.arc && c.arc !== '__new' && arcById(S.cur.id, c.arc)) arcIds = [c.arc];
+  }
   const resume = !!c.resume;
   if (c.picking) setEnd(now());
   const end = c.end != null ? Math.round(c.end * 1000) / 1000 : null;
   const note = { id: uid(), interview: S.cur.id, author: S.me.name, seconds: Math.round(c.seconds * 1000) / 1000, tc: secToTc(c.seconds),
                  secondsEnd: end, tcEnd: end != null ? secToTc(end) : '', star: !!c.star,
-                 says: c.says.trim(), comment: c.comment.trim(), tag: c.tag || '', _pending: true };
+                 says: c.says.trim(), comment: c.comment.trim(), tag: c.tag || '', archive: arcIds, _pending: true };
   S.notes.push(note);
+  if (arcNew){ (S.arc[S.cur.id] = S.arc[S.cur.id] || []).push(arcNew); pushArc(arcNew); }
   closeComposer();
   if (S.who !== 'all' && S.who !== 'mine') S.who = 'all';
   if (S.onlyStar && !note.star) S.onlyStar = false;
@@ -1504,12 +1585,15 @@ function saveComposer(){
   pushNote(note);
 }
 async function pushNote(note){
-  const iv = S.cur;
+  const iv = S.cur, wasNew = !!note._pending;
   try {
     const j = await tracked(() => api('saveNote', { note: { id: note.id, interview: note.interview, seconds: note.seconds, tc: note.tc,
-      secondsEnd: note.secondsEnd, tcEnd: note.tcEnd, star: !!note.star, says: note.says, comment: note.comment, tag: note.tag } }));
+      secondsEnd: note.secondsEnd, tcEnd: note.tcEnd, star: !!note.star, says: note.says, comment: note.comment, tag: note.tag, archive: note.archive || [] } }));
+    const local = (note.archive || []).slice();
     delete note._pending; S.failed.delete(note.id);
     if (S.cur === iv) Object.assign(note, j.note);
+    // si mientras se guardaba la nota alguien le vinculó archivo, se manda ahora
+    if (wasNew && local.join(',') !== (j.note.archive || []).join(',')){ note.archive = local; sendLinks(note, local, null); }
   } catch (e){
     S.failed.add(note.id); toast('No se pudo guardar una nota. Revisá la conexión y tocá el aviso de arriba para reintentar.', true);
   }
@@ -1519,6 +1603,7 @@ async function pushNote(note){
 $('#sync').onclick = () => {
   S.notes.filter(n => S.failed.has(n.id)).forEach(pushNote);
   Object.keys(S.free).forEach(k => S.free[k].filter(f => S.failed.has(f.id)).forEach(pushFree));
+  Object.keys(S.arc).forEach(k => S.arc[k].filter(a => S.failed.has(a.id)).forEach(a => pushArc(a)));
 };
 
 /* ═════════════ tabla de notas ═════════════ */
@@ -1565,16 +1650,19 @@ async function exportExcel(){
   const b = $('#xlsBtn'); b.disabled = true; b.textContent = 'Preparando…';
   try { await loadXLSX(); }
   catch (e){ toast('No se pudo preparar el Excel. Revisá la conexión.', true); b.disabled = false; b.textContent = '⬇ Excel'; return; }
-  const head = ['Momento', 'Hasta', 'Duración', 'Qué se dice', 'Comentario', 'Etiqueta', 'Momento clave', 'Quién', 'Respuestas', 'Creada'];
+  const head = ['Momento', 'Hasta', 'Duración', 'Qué se dice', 'Comentario', 'Etiqueta', 'Archivo', 'Momento clave', 'Quién', 'Respuestas', 'Creada'];
+  const arcTxt = n => (n.archive || []).map(id => arcById(iv.id, id)).filter(Boolean).map(a => a.title + ' — ' + a.link).join('\n');
   const rows = S.notes.slice().sort((a, c) => a.seconds - c.seconds).map(n => [
     n.tc || secToTc(n.seconds), n.secondsEnd != null ? (n.tcEnd || secToTc(n.secondsEnd)) : '', n.secondsEnd != null ? durTxt(n.secondsEnd - n.seconds) : '',
-    n.says || '', n.comment || '', n.tag || '', n.star ? 'Sí' : '', n.author, repliesOf(n.id).map(r => r.author + ': ' + r.text).join('\n'), n.created || '']);
+    n.says || '', n.comment || '', n.tag || '', arcTxt(n), n.star ? 'Sí' : '', n.author, repliesOf(n.id).map(r => r.author + ': ' + r.text).join('\n'), n.created || '']);
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet([head].concat(rows));
-  ws['!cols'] = [13, 13, 10, 50, 50, 20, 9, 14, 40, 16].map(w => ({ wch: w }));
+  ws['!cols'] = [13, 13, 10, 50, 50, 20, 40, 9, 14, 40, 16].map(w => ({ wch: w }));
   XLSX.utils.book_append_sheet(wb, ws, 'Notas');
   const free = (S.free[iv.id] || []).map(f => [f.text, f.author, f.created || '']);
   if (free.length){ const ws2 = XLSX.utils.aoa_to_sheet([['Nota suelta', 'Quién', 'Creada']].concat(free)); ws2['!cols'] = [{ wch: 80 }, { wch: 14 }, { wch: 16 }]; XLSX.utils.book_append_sheet(wb, ws2, 'Notas sueltas'); }
+  const arcs = arcSorted(iv.id).map(a => [a.title, a.link, a.detail || '', arcUses(iv.id, a.id).map(n => (n.tc || secToTc(n.seconds)) + (n.comment ? ' (' + n.comment + ')' : '')).join('\n'), a.author, a.created || '']);
+  if (arcs.length){ const ws3 = XLSX.utils.aoa_to_sheet([['Qué es', 'Link', 'Detalle', 'Va en', 'Agregado por', 'Creado']].concat(arcs)); ws3['!cols'] = [36, 50, 36, 50, 14, 16].map(w => ({ wch: w })); XLSX.utils.book_append_sheet(wb, ws3, 'Archivo'); }
   const name = String(iv.title).replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim() || 'entrevista';
   XLSX.writeFile(wb, 'Notas - ' + name + '.xlsx');
   b.disabled = false; b.textContent = '⬇ Excel';
@@ -1615,11 +1703,11 @@ function rowHtml(n){
   if (mine){
     const base = tagList(); const tags = base.concat(n.tag && !base.includes(n.tag) ? [n.tag] : []);
     main = '<td><textarea class="cell says" data-f="says" rows="1" title="Tocá para corregir">' + esc(n.says) + '</textarea></td>' +
-      '<td><textarea class="cell" data-f="comment" rows="1" placeholder="Agregar comentario" title="Tocá para corregir">' + esc(n.comment) + '</textarea></td>' +
+      '<td><textarea class="cell" data-f="comment" rows="1" placeholder="Agregar comentario" title="Tocá para corregir">' + esc(n.comment) + '</textarea>' + arcChips(n) + '</td>' +
       '<td><select class="tag' + (n.tag ? ' has' : '') + '" data-f="tag" style="--tc:' + tagColor(n.tag) + '"><option value="">Sin etiqueta</option>' + tags.map(t => '<option' + (t === n.tag ? ' selected' : '') + '>' + esc(t) + '</option>').join('') + '<option value="__new">＋ Nueva etiqueta…</option></select></td>';
   } else {
     main = '<td><div class="ro says' + (n.says ? '' : ' empty') + '">' + (esc(n.says) || '—') + '</div></td>' +
-      '<td><div class="ro' + (n.comment ? '' : ' empty') + '">' + (esc(n.comment) || '—') + '</div></td>' +
+      '<td><div class="ro' + (n.comment ? '' : ' empty') + '">' + (esc(n.comment) || '—') + '</div>' + arcChips(n) + '</td>' +
       '<td>' + (n.tag ? '<span class="tagpill" style="--tc:' + tagColor(n.tag) + '">' + esc(n.tag) + '</span>' : '') + '</td>';
   }
   return '<tr class="' + cls + '" data-id="' + esc(n.id) + '" style="--uc:' + color + '"><td>' + starCell + '</td><td>' + tcCell + '</td>' + main +
@@ -1646,6 +1734,7 @@ function renderNotes(){
     if (el){ el.focus(); try { el.setSelectionRange(restore.s, restore.e); } catch(e){} }
   }
   if (repDraft != null && $('#repIn')) $('#repIn').value = repDraft;
+  renderArc();
 }
 function renderRowState(n){
   const r = document.querySelector('tr.row[data-id="' + CSS.escape(n.id) + '"]'); if (!r) return;
@@ -1693,6 +1782,7 @@ rowsEl.addEventListener('click', async e => {
   const rd = e.target.closest('[data-rdel]'); if (rd){ deleteReply(rd.dataset.rdel); return; }
   const b = e.target.closest('[data-act]'); if (!b) return;
   const id = b.closest('tr').dataset.id; const n = S.notes.find(x => x.id === id); if (!n) return;
+  if (b.dataset.act === 'arc'){ const r = b.getBoundingClientRect(); openArcPop(id, r.left, r.bottom + 6); return; }
   if (b.dataset.act === 'seek'){ seek(n.seconds, true); return; }
   if (b.dataset.act === 'tcedit'){ S.tcEdit = id; renderNotes(); const inp = document.querySelector('tr.row[data-id="' + CSS.escape(id) + '"] [data-te="start"]'); if (inp){ inp.focus(); inp.select(); } return; }
   if (b.dataset.act === 'tcno'){ S.tcEdit = null; renderNotes(); return; }
@@ -1759,12 +1849,14 @@ function freeHtml(f){
 }
 // Pestañas de abajo en la entrevista: Notas / Notas sueltas
 function setLowerTab(t){
-  S.lt = t === 'free' ? 'free' : 'notes';
+  S.lt = (t === 'free' || t === 'arc') ? t : 'notes';
   $('#ltabs').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.lt === S.lt));
   $('#nfilters').classList.toggle('hidden', S.lt !== 'notes');
   $('#nscroll').classList.toggle('hidden', S.lt !== 'notes');
   $('#freeIv').classList.toggle('hidden', S.lt !== 'free');
+  $('#arcIv').classList.toggle('hidden', S.lt !== 'arc');
   if (S.lt === 'free' && S.cur) renderFree(S.cur.id);
+  if (S.lt === 'arc' && S.cur) renderArc(true);
 }
 $('#ltabs').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -1842,6 +1934,246 @@ async function pushFree(f){
   });
 });
 
+/* ═════════════ material de archivo ═════════════ */
+// Links al material de archivo, separados por entrevista. Una nota se vincula con uno o más archivos.
+// Las notas con una etiqueta de archivo que todavía no tienen link aparecen como "pedidos".
+const isArcTag = t => /archivo/i.test(t || '');
+const arcOf = k => S.arc[k] || [];
+const arcById = (k, id) => arcOf(k).find(a => a.id === id);
+const canEditArc = a => a.author === S.me.name || !!S.me.admin;
+const safeHref = u => /^https?:\/\//i.test(u || '') ? u : '#';
+const linkHost = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch(e){ return ''; } };
+function fixLink(u){
+  let s = String(u || '').trim();
+  if (s && !/^[a-z][a-z0-9+.-]*:/i.test(s) && /^[^\s\/]+\.[^\s]{2,}/.test(s)) s = 'https://' + s;
+  return /^https?:\/\/\S+$/i.test(s) ? s : '';
+}
+const arcTagName = () => tagList().find(isArcTag) || 'Material de archivo';
+function arcUses(k, id){ return S.notes.filter(n => n.interview === k && (n.archive || []).includes(id)).sort((a, b) => a.seconds - b.seconds); }
+function arcPending(k){ return S.notes.filter(n => n.interview === k && isArcTag(n.tag) && !(n.archive || []).some(id => arcById(k, id))).sort((a, b) => a.seconds - b.seconds); }
+// Ordenados por el momento de la entrevista donde se usan (los sin usar, al final)
+function arcSorted(k){
+  const first = a => { const u = arcUses(k, a.id); return u.length ? u[0].seconds : 1e12; };
+  return arcOf(k).slice().sort((a, b) => first(a) - first(b) || String(a.created || '~').localeCompare(String(b.created || '~')));
+}
+function setArc(k, list){
+  const local = arcOf(k).filter(a => a._pending || S.failed.has(a.id));
+  const ids = new Set(list.map(a => a.id));
+  S.arc[k] = list.concat(local.filter(a => !ids.has(a.id)));
+}
+function updateArc(k, list){
+  const js = JSON.stringify(list || []);
+  if (js === S.arcJson[k] || S.arcEdit || arcEditing()) return;
+  S.arcJson[k] = js; setArc(k, list || []);
+  const ae = document.activeElement;
+  if (!S.tcEdit && !(ae && ae.closest && ae.closest('tr.row,.repbox'))) renderNotes(); else renderArc();
+  if (S.arcPop && !(ae && $('#arcPop').contains(ae) && ae.type !== 'checkbox')) renderArcPop();
+}
+function arcEditing(){ const ae = document.activeElement; return !!(ae && $('#arcIv').contains(ae) && ae.tagName === 'INPUT'); }
+function arcChips(n){
+  const items = (n.archive || []).map(id => arcById(n.interview, id)).filter(Boolean);
+  if (!items.length && !isArcTag(n.tag)) return '';
+  return '<div class="arcs">' + items.map(a => '<a class="achip" href="' + esc(safeHref(a.link)) + '" target="_blank" rel="noopener noreferrer" title="Abrir: ' + esc(a.link) + '">' + esc(a.title) + ' ↗</a>').join('') +
+    '<button class="alink' + (items.length ? '' : ' want') + '" data-act="arc" title="Elegir qué material de archivo va acá">' + (items.length ? '＋' : '＋ Vincular archivo') + '</button></div>';
+}
+function arcRowHtml(c){
+  if (!isArcTag(c.tag) || !S.cur) return '';
+  const list = arcSorted(S.cur.id);
+  return '<div class="c-arc"><span class="c-arcl">Archivo:</span><select class="input" id="cArc" aria-label="Archivo de esta nota">' +
+    '<option value="">' + (list.length ? 'Elegir después' : 'Lo busco después') + '</option>' +
+    list.map(a => '<option value="' + esc(a.id) + '"' + (c.arc === a.id ? ' selected' : '') + '>' + esc(a.title) + '</option>').join('') +
+    '<option value="__new"' + (c.arc === '__new' ? ' selected' : '') + '>＋ Pegar un link nuevo…</option></select>' +
+    (c.arc === '__new' ? '<input class="input" id="cArcL" placeholder="Link (Drive, YouTube, web…)" value="' + esc(c.arcL || '') + '"><input class="input" id="cArcT" placeholder="Qué es (ej: fotos de la escuela)" value="' + esc(c.arcT || '') + '">' : '') +
+    '</div>';
+}
+function arcItemHtml(a){
+  const k = a.interview, uses = arcUses(k, a.id);
+  if (S.arcEdit === a.id) return '<div class="aitem editing" data-aid="' + esc(a.id) + '"><div class="a-edit">' +
+    '<input class="input" id="aeL" value="' + esc(a.link) + '" placeholder="Link" aria-label="Link">' +
+    '<input class="input" id="aeT" value="' + esc(a.title) + '" placeholder="Qué es" aria-label="Qué es">' +
+    '<input class="input" id="aeD" value="' + esc(a.detail || '') + '" placeholder="Detalle (opcional)" aria-label="Detalle">' +
+    '<div class="row2"><button class="btn primary sm" data-aact="save">Guardar</button><button class="btn sm" data-aact="cancel">Cancelar</button></div></div></div>';
+  const who = a.author === S.me.name ? 'Vos' : a.author;
+  return '<div class="aitem" data-aid="' + esc(a.id) + '"><div class="a-main">' +
+    '<a class="a-title" href="' + esc(safeHref(a.link)) + '" target="_blank" rel="noopener noreferrer" title="Abrir: ' + esc(a.link) + '">' + esc(a.title) + ' ↗</a><span class="a-host">' + esc(linkHost(a.link)) + '</span>' +
+    (a.detail ? '<div class="a-det">' + esc(a.detail) + '</div>' : '') +
+    '<div class="a-uses">' + (uses.length ? 'Va en' + uses.map(n => ' <button class="ause" data-aseek="' + n.seconds + '" style="--uc:' + esc(colorOf(n.author)) + '" title="' + esc((n.author === S.me.name ? 'Vos' : n.author) + ': ' + (n.comment || n.says || '')) + '"><i></i><span class="num">' + esc(String(n.tc || secToTc(n.seconds)).slice(0, 8)) + '</span></button>').join('') : 'Todavía no está vinculado a ninguna nota') + '</div></div>' +
+    '<div class="a-meta"><span>' + (S.failed.has(a.id) ? '<span class="warn" style="margin:0">Sin guardar</span>' : esc(who + (a.created ? ' · ' + shortDate(a.created) : ''))) + '</span>' +
+    (canEditArc(a) ? '<span class="a-acts"><button class="btn quiet sm" data-aact="edit">Editar</button><button class="del" data-aact="del">Quitar</button></span>' : '') + '</div></div>';
+}
+function renderArc(force){
+  if (!S.cur || !S.me) return;
+  const k = S.cur.id, list = arcSorted(k), pend = arcPending(k);
+  const la = $('#ltA'); la.textContent = list.length ? ' ' + list.length : ''; la.classList.toggle('pend', pend.length > 0);
+  la.parentElement.title = pend.length ? plural(pend.length, 'nota pide', 'notas piden') + ' material de archivo' : 'Links al material de archivo de esta entrevista';
+  if (S.lt !== 'arc' || (!force && arcEditing())) return;
+  const box = $('#arcIv');
+  const keep = {}; ['arcL', 'arcT', 'arcD'].forEach(id => { const el = $('#' + id); keep[id] = el ? el.value : ''; });
+  const tn = arcTagName(), tcol = tagColor(tn) || 'var(--accent)';
+  box.innerHTML =
+    '<p class="free-sub">El material de archivo de esta entrevista. Pegá el link (Drive, YouTube, una web…) y vinculalo con las notas donde va.</p>' +
+    '<div class="arc-new"><input class="input" id="arcL" placeholder="Link (Drive, YouTube, web…)" aria-label="Link"><input class="input" id="arcT" placeholder="Qué es (ej: fotos de la escuela, 1975)" maxlength="200" aria-label="Qué es">' +
+    '<input class="input" id="arcD" placeholder="Detalle (opcional)" maxlength="1000" aria-label="Detalle"><button class="btn primary" data-aact="add">Agregar</button></div>' +
+    (pend.length ? '<div class="arc-sec"><h4>Pedidos de archivo <span class="n">' + pend.length + '</span></h4><p class="hint">Notas con la etiqueta “' + esc(tn) + '” que todavía no tienen el archivo vinculado.</p>' +
+      pend.map(n => '<div class="apend" style="--uc:' + esc(colorOf(n.author)) + ';--tc:' + esc(tcol) + '"><button class="tc num" data-aseek="' + n.seconds + '" title="Ver este momento">' + esc(String(n.tc || secToTc(n.seconds)).slice(0, 8)) + '</button>' +
+        '<span class="who"><i></i>' + esc(n.author === S.me.name ? 'Vos' : n.author) + '</span><span class="x" title="' + esc(n.comment || n.says || '') + '">' + esc(n.comment || n.says || '—') + '</span>' +
+        '<button class="btn sm" data-alink="' + esc(n.id) + '">＋ Vincular archivo</button></div>').join('') + '</div>' : '') +
+    '<div class="arc-sec"><h4>Archivos <span class="n">' + list.length + '</span></h4>' +
+    (list.length ? list.map(arcItemHtml).join('') : '<div class="nempty"><b>Todavía no hay material de archivo en esta entrevista</b>Pegá un link acá arriba, o vinculalo desde una nota con la etiqueta “' + esc(tn) + '”.</div>') + '</div>';
+  Object.keys(keep).forEach(id => { const el = $('#' + id); if (el) el.value = keep[id]; });
+}
+function newArc(link, title, detail){
+  if (!String(link || '').trim()){ toast('Pegá el link del archivo.'); return null; }
+  const L = fixLink(link);
+  if (!L){ toast('Ese link no parece válido. Copialo entero desde el navegador (empieza con https://).', true); return null; }
+  const a = { id: uid(), interview: S.cur.id, title: String(title || '').replace(/\s+/g, ' ').trim() || linkHost(L) || L, link: L,
+              detail: String(detail || '').trim(), author: S.me.name, created: '', _pending: true };
+  (S.arc[S.cur.id] = S.arc[S.cur.id] || []).push(a);
+  pushArc(a);
+  return a;
+}
+async function pushArc(a){
+  try {
+    const j = await tracked(() => api('saveArchive', { item: { id: a.id, interview: a.interview, title: a.title, link: a.link, detail: a.detail } }));
+    delete a._pending; S.failed.delete(a.id); Object.assign(a, j.item);
+  } catch (e){ S.failed.add(a.id); toast('No se pudo guardar el archivo: ' + e.message + '. Tocá el aviso de arriba para reintentar.', true); }
+  setSync();
+  if (S.cur && S.cur.id === a.interview){ renderArc(); if (!(document.activeElement && document.activeElement.closest && document.activeElement.closest('tr.row'))) renderNotes(); }
+}
+function saveArcEdit(a){
+  const L = fixLink($('#aeL').value);
+  if (!L){ toast('Ese link no parece válido. Copialo entero desde el navegador (empieza con https://).', true); $('#aeL').focus(); return; }
+  a.link = L; a.title = $('#aeT').value.replace(/\s+/g, ' ').trim() || linkHost(L) || L; a.detail = $('#aeD').value.trim();
+  S.arcEdit = null; renderArc(true); renderNotes(); toast('Archivo actualizado');
+  pushArc(a);
+}
+// Vincular una nota con archivos (cualquiera puede hacerlo, en cualquier nota)
+function linkNote(n, ids){
+  const prev = (n.archive || []).slice();
+  n.archive = ids;
+  renderNotes(); renderArcPop();
+  if (n._pending || S.failed.has(n.id)) return; // se manda junto con la nota
+  sendLinks(n, ids, prev);
+}
+async function sendLinks(n, ids, prev){
+  try {
+    const j = await tracked(() => api('linkArchive', { id: n.id, archive: ids }));
+    if (n.archive === ids) n.archive = j.note.archive;
+  } catch (err){
+    toast('No se pudo vincular el archivo: ' + err.message, true);
+    if (prev && n.archive === ids){ n.archive = prev; renderNotes(); renderArcPop(); }
+  }
+}
+// Ventanita para elegir el archivo de una nota
+function closeArcPop(){ const p = $('#arcPop'); p.classList.add('hidden'); p.innerHTML = ''; S.arcPop = null; }
+function openArcPop(noteId, x, y){ S.arcPop = { id: noteId, x, y }; renderArcPop(true); }
+function renderArcPop(first){
+  const st = S.arcPop; if (!st || !S.cur) return;
+  const n = S.notes.find(x => x.id === st.id); if (!n){ closeArcPop(); return; }
+  const p = $('#arcPop'), list = arcSorted(S.cur.id), on = new Set(n.archive || []);
+  const dL = $('#apL') ? $('#apL').value : '', dT = $('#apT') ? $('#apT').value : '';
+  p.innerHTML = '<b>Material de archivo de esta nota</b><div class="q"><span class="num">' + esc(String(n.tc || secToTc(n.seconds)).slice(0, 8)) + '</span> · ' + esc(n.comment || n.says || '') + '</div>' +
+    (list.length ? '<div class="alist">' + list.map(a => '<label class="aopt"><input type="checkbox" data-aid="' + esc(a.id) + '"' + (on.has(a.id) ? ' checked' : '') + '><span>' + esc(a.title) + '</span><small>' + esc(linkHost(a.link)) + '</small></label>').join('') + '</div>'
+      : '<p class="small" style="margin:0 0 10px">Todavía no hay archivos en esta entrevista. Agregá el primero acá abajo.</p>') +
+    '<div class="anew"><input class="input" id="apL" placeholder="Pegá un link nuevo (Drive, YouTube, web…)" aria-label="Link nuevo"><input class="input" id="apT" placeholder="Qué es (ej: fotos de la escuela, 1975)" aria-label="Qué es"></div>' +
+    '<div class="foot"><button class="btn sm" data-apadd>＋ Agregar y vincular</button><button class="btn primary sm" data-apclose>Listo</button></div>';
+  $('#apL').value = dL; $('#apT').value = dT;
+  p.classList.remove('hidden');
+  if (first){
+    p.style.left = Math.max(10, Math.min(innerWidth - p.offsetWidth - 10, st.x)) + 'px';
+    p.style.top = Math.max(10, Math.min(innerHeight - p.offsetHeight - 10, st.y)) + 'px';
+    if (!list.length) $('#apL').focus();
+  }
+}
+function arcPopAdd(){
+  const n = S.arcPop && S.notes.find(x => x.id === S.arcPop.id); if (!n) return;
+  const a = newArc($('#apL').value, $('#apT').value, '');
+  if (!a){ $('#apL').focus(); return; }
+  $('#apL').value = ''; $('#apT').value = '';
+  linkNote(n, (n.archive || []).concat([a.id]));
+  toast('Archivo agregado y vinculado');
+}
+$('#arcPop').addEventListener('change', e => {
+  const cb = e.target.closest('input[data-aid]'); if (!cb || !S.arcPop) return;
+  const n = S.notes.find(x => x.id === S.arcPop.id); if (!n) return;
+  const ids = (n.archive || []).filter(id => id !== cb.dataset.aid);
+  if (cb.checked) ids.push(cb.dataset.aid);
+  linkNote(n, ids);
+});
+$('#arcPop').addEventListener('click', e => {
+  if (e.target.closest('[data-apclose]')){ closeArcPop(); return; }
+  if (e.target.closest('[data-apadd]')) arcPopAdd();
+});
+$('#arcPop').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.target.id === 'apL' || e.target.id === 'apT') && !e.isComposing){ e.preventDefault(); arcPopAdd(); }
+  if (e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); closeArcPop(); }
+});
+document.addEventListener('mousedown', e => {
+  if (S.arcPop && !e.target.closest('#arcPop') && !e.target.closest('[data-act="arc"],[data-alink]')) closeArcPop();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.arcPop){ e.preventDefault(); closeArcPop(); } });
+// Pestaña "Archivo" de la entrevista
+$('#arcIv').addEventListener('click', async e => {
+  if (!S.cur) return; const k = S.cur.id;
+  const sk = e.target.closest('[data-aseek]'); if (sk){ seek(+sk.dataset.aseek, true); return; }
+  const al = e.target.closest('[data-alink]'); if (al){ const r = al.getBoundingClientRect(); openArcPop(al.dataset.alink, r.left, r.bottom + 6); return; }
+  const b = e.target.closest('[data-aact]'); if (!b) return;
+  const act = b.dataset.aact;
+  if (act === 'add'){
+    const a = newArc($('#arcL').value, $('#arcT').value, $('#arcD').value);
+    if (a){ ['arcL', 'arcT', 'arcD'].forEach(id => { $('#' + id).value = ''; }); renderArc(true); toast('Archivo agregado'); }
+    else $('#arcL').focus();
+    return;
+  }
+  const it = b.closest('.aitem'); const a = it && arcById(k, it.dataset.aid); if (!a) return;
+  if (act === 'edit'){ S.arcEdit = a.id; renderArc(true); const f = $('#aeT'); if (f){ f.focus(); f.select(); } return; }
+  if (act === 'cancel'){ S.arcEdit = null; renderArc(true); return; }
+  if (act === 'save'){ saveArcEdit(a); return; }
+  if (act === 'del'){
+    if (!b.classList.contains('confirm')){ b.classList.add('confirm'); b.textContent = '¿Seguro?'; setTimeout(() => { b.classList.remove('confirm'); b.textContent = 'Quitar'; }, 3000); return; }
+    S.arc[k] = arcOf(k).filter(x => x.id !== a.id); renderArc(true); renderNotes();
+    if (a._pending){ S.failed.delete(a.id); setSync(); toast('Archivo quitado'); return; }
+    try { await tracked(() => api('deleteArchive', { id: a.id })); S.failed.delete(a.id); setSync(); toast('Archivo quitado'); }
+    catch (err){ toast('No se pudo quitar: ' + err.message, true); S.arc[k].push(a); renderArc(true); renderNotes(); }
+  }
+});
+$('#arcIv').addEventListener('keydown', e => {
+  const id = e.target.id;
+  if (e.key === 'Enter' && !e.isComposing && /^arc[LTD]$/.test(id)){ e.preventDefault(); $('#arcIv [data-aact="add"]').click(); }
+  if (/^ae[LTD]$/.test(id)){
+    if (e.key === 'Enter' && !e.isComposing){ e.preventDefault(); $('#arcIv [data-aact="save"]').click(); }
+    if (e.key === 'Escape'){ e.preventDefault(); S.arcEdit = null; renderArc(true); }
+  }
+});
+// Inicio: todo el archivo, por entrevista
+function showArcAll(items, notes){
+  const tcOf = (iv, s) => esc(secToTcFor(iv, s).slice(0, 8));
+  const groups = S.interviews.map(iv => {
+    const its = items.filter(a => a.interview === iv.id), ns = notes.filter(n => n.interview === iv.id);
+    const usesOf = id => ns.filter(n => (n.archive || []).includes(id)).sort((a, b) => a.seconds - b.seconds);
+    const pend = ns.filter(n => isArcTag(n.tag) && !(n.archive || []).some(id => its.some(a => a.id === id))).sort((a, b) => a.seconds - b.seconds);
+    if (!its.length && !pend.length) return '';
+    const first = a => { const u = usesOf(a.id); return u.length ? u[0].seconds : 1e12; };
+    const chip = n => '<button class="ause" data-iv="' + esc(iv.id) + '" data-s="' + n.seconds + '" style="--uc:' + esc(colorOf(n.author)) + '" title="' + esc((n.author === S.me.name ? 'Vos' : n.author) + ': ' + (n.comment || n.says || '')) + '"><i></i><span class="num">' + tcOf(iv, n.seconds) + '</span></button>';
+    return '<div class="resgroup"><h4 class="arc-h"><span class="t">' + esc(iv.title) + '</span><span class="n">' + plural(its.length, 'archivo', 'archivos') + (pend.length ? ' · ' + plural(pend.length, 'pedido', 'pedidos') : '') + '</span>' +
+      '<button class="btn sm" data-ivarc="' + esc(iv.id) + '">Abrir</button></h4>' +
+      its.sort((a, b) => first(a) - first(b)).map(a => { const u = usesOf(a.id); return '<div class="garc"><a class="a-title" href="' + esc(safeHref(a.link)) + '" target="_blank" rel="noopener noreferrer">' + esc(a.title) + ' ↗</a><span class="a-host">' + esc(linkHost(a.link)) + '</span>' +
+        (a.detail ? '<div class="a-det">' + esc(a.detail) + '</div>' : '') +
+        '<div class="a-uses">' + (u.length ? 'Va en' + u.map(n => ' ' + chip(n)).join('') : 'Todavía no está vinculado a ninguna nota') + '</div></div>'; }).join('') +
+      (pend.length ? '<div class="garc pend"><div class="k">Pedidos sin archivo</div>' + pend.map(n => '<button class="ause" data-iv="' + esc(iv.id) + '" data-s="' + n.seconds + '" style="--uc:' + esc(colorOf(n.author)) + '"><i></i><span class="num">' + tcOf(iv, n.seconds) + '</span><span class="x">' + esc(n.comment || n.says || '') + '</span></button>').join('') + '</div>' : '') +
+      '</div>';
+  }).join('');
+  $('#results').innerHTML = '<div class="reshead"><h3>Material de archivo</h3><button class="btn" id="resBack">← Volver a la lista</button></div>' +
+    (groups || '<div class="home-empty"><b>Todavía no hay material de archivo</b>Se agrega desde cada entrevista, en la pestaña “Archivo”, o vinculándolo desde una nota.</div>');
+}
+$('#arcBtn').onclick = async () => {
+  if (S.cur) showHome();
+  $('#results').classList.remove('hidden'); $('#ivlist').classList.add('hidden'); $('#freeHome').classList.add('hidden');
+  $('#results').innerHTML = '<p class="small">Juntando el material de archivo…</p>';
+  try { const j = await tracked(() => api('archiveAll')); showArcAll(j.items || [], j.notes || []); }
+  catch (err){ hideResults(); toast('No se pudo traer el archivo: ' + err.message, true); }
+};
+
 /* ═════════════ atajos de teclado (opcionales) ═════════════ */
 document.addEventListener('keydown', e => {
   if (!S.cur || $('#modalRoot').children.length) return;
@@ -1871,6 +2203,7 @@ function openHelp(){
     '<li><div><b>Lo anotado queda resaltado</b>En la transcripción, las frases que alguien usó en una nota se ven resaltadas con su color. Pasá el mouse para leer la nota, o tocala para encontrarla en la tabla.</div></li>' +
     '<li><div><b>Mirá y respondé las notas de todas</b>Cada persona tiene su color. Elegí cuáles ver con “Todas”, “Mías” o el nombre de cada una. Con “Responder” podés comentar la nota de otra persona.</div></li>' +
     '<li><div><b>Quién habla</b>En entrevistas de a dos, seleccioná la frase donde empieza a hablar otra persona y tocá “¿Quién habla acá?”. La marca vale hasta la próxima. Para cambiarla, tocá el nombre de color en la transcripción.</div></li>' +
+    '<li><div><b>Material de archivo</b>Cada entrevista tiene la pestaña “Archivo” (al lado de “Notas”) con los links al material de archivo. Si a una nota le ponés la etiqueta “Material de archivo”, en el cuadro de notas podés pegar el link ahí mismo; si todavía no lo tenés, queda como pedido en la pestaña “Archivo” hasta que alguien lo vincule. En el inicio, “Archivo” muestra todo junto.</div></li>' +
     '<li><div><b>Corregir la transcripción</b>Si una frase está mal transcripta, tocá “✎ Corregir” (arriba de la transcripción), tocá la frase y escribí. Enter guarda, Esc cancela. Cuando termines, “Listo”. Las demás ven la corrección la próxima vez que abran la entrevista.</div></li>' +
     '<li><div><b>Notas sueltas</b>Para ideas que no van en un momento puntual: en cada entrevista, en la pestaña “Notas sueltas” (al lado de “Notas”); y en el inicio, con el botón “Notas sueltas del documental”. No hace falta pausar.</div></li>' +
     '<li><div><b>Etiquetas de colores</b>Cada etiqueta tiene su color. Con el selector “Todas las etiquetas”, arriba de la tabla, ves solo las notas de una etiqueta.</div></li>' +
